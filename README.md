@@ -57,6 +57,11 @@ https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.21
 SIGVerse window will be opened.
 3. Type the IP address of ROS to "Rosbridge IP" in SIGVerse window.
 
+### Set Up Configuration File for Human Navigation
+
+1. Open the [SIGVerseConfig]-[HumanNavi]-[sample] folder in this project folder.
+2. Copy "HumanNaviConfig.json" to the [SIGVerseConfig]-[HumanNavi] folder.
+
 ## How to Execute Human Navigation Program
 
 ### Execute On Unity Editor
