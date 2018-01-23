@@ -1,0 +1,10 @@
+{
+	"recoveryUsingScoreFile": false,
+	"executionMode": 1,
+	"maxNumberOfTrials": 2,
+	"taskInfo":[
+		{"environment":"Example_Environment_01","target":"petbottle_500ml_empty_01","destination":"trashbox_01"},
+		{"environment":"Example_Environment_01","target":"pink_mugcup_01","destination":"cabinet_A_lower_03"}
+		],
+	"playbackType": 0
+}
