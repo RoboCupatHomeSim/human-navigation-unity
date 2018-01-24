@@ -1,10 +1,13 @@
 # Human Navigation Project
 
-This is a Unity project for the competition of Human Navigation.  
+This is a Unity project for the competition of Human Navigation task of the Partner Robot Challenge (Virtual Space) in the World Robot Competition. 
+
 Please prepare a common unitypackage and a dll file for text-to-speech (TTS) in advance, and import them to this project.  
-For details of creating the common unitypackage, please see the following page.  
+
+For details of using the common unitypackage, please see an instruction in the following repository:
 https://github.com/PartnerRobotChallengeVirtual/common-unity.git
-For details of creating the dll for TTS, please see the following page.  
+
+For details of creating the dll for TTS, please see the following repository:
 https://github.com/PartnerRobotChallengeVirtual/console-simple-tts
 
 ## Prerequisites
