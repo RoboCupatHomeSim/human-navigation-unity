@@ -43,6 +43,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		public HumanNaviScoreManager scoreManager;
 
 		[HeaderAttribute("Avatar")]
+		public GameObject avatar;
 		public GameObject cameraRig;
 		public GameObject Ethan;
 		public GameObject head;
@@ -77,8 +78,8 @@ namespace SIGVerse.Competition.HumanNavigation
 		private GameObject robot;
 		private GameObject environment;
 
-		private Vector3 initAvatarPosition;
-		private Vector3 initAvatarRotation;
+		private Vector3 initialAvatarPosition;
+		private Vector3 initialAvatarRotation;
 
 		private List<SIGVerse.Competition.HumanNavigation.TaskInfo> taskInfoList;
 		private SIGVerse.ROSBridge.human_navigation.HumanNaviTaskInfo taskInfoForRobot;
@@ -128,6 +129,8 @@ namespace SIGVerse.Competition.HumanNavigation
 				//Debug.Log(this.environmentPrefabs.Where(obj => obj.name == info.environment).SingleOrDefault());
 				/////
 
+				this.initialAvatarPosition = this.avatar.transform.position;
+				this.initialAvatarRotation = this.avatar.transform.eulerAngles;
 
 				this.noticePanelForAvatar.SetActive(false);
 				this.noticeTextForAvatar.text = "";
@@ -220,7 +223,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 						this.scoreManager.TaskStart();
 						
-						this.DoorOpen();
+						//this.DoorOpen();
 
 						SIGVerseLogger.Info("Waiting for end of trial");
 //						this.addCommandLog("Info", "Waiting_for_end_of_trial");
@@ -334,8 +337,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void ResetAvatarTransform()
 		{
-			//this.avatar.transform.position = this.initAvatarPosition;
-			//this.avatar.transform.eulerAngles = this.initAvatarRotation;
+			this.avatar.transform.position = this.initialAvatarPosition;
+			this.avatar.transform.eulerAngles = this.initialAvatarRotation;
 			this.cameraRig.transform.localPosition = Vector3.zero;
 			this.cameraRig.transform.localRotation = Quaternion.identity;
 			this.Ethan.transform.localPosition = Vector3.zero;
