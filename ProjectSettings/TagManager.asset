@@ -18,6 +18,7 @@ TagManager:
   - GraspingCandidates
   - DummyGraspingCandidates
   - MainMenu
+  - Moderator
   layers:
   - Default
   - TransparentFX
@@ -31,8 +32,8 @@ TagManager:
   - Robot
   - Effect
   - AvatarUI
-  - 
-  - 
+  - Collider.AvatarOnly
+  - Avatar
   - 
   - 
   - 
