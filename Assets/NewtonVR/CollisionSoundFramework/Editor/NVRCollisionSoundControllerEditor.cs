@@ -55,7 +55,8 @@ namespace NewtonVR
         private static bool DoesTypeExist(string className)
         {
             var foundType = (from assembly in AppDomain.CurrentDomain.GetAssemblies()
-                        from type in assembly.GetTypes()
+                        //from type in assembly.GetTypes()
+                        from type in System.Reflection.Assembly.Load("UnityEngine.dll").GetTypes()
                         where type.Name == className
                         select type).FirstOrDefault();
 
