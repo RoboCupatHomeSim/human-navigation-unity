@@ -24,10 +24,12 @@ namespace SIGVerse.Competition.HumanNavigation
 		private const string MsgGoToNextTrial   = "Go_to_next_trial";
 		private const string MsgMissionComplete = "Mission_complete";
 
-		private const string MsgIamReady      = "I_am_ready";
-		private const string MsgGetAvatarPose = "Get_avatar_pose";
+		private const string MsgIamReady           = "I_am_ready";
+		private const string MsgGetAvatarPose      = "Get_avatar_pose";
+		private const string MsgConfirmSpeechState = "Confirm_speech_state";
 
-		private const string MsgRequest = "Guidance_request";
+		private const string MsgRequest     = "Guidance_request";
+		private const string MsgSpeechState = "Speech_state";
 
 		private enum Step
 		{
@@ -61,10 +63,9 @@ namespace SIGVerse.Competition.HumanNavigation
 		public GameObject noticePanelForAvatar;
 		public UnityEngine.UI.Text noticeTextForAvatar;
 
-		[HeaderAttribute("Effect")]
-		public GameObject badEffect;
-		public GameObject goodEffect;
-		//public GameObject messagePanelForAvatar;
+		//[HeaderAttribute("Effect")]
+		//public GameObject badEffect;
+		//public GameObject goodEffect;
 
 		[HeaderAttribute("Menu")]
 		public HumanNaviMenu humanNaviMenu;
@@ -93,6 +94,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private bool isCompetitionStarted = false;
 		private bool isDuringTrial = false;
+
 		private Dictionary<string, bool> receivedMessageMap;
 		private bool isTargetAlreadyGrasped;
 		private bool goNextTrial = false;
@@ -141,6 +143,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.receivedMessageMap = new Dictionary<string, bool>();
 				this.receivedMessageMap.Add(MsgIamReady, false);
 				this.receivedMessageMap.Add(MsgGetAvatarPose, false);
+				this.receivedMessageMap.Add(MsgConfirmSpeechState, false);
 			}
 			catch (Exception exception)
 			{
@@ -193,7 +196,6 @@ namespace SIGVerse.Competition.HumanNavigation
 					{
 						if (this.receivedMessageMap[MsgIamReady])
 						{
-							this.isDuringTrial = true;
 							this.step++;
 							break;
 						}
@@ -227,6 +229,7 @@ namespace SIGVerse.Competition.HumanNavigation
 						SIGVerseLogger.Info("Waiting for end of trial");
 //						this.addCommandLog("Info", "Waiting_for_end_of_trial");
 
+						this.isDuringTrial = true;
 						this.step++;
 
 						break;
@@ -308,9 +311,6 @@ namespace SIGVerse.Competition.HumanNavigation
 				base.StartCoroutine(this.ShowNoticeMessagePanel("Mission complete", 5.0f));
 				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Mission complete", 5.0f));
 
-				//this.ShowMessageEffect(MessageEffect, this.birdviewCamera.gameObject, "Mission complete");
-				//this.ShowMessageEffectForAvatar(messagePanelForAvatar, this.head.gameObject, "Mission complete");
-
 				this.isAllTaskFinished = true;
 			}
 			else
@@ -391,7 +391,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			foreach (GameObject graspableObject in graspableObjects)
 			{
 				// transtrate the coordinate system of GameObject (left-handed, Z-axis:front, Y-axis:up) to ROS coodinate system (right-handed, X-axis:front, Z-axis:up)
-				Vector3 positionInROS = new Vector3(graspableObject.transform.position.z, -graspableObject.transform.position.x, graspableObject.transform.position.y);
+				Vector3 positionInROS = this.ConvertCoorinateSystemUnityToROS_Position(graspableObject.transform.position);
 
 				if (graspableObject.name == currentTaskInfo.target)
 				{
@@ -433,7 +433,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				if (destination.name == this.currentTaskInfo.destination)
 				{
 					Vector3 conterOfCollider = destination.GetComponent<BoxCollider>().center;
-					taskInfoForRobot.destination = destination.transform.position + conterOfCollider;
+					taskInfoForRobot.destination = this.ConvertCoorinateSystemUnityToROS_Position(destination.transform.position + conterOfCollider);
 				}
 			}
 			SIGVerseLogger.Info("Destination : " + taskInfoForRobot.destination);
@@ -456,12 +456,12 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		private void DoorOpen()
-		{
-			GameObject doorWay = GameObject.Find("doorway"); // TODO: should be modified
-			doorWay.transform.localPosition += doorWay.transform.right * (-0.9f);
-//			this.addCommandLog("Info", "door_open");
-		}
+//		private void DoorOpen()
+//		{
+//			GameObject doorWay = GameObject.Find("doorway"); // TODO: should be modified
+//			doorWay.transform.localPosition += doorWay.transform.right * (-0.9f);
+////			this.addCommandLog("Info", "door_open");
+//		}
 
 		public void TimeIsUp()
 		{
@@ -469,10 +469,8 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.SendROSHumanNaviMessage(MsgTaskFailed, strTimeup);
 			base.StartCoroutine(this.ShowNoticeMessagePanel(strTimeup, 3.0f));
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strTimeup, 3.0f));
-			//this.ShowMessageEffect(MessageEffect, this.birdviewCamera.gameObject, strTimeup);
-			//this.ShowMessageEffectForAvatar(messagePanelForAvatar, this.head.gameObject, strTimeup);
 
-			//			this.addCommandLog("Info", "Time_is up");
+//			this.addCommandLog("Info", "Time_is up");
 
 			this.TaskFinished();
 		}
@@ -483,9 +481,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.SendROSHumanNaviMessage(MsgTaskFailed, strGiveup);
 			base.StartCoroutine(this.ShowNoticeMessagePanel(strGiveup, 3.0f));
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strGiveup, 3.0f));
-
-			//this.ShowMessageEffect(MessageEffect, this.birdviewCamera.gameObject, strGiveup);
-			//this.ShowMessageEffectForAvatar(messagePanelForAvatar, this.head.gameObject, strGiveup);
 
 //			this.addCommandLog("Info", "Give up");
 
@@ -509,8 +504,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			yield return new WaitForSeconds(waitTime);
 			this.humanNaviMenu.ShowGoToNextPanel();
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Waiting for the next trial to start", 3.0f));
-
-			//this.ShowMessageEffectForAvatar(messagePanelForAvatar, this.head.gameObject, "Waiting for next trial");
 		}
 
 		private void TaskFinished()
@@ -537,6 +530,16 @@ namespace SIGVerse.Competition.HumanNavigation
 					avatarPose.right_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.rightHand.transform.rotation);
 
 					this.pubAvatarPose.SendROSMessage(avatarPose);
+				}
+				else if (humanNaviMsg.message == MsgConfirmSpeechState)
+				{
+					if (this.robot != null && this.isDuringTrial)
+					{
+						string detail;
+						if (this.robot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesis>().IsSpeeching()) { detail = "Is_speaking"; }
+						else                                                                                                  { detail = "Is_not_speaking"; }
+						this.SendROSHumanNaviMessage(MsgSpeechState, detail);
+					}
 				}
 			}
 			else
@@ -645,43 +648,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.noticePanelForAvatar.SetActive(false);
 		}
 
-		private void ShowEffects(GameObject effectPrefab, Vector3 objectPotition, Vector3 headRotation)
-		{
-			GameObject effect = MonoBehaviour.Instantiate(effectPrefab);
-			effect.transform.position = objectPotition;
-			//Vector3 relativePosition = (objectPotition - headPosition).normalized;
-			//relativePosition.y = 0.0f;
-			Vector3 direction = Vector3.Scale(headRotation, new Vector3(0, 1, 0));
-			//Vector3 direction = Vector3.Scale(relativePosition / relativePosition.magnitude, Vector3.up);
-			//Vector3 direction = relativePosition / relativePosition.magnitude;
-			Debug.Log(direction);
-			effect.transform.eulerAngles = direction;
-
-			Destroy(effect, 3.0f);
-		}
-
-		//private void ShowMessageEffect(GameObject effectPrefab, GameObject camera, string message)
-		//{
-		//	GameObject effect = MonoBehaviour.Instantiate(effectPrefab);
-		//	effect.GetComponentInChildren<TextMesh>().text = message;
-		//	//effect.transform.position = camera.transform.position;
-		//	effect.transform.position = camera.transform.position + camera.transform.forward * 0.5f - camera.transform.up * 0.025f;
-		//	effect.transform.eulerAngles = camera.transform.eulerAngles;//Vector3.Scale(camera.transform.eulerAngles, new Vector3(0, 1, 0));
-
-		//	Destroy(effect, 3.0f);
-		//}
-
-		private void ShowMessageEffectForAvatar(GameObject effectPrefab, GameObject camera, string message)
-		{
-			GameObject effect = MonoBehaviour.Instantiate(effectPrefab);
-			effect.GetComponentInChildren<TextMesh>().text = message;
-			//effect.transform.position = camera.transform.position;
-			effect.transform.position = camera.transform.position + camera.transform.forward * 0.4f + camera.transform.up * 0.1f;
-			effect.transform.eulerAngles = Vector3.Scale(camera.transform.eulerAngles, new Vector3(0, 1, 0));
-
-			Destroy(effect, 3.0f);
-		}
-
 		private void SendROSHumanNaviMessage(string message, string detail)
 		{
 			ExecuteEvents.Execute<IRosSendHandler>
@@ -715,12 +681,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 								base.StartCoroutine(this.ShowNoticeMessagePanel("Target object is grasped", 3.0f));
 
-								//ShowEffects(this.goodEffect, hand.CurrentlyInteracting.gameObject.transform.position, this.head.transform.eulerAngles);
 								this.scoreManager.AddScore(Score.Type.CorrectObjectIsGrasped);
 								this.scoreManager.AddTimeScoreOfGrasp();
-
-								//this.showMessageEffect(MessageEffect, this.birdviewCamera.gameObject, "Task succeeded");
-
 
 								this.isTargetAlreadyGrasped = true;
 							}
@@ -732,8 +694,6 @@ namespace SIGVerse.Competition.HumanNavigation
 								SIGVerseLogger.Info("Incorrect object is grasped");
 //								this.addEventLog("Info", "Incorrect_object_is_grasped");
 
-								//ShowEffects(this.badEffect, this.rightHand.CurrentlyInteracting.gameObject.transform.position, this.head.transform.eulerAngles);
-								//this.ShowMessageEffect(MessageEffect, this.birdviewCamera.gameObject, "Incorrect object is grasped");
 								base.StartCoroutine(this.ShowNoticeMessagePanel("Incorrect object is grasped", 3.0f));
 
 								this.scoreManager.AddScore(Score.Type.IncorrectObjectIsGrasped);

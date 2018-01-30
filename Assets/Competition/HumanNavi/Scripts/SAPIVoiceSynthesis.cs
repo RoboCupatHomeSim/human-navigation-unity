@@ -79,6 +79,12 @@ public class SAPIVoiceSynthesis : MonoBehaviour
 		this.voice.Voice = tokens.Item(0);
 	}
 
+	public bool IsSpeeching()
+	{
+		if (this.voice.Status.RunningState == SpeechRunState.SRSEIsSpeaking) return true;
+		else                                                                 return false;
+	}
+
 	public void OnReceiveROSStringMessage(SIGVerse.ROSBridge.std_msgs.String stringMsg)
 	{
 		this.guidanceMessageText.text = stringMsg.data;
