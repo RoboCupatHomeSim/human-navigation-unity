@@ -25,6 +25,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private const string MsgMissionComplete = "Mission_complete";
 
 		private const string MsgIamReady      = "I_am_ready";
+		private const string MsgGetAvatarPose = "Get_avatar_pose";
 
 		private const string MsgRequest = "Guidance_request";
 
@@ -72,6 +73,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		[HeaderAttribute("ROS Message")]
 		public HumanNaviPubMessage pubHumanNaviMessage;
 		public HumanNaviPubTaskInfo pubTaskInfo;
+		public HumanNaviPubAvatarPose pubAvatarPose;
 
 		//-----------------------------
 
@@ -90,6 +92,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private float waitingTime;
 
 		private bool isCompetitionStarted = false;
+		private bool isDuringTrial = false;
 		private Dictionary<string, bool> receivedMessageMap;
 		private bool isTargetAlreadyGrasped;
 		private bool goNextTrial = false;
@@ -137,6 +140,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				this.receivedMessageMap = new Dictionary<string, bool>();
 				this.receivedMessageMap.Add(MsgIamReady, false);
+				this.receivedMessageMap.Add(MsgGetAvatarPose, false);
 			}
 			catch (Exception exception)
 			{
@@ -168,13 +172,10 @@ namespace SIGVerse.Competition.HumanNavigation
 					return;
 				}
 
-				if (OVRInput.GetDown(OVRInput.RawButton.X))
+				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringTrial)
 				{
 					this.SendROSHumanNaviMessage(MsgRequest, "");
 				}
-
-				// for test
-				if (Input.GetKeyDown(KeyCode.R)) { this.SendROSHumanNaviMessage(MsgRequest, ""); }
 
 				switch (this.step)
 				{
@@ -192,6 +193,7 @@ namespace SIGVerse.Competition.HumanNavigation
 					{
 						if (this.receivedMessageMap[MsgIamReady])
 						{
+							this.isDuringTrial = true;
 							this.step++;
 							break;
 						}
@@ -208,13 +210,10 @@ namespace SIGVerse.Competition.HumanNavigation
 						base.StartCoroutine(this.ShowNoticeMessagePanel(textForGUI, 3.0f));
 						base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(textForGUI, 3.0f));
 
-						//this.ShowMessageEffect(MessageEffect, this.birdviewCamera.gameObject, textForGUI);
-						//this.ShowMessageEffectForAvatar(messagePanelForAvatar, this.head.gameObject, textForGUI);
-
 						//this.worldRecorder.GetComponentInChildren<HumanNaviPlaybackRecorder>().addCommadLog("test", "Task start!");
-						//						this.StartRecording();
+//						this.StartRecording();
 
-						//						this.addCommandLog("TaskMessage", "Task_start:" + this.scoreManager.GetChallengeInfoText());
+//						this.addCommandLog("TaskMessage", "Task_start:" + this.scoreManager.GetChallengeInfoText());
 
 						this.pubTaskInfo.SendROSMessage(this.taskInfoForRobot);
 //						this.addCommandLog("SendROSMessage", "Task_Info");
@@ -325,6 +324,7 @@ namespace SIGVerse.Competition.HumanNavigation
 //			this.StopRecording();
 //			this.StopPlaying();
 
+			this.isDuringTrial = false;
 			this.step = Step.WaitNextTrial;
 		}
 
@@ -390,18 +390,20 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			foreach (GameObject graspableObject in graspableObjects)
 			{
-				//if (graspableObject.name == taskInfoList[HumanNaviConfig.Instance.numberOfTrials - 1].target_object.name)
+				// transtrate the coordinate system of GameObject (left-handed, Z-axis:front, Y-axis:up) to ROS coodinate system (right-handed, X-axis:front, Z-axis:up)
+				Vector3 positionInROS = new Vector3(graspableObject.transform.position.z, -graspableObject.transform.position.x, graspableObject.transform.position.y);
+
 				if (graspableObject.name == currentTaskInfo.target)
 				{
 					taskInfoForRobot.target_object.name = graspableObject.name;
-					taskInfoForRobot.target_object.position = graspableObject.transform.position;
+					taskInfoForRobot.target_object.position = positionInROS;
 				}
 				else
 				{
 					SIGVerse.ROSBridge.human_navigation.HumanNaviObjectInfo objInfo = new SIGVerse.ROSBridge.human_navigation.HumanNaviObjectInfo
 					{
 						name = graspableObject.name,
-						position = graspableObject.transform.position
+						position = positionInROS
 					};
 
 					taskInfoForRobot.objects_info.Add(objInfo);
@@ -522,11 +524,34 @@ namespace SIGVerse.Competition.HumanNavigation
 			if (this.receivedMessageMap.ContainsKey(humanNaviMsg.message))
 			{
 				this.receivedMessageMap[humanNaviMsg.message] = true;
+
+				if(humanNaviMsg.message == MsgGetAvatarPose)
+				{
+					ROSBridge.human_navigation.HumanNaviAvatarPose avatarPose = new ROSBridge.human_navigation.HumanNaviAvatarPose();
+
+					avatarPose.head.position = ConvertCoorinateSystemUnityToROS_Position(this.head.transform.position);
+					avatarPose.head.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.head.transform.rotation);
+					avatarPose.left_hand.position = ConvertCoorinateSystemUnityToROS_Position(this.LeftHand.transform.position);
+					avatarPose.left_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.LeftHand.transform.rotation);
+					avatarPose.right_hand.position = ConvertCoorinateSystemUnityToROS_Position(this.rightHand.transform.position);
+					avatarPose.right_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.rightHand.transform.rotation);
+
+					this.pubAvatarPose.SendROSMessage(avatarPose);
+				}
 			}
 			else
 			{
 				SIGVerseLogger.Warn("Received Illegal message : " + humanNaviMsg.message);
 			}
+		}
+
+		private Vector3 ConvertCoorinateSystemUnityToROS_Position(Vector3 unityPosition)
+		{
+			return new Vector3(unityPosition.z, -unityPosition.x, unityPosition.y);
+		}
+		private Quaternion ConvertCoorinateSystemUnityToROS_Rotation(Quaternion unityQuaternion)
+		{
+			return new Quaternion(-unityQuaternion.z, unityQuaternion.x, -unityQuaternion.y, unityQuaternion.w);
 		}
 
 		//private void StartRecording()

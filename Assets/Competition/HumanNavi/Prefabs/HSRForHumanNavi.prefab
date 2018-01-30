@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4207503715083268}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_l_distal_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36,7 +36,7 @@ GameObject:
   - component: {fileID: 4551141130568658}
   - component: {fileID: 20694182277435156}
   - component: {fileID: 114795122015667512}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HeadCenterCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 33763029566128658}
   - component: {fileID: 23973174703143500}
   - component: {fileID: 64185546019981344}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Bumper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 4049049720210520}
   - component: {fileID: 33611094327504114}
   - component: {fileID: 23699031213060552}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: torso_base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4741322113390742}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_range_sensor_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,7 +105,7 @@ GameObject:
   - component: {fileID: 114049132209920564}
   - component: {fileID: 114088907559311884}
   - component: {fileID: 114199157197865922}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HSRForHumanNavi
   m_TagString: Robot
   m_Icon: {fileID: 0}
@@ -120,7 +120,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4963048174196866}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_camera_rgb_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,7 +135,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4719675497748598}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_roll_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -150,7 +150,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4513933289309008}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_l_passive_wheel_y_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -165,7 +165,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4223746585446294}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_center_camera_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,7 +180,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4522693255206988}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_r_passive_wheel_x_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -195,7 +195,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4522616165549720}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_imu_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -210,7 +210,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4017856233300484}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_r_stereo_camera_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -225,7 +225,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4066886813489766}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_l_proximal_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -242,7 +242,7 @@ GameObject:
   - component: {fileID: 4265860118242500}
   - component: {fileID: 33286673109761370}
   - component: {fileID: 23923380762424862}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: microphone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 4184006153761956}
   - component: {fileID: 33173196211621140}
   - component: {fileID: 23496581531770136}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: TabletDisplay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -302,7 +302,7 @@ GameObject:
   - component: {fileID: 4962239920321622}
   - component: {fileID: 33503197759363502}
   - component: {fileID: 23338613299504066}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_l_finger_vacuum_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -317,7 +317,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4977250178306770}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_l_mimic_distal_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -332,7 +332,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4459733845509206}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_center_camera_rgb_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -347,7 +347,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4490022065851902}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_l_spring_proximal_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -362,7 +362,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4962282051380104}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_r_finger_tip_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -377,7 +377,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4649107120219668}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_rgbd_sensor_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -396,7 +396,7 @@ GameObject:
   - component: {fileID: 54562470339587518}
   - component: {fileID: 114382876852952962}
   - component: {fileID: 114084967758142486}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RightFingerTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -411,7 +411,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4864244361295234}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_r_distal_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -429,7 +429,7 @@ GameObject:
   - component: {fileID: 33202282833706154}
   - component: {fileID: 23109559795123414}
   - component: {fileID: 64946304554159076}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -447,7 +447,7 @@ GameObject:
   - component: {fileID: 33955922251573348}
   - component: {fileID: 23204128156027504}
   - component: {fileID: 65122259052899080}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: arm_flex_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -464,7 +464,7 @@ GameObject:
   - component: {fileID: 4034638517585424}
   - component: {fileID: 20002517684133090}
   - component: {fileID: 114933810531617912}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HandCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -481,7 +481,7 @@ GameObject:
   - component: {fileID: 4490202305216134}
   - component: {fileID: 33804739205441728}
   - component: {fileID: 23149731114362764}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Head_Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -496,7 +496,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4567652114879300}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_rgbd_sensor_depth_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -513,7 +513,7 @@ GameObject:
   - component: {fileID: 4679091820192360}
   - component: {fileID: 33925356834300344}
   - component: {fileID: 23694020160171458}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: wrist_flex_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -528,7 +528,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4043191792875754}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_l_stereo_camera_rgb_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -546,7 +546,7 @@ GameObject:
   - component: {fileID: 33690990752803830}
   - component: {fileID: 23949532298188628}
   - component: {fileID: 64025761640581230}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: tablet_base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -561,7 +561,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4563503096219400}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: tablet_base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -579,7 +579,7 @@ GameObject:
   - component: {fileID: 33670244904268752}
   - component: {fileID: 23559448110683398}
   - component: {fileID: 65074990199462236}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Palm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -595,7 +595,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4968794194571624}
   - component: {fileID: 20389225588175728}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AudienceCamera2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -613,7 +613,7 @@ GameObject:
   - component: {fileID: 33822682713131446}
   - component: {fileID: 23531331643987280}
   - component: {fileID: 135224085526226836}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_l_passive_wheel_z_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -628,7 +628,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4090342591539244}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_r_spring_proximal_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -643,7 +643,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4867075347276818}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: torso_lift_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -658,7 +658,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4091568484687408}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_camera_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -675,7 +675,7 @@ GameObject:
   - component: {fileID: 4097326783683728}
   - component: {fileID: 20566042941779154}
   - component: {fileID: 114854635611407888}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HeadDepthCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -692,7 +692,7 @@ GameObject:
   - component: {fileID: 4861296010731818}
   - component: {fileID: 33763217311415840}
   - component: {fileID: 23892653773445474}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Torso_lower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -707,7 +707,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4935653572047046}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_rgbd_sensor_rgb_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -725,7 +725,7 @@ GameObject:
   - component: {fileID: 33359966473650230}
   - component: {fileID: 23800489340635110}
   - component: {fileID: 64605314332300140}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: R_Distal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -743,7 +743,7 @@ GameObject:
   - component: {fileID: 33441373077148322}
   - component: {fileID: 23611559079212888}
   - component: {fileID: 64485317825127674}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_tilt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -774,7 +774,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4747089002674536}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_footprint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -810,7 +810,7 @@ GameObject:
   - component: {fileID: 33096068771549642}
   - component: {fileID: 23806320057998976}
   - component: {fileID: 64465785253374050}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -828,7 +828,7 @@ GameObject:
   - component: {fileID: 33095489456449118}
   - component: {fileID: 23733077088871216}
   - component: {fileID: 64909343854529224}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_r_drive_wheel_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -845,7 +845,7 @@ GameObject:
   - component: {fileID: 4111788488507490}
   - component: {fileID: 33593139115405808}
   - component: {fileID: 23000031583582688}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Head_Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -860,7 +860,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4215843493199692}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_l_finger_tip_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -894,7 +894,7 @@ GameObject:
   - component: {fileID: 33800876029636160}
   - component: {fileID: 23379578063096178}
   - component: {fileID: 64535194474582230}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: arm_roll_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -909,7 +909,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4309183971056362}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -927,7 +927,7 @@ GameObject:
   - component: {fileID: 33261505596930732}
   - component: {fileID: 23678545851020352}
   - component: {fileID: 135568687245844314}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_r_passive_wheel_z_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -942,7 +942,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4875893736539420}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_r_passive_wheel_y_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -959,7 +959,7 @@ GameObject:
   - component: {fileID: 4997823635680796}
   - component: {fileID: 33281373074520512}
   - component: {fileID: 23073815989242536}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: arm_lift_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -976,7 +976,7 @@ GameObject:
   - component: {fileID: 4197498305764890}
   - component: {fileID: 33508469339200250}
   - component: {fileID: 23164662397508556}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_pan_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1011,7 +1011,7 @@ GameObject:
   - component: {fileID: 4576660799605308}
   - component: {fileID: 33735050736863136}
   - component: {fileID: 23976810441075430}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Shoulder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1026,7 +1026,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4159670872091748}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_r_stereo_camera_rgb_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1041,7 +1041,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4864666085002504}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_r_proximal_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1060,7 +1060,7 @@ GameObject:
   - component: {fileID: 54242457158249140}
   - component: {fileID: 114225441112222838}
   - component: {fileID: 114811867221746290}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: LeftFingerTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1075,7 +1075,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4567193408081616}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_palm_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1090,7 +1090,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4729387956208486}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: body_light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1108,7 +1108,7 @@ GameObject:
   - component: {fileID: 33331947841649756}
   - component: {fileID: 23337626243458922}
   - component: {fileID: 65942447707459250}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_rgbd_sensor_link_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1123,7 +1123,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4873337785021228}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_motor_dummy_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1138,7 +1138,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4852632013396444}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: hand_r_mimic_distal_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1156,7 +1156,7 @@ GameObject:
   - component: {fileID: 33061439872667574}
   - component: {fileID: 23548373281862332}
   - component: {fileID: 64227382359358430}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: L_Proximal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1171,7 +1171,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4442114292590770}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_l_stereo_camera_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1188,7 +1188,7 @@ GameObject:
   - component: {fileID: 4675889549447498}
   - component: {fileID: 33546700911497220}
   - component: {fileID: 23751865156864406}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SensorLower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1205,7 +1205,7 @@ GameObject:
   - component: {fileID: 4950882100216612}
   - component: {fileID: 33967815988972124}
   - component: {fileID: 23178547983179082}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: display
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1220,7 +1220,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4443437469544658}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_l_passive_wheel_x_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1235,7 +1235,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4477446563477978}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: odom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1250,7 +1250,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4882182848711278}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: wrist_ft_sensor_frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1268,7 +1268,7 @@ GameObject:
   - component: {fileID: 33139191179570610}
   - component: {fileID: 23853052693296654}
   - component: {fileID: 64933442720523050}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: L_Distal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1286,7 +1286,7 @@ GameObject:
   - component: {fileID: 33461073205583576}
   - component: {fileID: 23216794442479538}
   - component: {fileID: 64425799365795760}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: base_l_drive_wheel_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1303,7 +1303,7 @@ GameObject:
   - component: {fileID: 4531330255561052}
   - component: {fileID: 33332375687035944}
   - component: {fileID: 23814266637757806}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: URG
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1321,7 +1321,7 @@ GameObject:
   - component: {fileID: 33650422519187326}
   - component: {fileID: 23550636560517488}
   - component: {fileID: 64942376082094460}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: wrist_roll_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1339,7 +1339,7 @@ GameObject:
   - component: {fileID: 33101207061645184}
   - component: {fileID: 23590948601682544}
   - component: {fileID: 64666052563788092}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: R_Proximal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1356,7 +1356,7 @@ GameObject:
   - component: {fileID: 4565396297785452}
   - component: {fileID: 33798078597439224}
   - component: {fileID: 23487214351688166}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: SensorUpper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1373,7 +1373,7 @@ GameObject:
   - component: {fileID: 4521429743614220}
   - component: {fileID: 33145553354239498}
   - component: {fileID: 23644644791981278}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Torso_upper
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1390,7 +1390,7 @@ GameObject:
   - component: {fileID: 4273160484484386}
   - component: {fileID: 20020135286270264}
   - component: {fileID: 114072492063395598}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HeadRGBCamera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1407,7 +1407,7 @@ GameObject:
   - component: {fileID: 4246034863728192}
   - component: {fileID: 33635388862700882}
   - component: {fileID: 23783197440524450}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: head_tilt_link
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1585,7 +1585,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1065516844827122}
   m_LocalRotation: {x: -0.27059808, y: 0.6532815, z: 0.6532815, w: 0.27059808}
-  m_LocalPosition: {x: -1.56, y: 0, z: -2.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4477446563477978}
