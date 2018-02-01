@@ -19,8 +19,6 @@ public class SAPIVoiceSynthesis : MonoBehaviour
 
 	private SpVoice voice;
 
-	bool isSpeaking = false;
-
 	private Text guidanceMessageText;
 
 	// Use this for initialization

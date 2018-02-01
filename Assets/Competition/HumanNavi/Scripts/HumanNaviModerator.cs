@@ -438,10 +438,10 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 			SIGVerseLogger.Info("Destination : " + taskInfoForRobot.destination);
 
-			if (taskInfoForRobot.destination == null)
-			{
-				throw new Exception("Destination is not found.");
-			}
+			//if (taskInfoForRobot.destination == null)
+			//{
+			//	throw new Exception("Destination is not found.");
+			//}
 		}
 
 		private void SendMessageAtIntervals(string message, string detail, int interval_ms = 1000)
