@@ -8,7 +8,7 @@ using System;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public interface IRosReceiveHandler : IEventSystemHandler
+	public interface IReceiveHumanNaviMsgHandler : IEventSystemHandler
 	{
 		void OnReceiveRosMessage(ROSBridge.human_navigation.HumanNaviMsg humanNaviMsg);
 	}

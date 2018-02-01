@@ -6,9 +6,9 @@ using SIGVerse.Common;
 using System.Collections.Generic;
 using System;
 
-namespace SIGVerse.Competition.HumanNavi
+namespace SIGVerse.Competition.HumanNavigation
 {
-	public interface IRosReceiveHandler : IEventSystemHandler
+	public interface IReceiveStringMsgHandler : IEventSystemHandler
 	{
 		void OnReceiveROSStringMessage(ROSBridge.std_msgs.String stringMsg);
 	}
