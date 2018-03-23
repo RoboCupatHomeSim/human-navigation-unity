@@ -77,7 +77,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.configInfo.maxNumberOfTrials = 1;
 				this.configInfo.recoveryUsingScoreFile = false;
 				this.configInfo.executionMode = 1;
-				this.configInfo.playbackType = HumanNaviPlaybackParam.PlaybackTypeNone;
+				this.configInfo.playbackType = WorldPlaybackCommon.PlaybackTypeNone;
 				this.configInfo.language = "English";
 				List<TaskInfo> taskInfoList = new List<TaskInfo>();
 				taskInfoList.Add(new TaskInfo() { environment = "Default_Environment", target = "petbottle_500ml_empty_01", destination = "trashbox_01" });
@@ -122,7 +122,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.numberOfTrials = 0;
 			}
 
-			if(this.configInfo.playbackType == HumanNaviPlaybackParam.PlaybackTypePlay)
+			if(this.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypePlay)
 			{
 				this.numberOfTrials = this.configInfo.playbackTrialNum;
 			}
@@ -149,7 +149,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void InclementNumberOfTrials(int playbackType = 0)
 		{
-			if (playbackType != HumanNaviPlaybackParam.PlaybackTypePlay)
+			if (playbackType != WorldPlaybackCommon.PlaybackTypePlay)
 			{
 				this.numberOfTrials++;
 			}

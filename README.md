@@ -1,6 +1,6 @@
 # Human Navigation Project
 
-This is a Unity project for the competition of Human Navigation task of the Partner Robot Challenge (Virtual Space) in the World Robot Competition. 
+This is a Unity project for the competition of Human Navigation task of the Partner Robot Challenge (Virtual Space) in the World Robot Competition.
 
 Please prepare a common unitypackage and a dll file for text-to-speech (TTS) in advance, and import them to this project.  
 
@@ -27,8 +27,8 @@ https://github.com/PartnerRobotChallengeVirtual/console-simple-tts
 
 ### Import Oculus Utilities for Unity
 
-1. Download Oculus Utilities for Unity ver.1.21.0 from the following link.  
-https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.21.0/
+1. Download Oculus Utilities for Unity ver.1.23.0 from the following link.  
+https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.23.0/
 2. Unzip the downloaded file.
 3. Open this project with Unity.
 4. Click [Assets]-[Import Package]-[Custom Package...].

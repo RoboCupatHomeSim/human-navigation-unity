@@ -5,12 +5,12 @@ using SIGVerse.Common;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public interface IRosSendHandler : IEventSystemHandler
+	public interface IROSHumanNaviMessageSendHandler : IEventSystemHandler
 	{
 		void OnSendROSHumanNaviMessage(string message, string detail);
 	}
 
-	public class HumanNaviPubMessage : MonoBehaviour, IRosSendHandler
+	public class HumanNaviPubMessage : MonoBehaviour, IROSHumanNaviMessageSendHandler
 	{
 		public string rosBridgeIP;
 		public int rosBridgePort = 9090;

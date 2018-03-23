@@ -19,6 +19,7 @@ TagManager:
   - DummyGraspingCandidates
   - MainMenu
   - Moderator
+  - Avatar
   layers:
   - Default
   - TransparentFX

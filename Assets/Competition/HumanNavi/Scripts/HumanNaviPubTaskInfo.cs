@@ -11,7 +11,12 @@ using System;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public class HumanNaviPubTaskInfo : MonoBehaviour
+	public interface IROSTaskInfoSendHandler : IEventSystemHandler
+	{
+		void OnSendROSTaskInfoMessage(ROSBridge.human_navigation.HumanNaviTaskInfo message);
+	}
+
+	public class HumanNaviPubTaskInfo : MonoBehaviour, IROSTaskInfoSendHandler
 	{
 		public string rosBridgeIP;
 		public int rosBridgePort = 9090;
@@ -52,7 +57,23 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.webSocketConnection.Render();
 		}
 
-		public void SendROSMessage(ROSBridge.human_navigation.HumanNaviTaskInfo message)
+		//public void SendROSMessage(ROSBridge.human_navigation.HumanNaviTaskInfo message)
+		//{
+		//	SIGVerseLogger.Info("Sending Task Info message : ");
+		//	SIGVerseLogger.Info("Environment ID : " + message.environment_id);
+		//	SIGVerseLogger.Info("Target object : " + message.target_object.name + " " + message.target_object.position);
+
+		//	ROSBridge.human_navigation.HumanNaviTaskInfo rosMessage = new ROSBridge.human_navigation.HumanNaviTaskInfo(
+		//		message.environment_id,
+		//		message.objects_info,
+		//		message.target_object,
+		//		message.destination
+		//		);
+
+		//	this.messagePublisher.Publish(rosMessage);
+		//}
+
+		public void OnSendROSTaskInfoMessage(ROSBridge.human_navigation.HumanNaviTaskInfo message)
 		{
 			SIGVerseLogger.Info("Sending Task Info message : ");
 			SIGVerseLogger.Info("Environment ID : " + message.environment_id);

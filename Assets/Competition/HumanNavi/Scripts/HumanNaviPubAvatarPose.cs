@@ -11,7 +11,12 @@ using System;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public class HumanNaviPubAvatarPose : MonoBehaviour
+	public interface IROSAvatarPoseSendHandler : IEventSystemHandler
+	{
+		void OnSendROSAvatarPoseMessage(ROSBridge.human_navigation.HumanNaviAvatarPose message);
+	}
+
+	public class HumanNaviPubAvatarPose : MonoBehaviour, IROSAvatarPoseSendHandler
 	{
 		public string rosBridgeIP;
 		public int rosBridgePort = 9090;
@@ -52,7 +57,23 @@ namespace SIGVerse.Competition.HumanNavigation
 		//	this.webSocketConnection.Render();
 		//}
 
-		public void SendROSMessage(ROSBridge.human_navigation.HumanNaviAvatarPose message)
+		//public void SendROSMessage(ROSBridge.human_navigation.HumanNaviAvatarPose message)
+		//{
+		//	SIGVerseLogger.Info("Sending pose of avatar: ");
+		//	SIGVerseLogger.Info("Head       : " + message.head.position + message.head.orientation);
+		//	SIGVerseLogger.Info("Left Hand  : " + message.left_hand.position + message.left_hand.orientation);
+		//	SIGVerseLogger.Info("Right Hand : " + message.right_hand.position + message.right_hand.orientation);
+
+		//	ROSBridge.human_navigation.HumanNaviAvatarPose rosMessage = new ROSBridge.human_navigation.HumanNaviAvatarPose(
+		//		message.head,
+		//		message.left_hand,
+		//		message.right_hand
+		//		);
+
+		//	this.messagePublisher.Publish(rosMessage);
+		//}
+
+		public void OnSendROSAvatarPoseMessage(ROSBridge.human_navigation.HumanNaviAvatarPose message)
 		{
 			SIGVerseLogger.Info("Sending pose of avatar: ");
 			SIGVerseLogger.Info("Head       : " + message.head.position + message.head.orientation);

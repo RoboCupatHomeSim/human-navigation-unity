@@ -16,7 +16,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			CorrectObjectIsGrasped,
 			IncorrectObjectIsGrasped,
-			TargetObujectInDestination,
+			TargetObjectInDestination,
 			Time,
 			CollisionEnter,
 		}
@@ -27,7 +27,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				case Score.Type.CorrectObjectIsGrasped    : { return +20; }
 				case Score.Type.IncorrectObjectIsGrasped  : { return -10; }
-				case Score.Type.TargetObujectInDestination: { return +20; }
+				case Score.Type.TargetObjectInDestination : { return +20; }
 				case Score.Type.Time                      : { return +30; }
 				case Score.Type.CollisionEnter            : { return -10; }
 			}
@@ -244,7 +244,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			return this.challengeInfoText.text;
 		}
 
-		public void OnHsrCollisionEnter()
+		public void OnHsrCollisionEnter(Collision collision, float collisionVelocity, float effectScale)
 		{
 			this.AddScore(Score.Type.CollisionEnter);
 		}
