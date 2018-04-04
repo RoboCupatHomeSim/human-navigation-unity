@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using SIGVerse.ROSBridge;
-using SIGVerse.ROSBridge.sensor_msgs;
+using SIGVerse.RosBridge;
+using SIGVerse.RosBridge.sensor_msgs;
 using SIGVerse.Common;
 using System.Collections.Generic;
 using System;
@@ -10,7 +10,7 @@ namespace SIGVerse.Competition.HumanNavigation
 {
 	public interface IReceiveHumanNaviMsgHandler : IEventSystemHandler
 	{
-		void OnReceiveRosMessage(ROSBridge.human_navigation.HumanNaviMsg humanNaviMsg);
+		void OnReceiveRosMessage(RosBridge.human_navigation.HumanNaviMsg humanNaviMsg);
 	}
 
 	public class HumanNaviSubMessage : MonoBehaviour
@@ -22,9 +22,9 @@ namespace SIGVerse.Competition.HumanNavigation
 		public string receivingTopicName = "/human_navigation/message/to_moderator";
 
 		//--------------------------------------------------
-		private ROSBridgeWebSocketConnection webSocketConnection = null;
+		private RosBridgeWebSocketConnection webSocketConnection = null;
 
-		private ROSBridgeSubscriber<ROSBridge.human_navigation.HumanNaviMsg> subscriber = null;
+		private RosBridgeSubscriber<RosBridge.human_navigation.HumanNaviMsg> subscriber = null;
 
 		void Start()
 		{
@@ -34,9 +34,9 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.rosBridgePort = ConfigManager.Instance.configInfo.rosbridgePort;
 			}
 
-			this.webSocketConnection = new SIGVerse.ROSBridge.ROSBridgeWebSocketConnection(rosBridgeIP, rosBridgePort);
+			this.webSocketConnection = new SIGVerse.RosBridge.RosBridgeWebSocketConnection(rosBridgeIP, rosBridgePort);
 
-			this.subscriber = this.webSocketConnection.Subscribe<ROSBridge.human_navigation.HumanNaviMsg>(receivingTopicName, this.SubscribeMessageCallback);
+			this.subscriber = this.webSocketConnection.Subscribe<RosBridge.human_navigation.HumanNaviMsg>(receivingTopicName, this.SubscribeMessageCallback);
 
 			// Connect to ROSbridge server
 			this.webSocketConnection.Connect();
@@ -57,7 +57,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.webSocketConnection.Render();
 		}
 
-		public void SubscribeMessageCallback(ROSBridge.human_navigation.HumanNaviMsg humanNaviMsg)
+		public void SubscribeMessageCallback(RosBridge.human_navigation.HumanNaviMsg humanNaviMsg)
 		{
 			SIGVerseLogger.Info("Received message :"+ humanNaviMsg.message);
 

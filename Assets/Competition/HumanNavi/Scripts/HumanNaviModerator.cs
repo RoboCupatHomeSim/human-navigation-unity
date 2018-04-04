@@ -6,10 +6,10 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using SIGVerse.Common;
-using SIGVerse.ROSBridge;
+using SIGVerse.RosBridge;
 using System.Threading;
 
-//using SIGVerse.ROSBridge.HumanNavigation;
+//using SIGVerse.RosBridge.HumanNavigation;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
@@ -91,7 +91,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private Vector3 initialAvatarRotation;
 
 		private List<SIGVerse.Competition.HumanNavigation.TaskInfo> taskInfoList;
-		private SIGVerse.ROSBridge.human_navigation.HumanNaviTaskInfo taskInfoForRobot;
+		private SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo taskInfoForRobot;
 		private SIGVerse.Competition.HumanNavigation.TaskInfo currentTaskInfo;
 
 		private Step step;
@@ -253,7 +253,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 						//this.pubTaskInfo.SendROSMessage(this.taskInfoForRobot);
 						//this.RecordEventROSMessageSent("TaskInfo", "");
-						this.SendROSTaskInfoMessage(this.taskInfoForRobot);
+						this.SendRosTaskInfoMessage(this.taskInfoForRobot);
 
 						this.scoreManager.TaskStart();
 						
@@ -332,7 +332,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.currentTaskInfo = taskInfoList[HumanNaviConfig.Instance.numberOfTrials - 1];
 
-			this.taskInfoForRobot = new SIGVerse.ROSBridge.human_navigation.HumanNaviTaskInfo();
+			this.taskInfoForRobot = new SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo();
 			this.taskInfoForRobot.environment_id = this.environment.name;
 			this.SetObjectListToHumanNaviTaskInfo();
 			this.SetDestinationToHumanNaviTaskInfo();
@@ -443,7 +443,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				}
 				else
 				{
-					SIGVerse.ROSBridge.human_navigation.HumanNaviObjectInfo objInfo = new SIGVerse.ROSBridge.human_navigation.HumanNaviObjectInfo
+					SIGVerse.RosBridge.human_navigation.HumanNaviObjectInfo objInfo = new SIGVerse.RosBridge.human_navigation.HumanNaviObjectInfo
 					{
 						name = graspableObject.name,
 						position = positionInROS
@@ -556,7 +556,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.PostProcess();
 		}
 
-		public void OnReceiveROSMessage(ROSBridge.human_navigation.HumanNaviMsg humanNaviMsg)
+		public void OnReceiveROSMessage(RosBridge.human_navigation.HumanNaviMsg humanNaviMsg)
 		{
 			this.RecordEventROSMessageReceived("HumanNaviMsg", humanNaviMsg.message + "\t" + humanNaviMsg.detail);
 
@@ -566,7 +566,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				if(humanNaviMsg.message == MsgGetAvatarPose)
 				{
-					ROSBridge.human_navigation.HumanNaviAvatarPose avatarPose = new ROSBridge.human_navigation.HumanNaviAvatarPose();
+					RosBridge.human_navigation.HumanNaviAvatarPose avatarPose = new RosBridge.human_navigation.HumanNaviAvatarPose();
 
 					avatarPose.head.position = ConvertCoorinateSystemUnityToROS_Position(this.head.transform.position);
 					avatarPose.head.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.head.transform.rotation);
@@ -576,7 +576,7 @@ namespace SIGVerse.Competition.HumanNavigation
 					avatarPose.right_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.rightHand.transform.rotation);
 
 					//this.pubAvatarPose.SendROSMessage(avatarPose);
-					this.SendROSAvatarPoseMessage(avatarPose);
+					this.SendRosAvatarPoseMessage(avatarPose);
 				}
 				else if (humanNaviMsg.message == MsgConfirmSpeechState)
 				{
@@ -697,7 +697,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			);
 		}
 
-		private void RecordEventROSMessageSent(string messageType, string message)
+		private void RecordEventRosMessageSent(string messageType, string message)
 		{
 			ExecuteEvents.Execute<IEventRecoderHandler>
 			(
@@ -812,9 +812,9 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void SendROSHumanNaviMessage(string message, string detail)
 		{
-			this.RecordEventROSMessageSent("HumanNaviMsg", message + "\t" + detail);
+			this.RecordEventRosMessageSent("HumanNaviMsg", message + "\t" + detail);
 
-			ExecuteEvents.Execute<IROSHumanNaviMessageSendHandler>
+			ExecuteEvents.Execute<IRosHumanNaviMessageSendHandler>
 			(
 				target: this.gameObject, 
 				eventData: null, 
@@ -822,9 +822,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			);
 		}
 
-		private void SendROSAvatarPoseMessage(ROSBridge.human_navigation.HumanNaviAvatarPose avatarPose)
+		private void SendRosAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose avatarPose)
 		{
-			this.RecordEventROSMessageSent("AvatarPose", "");
+			this.RecordEventRosMessageSent("AvatarPose", "");
 
 			ExecuteEvents.Execute<IROSAvatarPoseSendHandler>
 			(
@@ -834,15 +834,15 @@ namespace SIGVerse.Competition.HumanNavigation
 			);
 		}
 
-		private void SendROSTaskInfoMessage(ROSBridge.human_navigation.HumanNaviTaskInfo taskInfo)
+		private void SendRosTaskInfoMessage(RosBridge.human_navigation.HumanNaviTaskInfo taskInfo)
 		{
-			this.RecordEventROSMessageSent("TaskInfo", "");
+			this.RecordEventRosMessageSent("TaskInfo", "");
 
-			ExecuteEvents.Execute<IROSTaskInfoSendHandler>
+			ExecuteEvents.Execute<IRosTaskInfoSendHandler>
 			(
 				target: this.gameObject,
 				eventData: null,
-				functor: (reciever, eventData) => reciever.OnSendROSTaskInfoMessage(taskInfo)
+				functor: (reciever, eventData) => reciever.OnSendRosTaskInfoMessage(taskInfo)
 			);
 		}
 

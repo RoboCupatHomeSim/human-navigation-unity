@@ -1,25 +1,25 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using SIGVerse.ROSBridge;
+using SIGVerse.RosBridge;
 using SIGVerse.Common;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public interface IROSHumanNaviMessageSendHandler : IEventSystemHandler
+	public interface IRosHumanNaviMessageSendHandler : IEventSystemHandler
 	{
 		void OnSendROSHumanNaviMessage(string message, string detail);
 	}
 
-	public class HumanNaviPubMessage : MonoBehaviour, IROSHumanNaviMessageSendHandler
+	public class HumanNaviPubMessage : MonoBehaviour, IRosHumanNaviMessageSendHandler
 	{
 		public string rosBridgeIP;
 		public int rosBridgePort = 9090;
 		public string sendingTopicName = "/human_navigation/message/to_robot";
 
 		//--------------------------------------------------
-		private ROSBridgeWebSocketConnection webSocketConnection = null;
+		private RosBridgeWebSocketConnection webSocketConnection = null;
 
-		private ROSBridgePublisher<ROSBridge.human_navigation.HumanNaviMsg> publisher;
+		private RosBridgePublisher<RosBridge.human_navigation.HumanNaviMsg> publisher;
 
 
 		void Start()
@@ -30,9 +30,9 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.rosBridgePort = ConfigManager.Instance.configInfo.rosbridgePort;
 			}
 
-			this.webSocketConnection = new SIGVerse.ROSBridge.ROSBridgeWebSocketConnection(rosBridgeIP, rosBridgePort);
+			this.webSocketConnection = new SIGVerse.RosBridge.RosBridgeWebSocketConnection(rosBridgeIP, rosBridgePort);
 
-			this.publisher = this.webSocketConnection.Advertise<ROSBridge.human_navigation.HumanNaviMsg>(sendingTopicName);
+			this.publisher = this.webSocketConnection.Advertise<RosBridge.human_navigation.HumanNaviMsg>(sendingTopicName);
 
 			// Connect to ROSbridge server
 			this.webSocketConnection.Connect();
@@ -57,7 +57,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			SIGVerseLogger.Info("Sending message : " + message + ", " + detail);
 
-			ROSBridge.human_navigation.HumanNaviMsg humanNaviMsg = new ROSBridge.human_navigation.HumanNaviMsg();
+			RosBridge.human_navigation.HumanNaviMsg humanNaviMsg = new RosBridge.human_navigation.HumanNaviMsg();
 			humanNaviMsg.message = message;
 			humanNaviMsg.detail = detail;
 

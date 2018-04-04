@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using SIGVerse.ROSBridge;
-using SIGVerse.ROSBridge.sensor_msgs;
+using SIGVerse.RosBridge;
+using SIGVerse.RosBridge.sensor_msgs;
 using SIGVerse.Common;
 using System.Collections.Generic;
 using System;
@@ -10,7 +10,7 @@ namespace SIGVerse.Competition.HumanNavigation
 {
 	public interface IReceiveStringMsgHandler : IEventSystemHandler
 	{
-		void OnReceiveROSStringMessage(ROSBridge.std_msgs.String stringMsg);
+		void OnReceiveROSStringMessage(RosBridge.std_msgs.String stringMsg);
 	}
 
 	public class HumanNaviSubString : MonoBehaviour
@@ -23,7 +23,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		public string receivingTopicName = "/human_navigation/message/guidance_message";
 
 		//--------------------------------------------------
-		private ROSBridgeWebSocketConnection webSocketConnection = null;
+		private RosBridgeWebSocketConnection webSocketConnection = null;
 
 
 		void Start()
@@ -34,9 +34,9 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.rosBridgePort = ConfigManager.Instance.configInfo.rosbridgePort;
 			}
 
-			this.webSocketConnection = new SIGVerse.ROSBridge.ROSBridgeWebSocketConnection(rosBridgeIP, rosBridgePort);
+			this.webSocketConnection = new SIGVerse.RosBridge.RosBridgeWebSocketConnection(rosBridgeIP, rosBridgePort);
 
-			this.webSocketConnection.Subscribe<ROSBridge.std_msgs.String>(receivingTopicName, this.SubscribeStringMessageCallback);
+			this.webSocketConnection.Subscribe<RosBridge.std_msgs.String>(receivingTopicName, this.SubscribeStringMessageCallback);
 
 			// Connect to ROSbridge server
 			this.webSocketConnection.Connect();
@@ -55,11 +55,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.webSocketConnection.Render();
 		}
 
-		public void SubscribeStringMessageCallback(ROSBridge.std_msgs.String message)
+		public void SubscribeStringMessageCallback(RosBridge.std_msgs.String message)
 		{
 			SIGVerseLogger.Info("Received guide message : " + message.data);
 
-			this.tts.OnReceiveROSStringMessage(message);
+			this.tts.OnReceiveRosStringMessage(message);
 		}
 	}
 }

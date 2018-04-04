@@ -4,15 +4,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SIGVerse.ROSBridge;
+using SIGVerse.RosBridge;
 using UnityEngine;
 
-namespace SIGVerse.ROSBridge
+namespace SIGVerse.RosBridge
 {
 	namespace human_navigation
 	{
 		[System.Serializable]
-		public class HumanNaviMsg : ROSMessage
+		public class HumanNaviMsg : RosMessage
 		{
 			public string message;
 			public string detail;
@@ -40,5 +40,5 @@ namespace SIGVerse.ROSBridge
 			}
 		} // class HumanNaviMsg
 	} // namespace human_navigation
-} // namespace SIGVerse.ROSBridge
+} // namespace SIGVerse.RosBridge
 

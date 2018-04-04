@@ -83,7 +83,7 @@ public class SAPIVoiceSynthesis : MonoBehaviour
 		else                                                                 return false;
 	}
 
-	public void OnReceiveROSStringMessage(SIGVerse.ROSBridge.std_msgs.String stringMsg)
+	public void OnReceiveRosStringMessage(SIGVerse.RosBridge.std_msgs.String stringMsg)
 	{
 		this.guidanceMessageText.text = stringMsg.data;
 		this.SpeakMessage(stringMsg.data);

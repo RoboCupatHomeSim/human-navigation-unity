@@ -4,16 +4,16 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SIGVerse.ROSBridge;
+using SIGVerse.RosBridge;
 using UnityEngine;
 
-namespace SIGVerse.ROSBridge
+namespace SIGVerse.RosBridge
 {
 	namespace human_navigation
 	{
 
 		[System.Serializable]
-		public class HumanNaviTaskInfo : ROSMessage
+		public class HumanNaviTaskInfo : RosMessage
 		{
 			public string environment_id;
 			public System.Collections.Generic.List<human_navigation.HumanNaviObjectInfo> objects_info;

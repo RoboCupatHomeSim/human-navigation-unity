@@ -4,15 +4,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SIGVerse.ROSBridge;
+using SIGVerse.RosBridge;
 using UnityEngine;
 
-namespace SIGVerse.ROSBridge
+namespace SIGVerse.RosBridge
 {
 	namespace human_navigation
 	{
 		[System.Serializable]
-		public class HumanNaviAvatarPose : ROSMessage
+		public class HumanNaviAvatarPose : RosMessage
 		{
 			public geometry_msgs.Pose head;
 			public geometry_msgs.Pose left_hand;

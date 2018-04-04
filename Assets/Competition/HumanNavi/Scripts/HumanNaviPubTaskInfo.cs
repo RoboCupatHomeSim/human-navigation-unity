@@ -1,31 +1,31 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
-using SIGVerse.ROSBridge;
-using SIGVerse.ROSBridge.sensor_msgs;
+using SIGVerse.RosBridge;
+using SIGVerse.RosBridge.sensor_msgs;
 using SIGVerse.Common;
 using System.Collections.Generic;
 using System;
 
-//using SIGVerse.ROSBridge.HumanNavigation;
+//using SIGVerse.RosBridge.HumanNavigation;
 
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public interface IROSTaskInfoSendHandler : IEventSystemHandler
+	public interface IRosTaskInfoSendHandler : IEventSystemHandler
 	{
-		void OnSendROSTaskInfoMessage(ROSBridge.human_navigation.HumanNaviTaskInfo message);
+		void OnSendRosTaskInfoMessage(RosBridge.human_navigation.HumanNaviTaskInfo message);
 	}
 
-	public class HumanNaviPubTaskInfo : MonoBehaviour, IROSTaskInfoSendHandler
+	public class HumanNaviPubTaskInfo : MonoBehaviour, IRosTaskInfoSendHandler
 	{
 		public string rosBridgeIP;
 		public int rosBridgePort = 9090;
 		public string sendingTopicName = "/human_navigation/message/to_robot";
 
 		//--------------------------------------------------
-		private ROSBridgeWebSocketConnection webSocketConnection = null;
+		private RosBridgeWebSocketConnection webSocketConnection = null;
 
-		private ROSBridgePublisher<ROSBridge.human_navigation.HumanNaviTaskInfo> messagePublisher;
+		private RosBridgePublisher<RosBridge.human_navigation.HumanNaviTaskInfo> messagePublisher;
 
 
 		void Start()
@@ -36,9 +36,9 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.rosBridgePort = ConfigManager.Instance.configInfo.rosbridgePort;
 			}
 
-			this.webSocketConnection = new SIGVerse.ROSBridge.ROSBridgeWebSocketConnection(rosBridgeIP, rosBridgePort);
+			this.webSocketConnection = new SIGVerse.RosBridge.RosBridgeWebSocketConnection(rosBridgeIP, rosBridgePort);
 
-			this.messagePublisher = this.webSocketConnection.Advertise<ROSBridge.human_navigation.HumanNaviTaskInfo>(sendingTopicName);
+			this.messagePublisher = this.webSocketConnection.Advertise<RosBridge.human_navigation.HumanNaviTaskInfo>(sendingTopicName);
 
 			// Connect to ROSbridge server
 			this.webSocketConnection.Connect();
@@ -57,13 +57,13 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.webSocketConnection.Render();
 		}
 
-		//public void SendROSMessage(ROSBridge.human_navigation.HumanNaviTaskInfo message)
+		//public void SendROSMessage(RosBridge.human_navigation.HumanNaviTaskInfo message)
 		//{
 		//	SIGVerseLogger.Info("Sending Task Info message : ");
 		//	SIGVerseLogger.Info("Environment ID : " + message.environment_id);
 		//	SIGVerseLogger.Info("Target object : " + message.target_object.name + " " + message.target_object.position);
 
-		//	ROSBridge.human_navigation.HumanNaviTaskInfo rosMessage = new ROSBridge.human_navigation.HumanNaviTaskInfo(
+		//	RosBridge.human_navigation.HumanNaviTaskInfo rosMessage = new RosBridge.human_navigation.HumanNaviTaskInfo(
 		//		message.environment_id,
 		//		message.objects_info,
 		//		message.target_object,
@@ -73,13 +73,13 @@ namespace SIGVerse.Competition.HumanNavigation
 		//	this.messagePublisher.Publish(rosMessage);
 		//}
 
-		public void OnSendROSTaskInfoMessage(ROSBridge.human_navigation.HumanNaviTaskInfo message)
+		public void OnSendRosTaskInfoMessage(RosBridge.human_navigation.HumanNaviTaskInfo message)
 		{
 			SIGVerseLogger.Info("Sending Task Info message : ");
 			SIGVerseLogger.Info("Environment ID : " + message.environment_id);
 			SIGVerseLogger.Info("Target object : " + message.target_object.name + " " + message.target_object.position);
 
-			ROSBridge.human_navigation.HumanNaviTaskInfo rosMessage = new ROSBridge.human_navigation.HumanNaviTaskInfo(
+			RosBridge.human_navigation.HumanNaviTaskInfo rosMessage = new RosBridge.human_navigation.HumanNaviTaskInfo(
 				message.environment_id,
 				message.objects_info,
 				message.target_object,
