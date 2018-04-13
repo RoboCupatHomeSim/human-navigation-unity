@@ -9,11 +9,9 @@ using SIGVerse.Common;
 using SIGVerse.RosBridge;
 using System.Threading;
 
-//using SIGVerse.RosBridge.HumanNavigation;
-
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public class HumanNaviModerator : MonoBehaviour
+	public class HumanNaviModerator : MonoBehaviour, ITimeIsUpHandler, IStartTrialHandler, IGoToNextTrialHandler//, IGiveUpHandler
 	{
 		private const int SendingAreYouReadyInterval = 1000;
 
@@ -24,9 +22,13 @@ namespace SIGVerse.Competition.HumanNavigation
 		private const string MsgGoToNextTrial   = "Go_to_next_trial";
 		private const string MsgMissionComplete = "Mission_complete";
 
+		private const string ReasonTimeIsUp = "Time_is_up";
+		private const string ReasonGiveUp = "Give_up";
+
 		private const string MsgIamReady           = "I_am_ready";
 		private const string MsgGetAvatarPose      = "Get_avatar_pose";
 		private const string MsgConfirmSpeechState = "Confirm_speech_state";
+		private const string MsgGiveUp             = "Give_up";
 
 		private const string MsgRequest     = "Guidance_request";
 		private const string MsgSpeechState = "Speech_state";
@@ -36,8 +38,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			Initialize,
 			InitializePlayback,
 			WaitForStart,
-			WaitForIamReady,
 			TrialStart,
+			WaitForIamReady,
+			SendTaskInfo,
 			WaitTrialFinished,
 			WaitNextTrial,
 			Playback,
@@ -71,8 +74,11 @@ namespace SIGVerse.Competition.HumanNavigation
 		//public GameObject goodEffect;
 
 		[HeaderAttribute("Menu")]
-		public HumanNaviMenu humanNaviMenu;
+//		public HumanNaviMenu humanNaviMenu;
 		public Camera birdviewCamera;
+		public GameObject startTrialPanel;
+		public GameObject goToNextTrialPanel;
+
 
 		[HeaderAttribute("ROS Message")]
 		public HumanNaviPubMessage pubHumanNaviMessage;
@@ -86,6 +92,9 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private GameObject robot;
 		private GameObject environment;
+
+		private GameObject mainMenu;
+		private PanelMainController panelMainController;
 
 		private Vector3 initialAvatarPosition;
 		private Vector3 initialAvatarRotation;
@@ -105,11 +114,16 @@ namespace SIGVerse.Competition.HumanNavigation
 		private bool isTargetAlreadyGrasped;
 		private bool goNextTrial = false;
 		private bool isAllTaskFinished = false;
+		private string interruptedReason;
 
 		//private GameObject worldRecorder;
 		private HumanNaviPlaybackTransformRecorder playbackTransformRecorder;
 		private HumanNaviPlaybackTransformPlayer playbackTransformPlayer;
 		private HumanNaviPlaybackEventRecorder playbackEventRecorder;
+
+		//-----------------------------
+
+		private IRosConnection[] rosConnections;
 
 
 		void Awake()
@@ -150,6 +164,10 @@ namespace SIGVerse.Competition.HumanNavigation
 				//Debug.Log(this.environmentPrefabs.Where(obj => obj.name == info.environment).SingleOrDefault());
 				/////
 
+				this.mainMenu = GameObject.FindGameObjectWithTag("MainMenu");
+				this.panelMainController = mainMenu.GetComponent<PanelMainController>();
+
+
 				this.initialAvatarPosition = this.avatar.transform.position;
 				this.initialAvatarRotation = this.avatar.transform.eulerAngles;
 
@@ -160,13 +178,17 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.receivedMessageMap.Add(MsgIamReady, false);
 				this.receivedMessageMap.Add(MsgGetAvatarPose, false);
 				this.receivedMessageMap.Add(MsgConfirmSpeechState, false);
+				this.receivedMessageMap.Add(MsgGiveUp, false);
+
+				this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
+				SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
 			}
 			catch (Exception exception)
 			{
 				Debug.LogError(exception);
 				SIGVerseLogger.Error(exception.Message);
 				SIGVerseLogger.Error(exception.StackTrace);
-				Application.Quit();
+				this.ApplicationQuitAfter1sec();
 			}
 		}
 
@@ -178,8 +200,15 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.SetDefaultEnvironment();
 
-			this.humanNaviMenu.ShowStartTaskPanel();
+			this.ShowStartTaskPanel();
+
+			this.interruptedReason = string.Empty;
 		}
+
+		//void OnDestroy()
+		//{
+		//	this.CloseRosConnections();
+		//}
 
 		// Update is called once per frame
 		void Update()
@@ -190,9 +219,17 @@ namespace SIGVerse.Competition.HumanNavigation
 					return;
 				}
 
+				if (this.interruptedReason != string.Empty && this.step != Step.WaitNextTrial)
+				{
+					SIGVerseLogger.Info("Failed '" + this.interruptedReason + "'");
+					this.SendPanelNotice("Failed\n" + interruptedReason.Replace('_', ' '), 100, PanelNoticeStatus.Red);
+					//this.GoToNextTaskTaskFailed(this.interruptedReason);
+					this.TimeIsUp();
+				}
+
 				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringTrial && HumanNaviConfig.Instance.configInfo.playbackType != WorldPlaybackCommon.PlaybackTypePlay)
 				{
-					this.SendROSHumanNaviMessage(MsgRequest, "");
+					this.SendRosHumanNaviMessage(MsgRequest, "");
 					this.RecordEvent("Guidance_message_is_requested");
 				}
 
@@ -216,16 +253,31 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.WaitForStart:
 					{
-						if(this.IsPlaybackInitialized())
+						if(this.IsPlaybackInitialized() && IsConnectedToRos())
 						{
 							this.step++;
 						}
 
 						break;
 					}
+					case Step.TrialStart:
+					{
+						SIGVerseLogger.Info("Trial start!");
+						//this.RecordEvent("Trial_start");
+
+						this.scoreManager.TaskStart();
+
+						this.SendPanelNotice("Trial start!", 100, PanelNoticeStatus.Green);
+						base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Trial start!", 3.0f));
+
+						this.isDuringTrial = true;
+						this.step++;
+
+						break;
+					}
 					case Step.WaitForIamReady:
 					{
-						if(HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypePlay)
+						if (HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypePlay)
 						{
 							this.StartPlaybackPlay();
 							this.step = Step.Playback; // TODO
@@ -242,26 +294,14 @@ namespace SIGVerse.Competition.HumanNavigation
 
 						break;
 					}
-					case Step.TrialStart:
+					case Step.SendTaskInfo:
 					{
-						SIGVerseLogger.Info("Trial start!");
-						this.RecordEvent("Trial_start");
-
-						string textForGUI = "Task start!";
-						base.StartCoroutine(this.ShowNoticeMessagePanel(textForGUI, 3.0f));
-						base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(textForGUI, 3.0f));
-
 						//this.pubTaskInfo.SendROSMessage(this.taskInfoForRobot);
 						//this.RecordEventROSMessageSent("TaskInfo", "");
 						this.SendRosTaskInfoMessage(this.taskInfoForRobot);
 
-						this.scoreManager.TaskStart();
-						
-						//this.DoorOpen();
-
 						SIGVerseLogger.Info("Waiting for end of trial");
 
-						this.isDuringTrial = true;
 						this.step++;
 
 						break;
@@ -281,7 +321,7 @@ namespace SIGVerse.Competition.HumanNavigation
 							this.RecordEvent("Go_to_next_trial");
 
 							//if (HumanNaviConfig.Instance.configInfo.playbackType != HumanNaviPlaybackParam.PlaybackTypePlay) // TODO: delete
-							this.SendROSHumanNaviMessage(MsgGoToNextTrial, "");
+							this.SendRosHumanNaviMessage(MsgGoToNextTrial, "");
 
 							this.step = Step.Initialize;
 						}
@@ -305,6 +345,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void ApplicationQuitAfter1sec()
 		{
+			this.CloseRosConnections();
+
 			Thread.Sleep(1000);
 			Application.Quit();
 		}
@@ -323,11 +365,17 @@ namespace SIGVerse.Competition.HumanNavigation
 				HumanNaviConfig.Instance.InclementNumberOfTrials(HumanNaviConfig.Instance.configInfo.playbackType);
 			}
 
-			this.scoreManager.SetChallengeInfoText();
-			this.scoreManager.ResetTimeText();
+			this.panelMainController.SetTrialNumberText(HumanNaviConfig.Instance.numberOfTrials);
+			SIGVerseLogger.Info("##### " + this.panelMainController.GetTrialNumberText() + " #####");
+
+			this.panelMainController.SetTaskMessageText("");
+
+			this.scoreManager.ResetTimeLeftText();
 
 			this.ResetEnvironment();
 			this.ResetAvatarTransform();
+
+			this.ClearRosConnections();
 			this.ResetRobot();
 
 			this.currentTaskInfo = taskInfoList[HumanNaviConfig.Instance.numberOfTrials - 1];
@@ -339,6 +387,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.waitingTime = 0.0f;
 
+			this.interruptedReason = string.Empty;
+
 			SIGVerseLogger.Info("End of PreProcess");
 		}
 
@@ -346,15 +396,18 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			if (HumanNaviConfig.Instance.numberOfTrials == HumanNaviConfig.Instance.configInfo.maxNumberOfTrials)
 			{
-				this.SendROSHumanNaviMessage(MsgMissionComplete, "");
-				base.StartCoroutine(this.ShowNoticeMessagePanel("Mission complete", 5.0f));
+				this.SendRosHumanNaviMessage(MsgMissionComplete, "");
+				//base.StartCoroutine(this.ShowNoticeMessagePanel("Mission complete", 5.0f));
+				this.SendPanelNotice("Mission complete", 100, PanelNoticeStatus.Green);
 				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Mission complete", 5.0f));
+
+				this.CloseRosConnections();
 
 				this.isAllTaskFinished = true;
 			}
 			else
 			{
-				this.SendROSHumanNaviMessage(MsgTaskFinished, "");
+				this.SendRosHumanNaviMessage(MsgTaskFinished, "");
 
 				SIGVerseLogger.Info("Waiting for next task");
 				base.StartCoroutine(this.ShowGotoNextPanel(3.0f));
@@ -363,6 +416,8 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.StopPlayback();
 
 			this.isDuringTrial = false;
+			this.interruptedReason = string.Empty;
+
 			this.step = Step.WaitNextTrial;
 		}
 
@@ -395,6 +450,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				Destroy(this.robot);
 			}
+
 			this.robot = MonoBehaviour.Instantiate(this.robotPrefab);
 			this.robot.name = this.robotPrefab.name;
 			this.robot.SetActive(true);
@@ -492,23 +548,17 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			if (this.waitingTime > interval_ms * 0.001)
 			{
-				this.SendROSHumanNaviMessage(MsgAreYouReady, "");
+				this.SendRosHumanNaviMessage(MsgAreYouReady, "");
 				this.waitingTime = 0.0f;
 			}
 		}
 
-//		private void DoorOpen()
-//		{
-//			GameObject doorWay = GameObject.Find("doorway"); // TODO: should be modified
-//			doorWay.transform.localPosition += doorWay.transform.right * (-0.9f);
-////			this.addCommandLog("Info", "door_open");
-//		}
-
 		public void TimeIsUp()
 		{
 			string strTimeup = "Time is up";
-			this.SendROSHumanNaviMessage(MsgTaskFailed, strTimeup);
-			base.StartCoroutine(this.ShowNoticeMessagePanel(strTimeup, 3.0f));
+			this.SendRosHumanNaviMessage(MsgTaskFailed, strTimeup);
+			//base.StartCoroutine(this.ShowNoticeMessagePanel(strTimeup, 3.0f));
+			this.SendPanelNotice(strTimeup, 100, PanelNoticeStatus.Red);
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strTimeup, 3.0f));
 
 			this.RecordEvent("Time_is_up");
@@ -516,37 +566,10 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.TaskFinished();
 		}
 
-		public void GiveUp()
-		{
-			string strGiveup = "Give up";
-			this.SendROSHumanNaviMessage(MsgTaskFailed, strGiveup);
-			base.StartCoroutine(this.ShowNoticeMessagePanel(strGiveup, 3.0f));
-			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strGiveup, 3.0f));
-
-			this.RecordEvent("Give_up");
-
-			this.TaskFinished();
-		}
-
-		public void StartTask()
-		{
-			SIGVerseLogger.Info("Task start!");
-			this.RecordEvent("Task_start");
-
-			this.humanNaviMenu.startTaskPanel.SetActive(false);
-			this.isCompetitionStarted = true;
-		}
-
-		public void GoToNextTrial()
-		{
-			this.humanNaviMenu.goToNextTrialPanel.SetActive(false);
-			this.goNextTrial = true;
-		}
-
 		private IEnumerator ShowGotoNextPanel(float waitTime = 1.0f)
 		{
 			yield return new WaitForSeconds(waitTime);
-			this.humanNaviMenu.ShowGoToNextPanel();
+			this.goToNextTrialPanel.SetActive(true);
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Waiting for the next trial to start", 3.0f));
 		}
 
@@ -564,7 +587,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				this.receivedMessageMap[humanNaviMsg.message] = true;
 
-				if(humanNaviMsg.message == MsgGetAvatarPose)
+				if (humanNaviMsg.message == MsgGiveUp)
+				{
+					this.OnGiveUp();
+				}
+				else if(humanNaviMsg.message == MsgGetAvatarPose)
 				{
 					RosBridge.human_navigation.HumanNaviAvatarPose avatarPose = new RosBridge.human_navigation.HumanNaviAvatarPose();
 
@@ -575,7 +602,6 @@ namespace SIGVerse.Competition.HumanNavigation
 					avatarPose.right_hand.position = ConvertCoorinateSystemUnityToROS_Position(this.rightHand.transform.position);
 					avatarPose.right_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.rightHand.transform.rotation);
 
-					//this.pubAvatarPose.SendROSMessage(avatarPose);
 					this.SendRosAvatarPoseMessage(avatarPose);
 				}
 				else if (humanNaviMsg.message == MsgConfirmSpeechState)
@@ -583,9 +609,9 @@ namespace SIGVerse.Competition.HumanNavigation
 					if (this.robot != null && this.isDuringTrial)
 					{
 						string detail;
-						if (this.robot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesis>().IsSpeeching()) { detail = "Is_speaking"; }
-						else                                                                                                  { detail = "Is_not_speaking"; }
-						this.SendROSHumanNaviMessage(MsgSpeechState, detail);
+						if (this.robot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesis>().IsSpeaking()) { detail = "Is_speaking"; }
+						else                                                                                                 { detail = "Is_not_speaking"; }
+						this.SendRosHumanNaviMessage(MsgSpeechState, detail);
 					}
 				}
 			}
@@ -789,17 +815,6 @@ namespace SIGVerse.Competition.HumanNavigation
 		//	}
 		//}
 
-
-		private IEnumerator ShowNoticeMessagePanel(string text, float waitTime = 1.0f)
-		{
-			this.humanNaviMenu.noticeText.text = text;
-			this.humanNaviMenu.noticePanel.SetActive(true);
-
-			yield return new WaitForSeconds(waitTime);
-
-			this.humanNaviMenu.noticePanel.SetActive(false);
-		}
-
 		private IEnumerator ShowNoticeMessagePanelForAvatar(string text, float waitTime = 1.0f)
 		{
 			this.noticeTextForAvatar.text = text;
@@ -810,21 +825,21 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.noticePanelForAvatar.SetActive(false);
 		}
 
-		private void SendROSHumanNaviMessage(string message, string detail)
+		private void SendRosHumanNaviMessage(string message, string detail)
 		{
-			this.RecordEventRosMessageSent("HumanNaviMsg", message + "\t" + detail);
+			//this.RecordEventRosMessageSent("HumanNaviMsg", message + "\t" + detail);
 
 			ExecuteEvents.Execute<IRosHumanNaviMessageSendHandler>
 			(
 				target: this.gameObject, 
 				eventData: null, 
-				functor: (reciever, eventData) => reciever.OnSendROSHumanNaviMessage(message, detail)
+				functor: (reciever, eventData) => reciever.OnSendRosHumanNaviMessage(message, detail)
 			);
 		}
 
 		private void SendRosAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose avatarPose)
 		{
-			this.RecordEventRosMessageSent("AvatarPose", "");
+			//this.RecordEventRosMessageSent("AvatarPose", "");
 
 			ExecuteEvents.Execute<IROSAvatarPoseSendHandler>
 			(
@@ -836,7 +851,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void SendRosTaskInfoMessage(RosBridge.human_navigation.HumanNaviTaskInfo taskInfo)
 		{
-			this.RecordEventRosMessageSent("TaskInfo", "");
+			//this.RecordEventRosMessageSent("TaskInfo", "");
 
 			ExecuteEvents.Execute<IRosTaskInfoSendHandler>
 			(
@@ -870,7 +885,8 @@ namespace SIGVerse.Competition.HumanNavigation
 								SIGVerseLogger.Info("Target object is grasped");
 								this.RecordEvent("Target_object_is_grasped");
 
-								base.StartCoroutine(this.ShowNoticeMessagePanel("Target object is grasped", 3.0f));
+								//base.StartCoroutine(this.ShowNoticeMessagePanel("Target object is grasped", 3.0f));
+								this.SendPanelNotice("Target object is grasped", 100, PanelNoticeStatus.Green);
 
 								this.scoreManager.AddScore(Score.Type.CorrectObjectIsGrasped);
 								this.scoreManager.AddTimeScoreOfGrasp();
@@ -885,7 +901,8 @@ namespace SIGVerse.Competition.HumanNavigation
 								SIGVerseLogger.Info("Wrong object is grasped");
 								this.RecordEvent("Wrong_object_is_grasped");
 
-								base.StartCoroutine(this.ShowNoticeMessagePanel("Wrong object is grasped", 3.0f));
+								//base.StartCoroutine(this.ShowNoticeMessagePanel("Wrong object is grasped", 3.0f));
+								this.SendPanelNotice("Wrong object is grasped", 100, PanelNoticeStatus.Red);
 
 								this.scoreManager.AddScore(Score.Type.IncorrectObjectIsGrasped);
 							}
@@ -932,11 +949,126 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.scoreManager.AddScore(Score.Type.TargetObjectInDestination);
 			this.scoreManager.AddTimeScoreOfPlacement();
 
-			this.SendROSHumanNaviMessage(MsgTaskSucceeded, "");
-			base.StartCoroutine(this.ShowNoticeMessagePanel("Task succeeded", 3.0f));
+			this.SendRosHumanNaviMessage(MsgTaskSucceeded, "");
+			//base.StartCoroutine(this.ShowNoticeMessagePanel("Task succeeded", 3.0f));
+			this.SendPanelNotice("Task succeeded", 100, PanelNoticeStatus.Green);
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Task succeeded", 3.0f));
 
 			this.TaskFinished();
 		}
+
+		public void OnTimeIsUp()
+		{
+			this.interruptedReason = HumanNaviModerator.ReasonTimeIsUp;
+		}
+
+		public void OnGiveUp()
+		{
+			//if (this.step > Step.TrialStart && this.step < Step.WaitNextTrial)
+			if (this.isDuringTrial)
+			{
+				this.interruptedReason = HumanNaviModerator.ReasonGiveUp;
+
+				string strGiveup = "Give up";
+				this.SendRosHumanNaviMessage(MsgTaskFailed, strGiveup);
+				//base.StartCoroutine(this.ShowNoticeMessagePanel(strGiveup, 3.0f));
+				this.SendPanelNotice(strGiveup, 100, PanelNoticeStatus.Red);
+				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strGiveup, 3.0f));
+
+				this.RecordEvent("Give_up");
+
+				this.panelMainController.giveUpPanel.SetActive(false);
+
+
+				this.TaskFinished();
+			}
+			else
+			{
+				SIGVerseLogger.Warn("It is a timing not allowed to give up.");
+			}
+		}
+
+		public void OnStartTrial()
+		{
+			SIGVerseLogger.Info("Task start!");
+			this.RecordEvent("Task_start");
+
+			this.startTrialPanel.SetActive(false);
+			this.isCompetitionStarted = true;
+		}
+
+		public void OnGoToNextTrial()
+		{
+			this.goToNextTrialPanel.SetActive(false);
+			this.goNextTrial = true;
+		}
+
+		public void ShowStartTaskPanel()
+		{
+			//if (this.startTrialPanel.activeSelf)
+			//{
+			//	this.startTrialPanel.SetActive(false);
+			//}
+			//else
+			//{
+				this.startTrialPanel.SetActive(true);
+			//}
+		}
+
+		private void SendPanelNotice(string message, int fontSize, Color color)
+		{
+			PanelNoticeStatus noticeStatus = new PanelNoticeStatus(message, fontSize, color, 3.0f);
+
+			// For changing the notice of a panel
+			ExecuteEvents.Execute<IPanelNoticeHandler>
+			(
+				target: this.mainMenu,
+				eventData: null,
+				functor: (reciever, eventData) => reciever.OnPanelNoticeChange(noticeStatus)
+			);
+
+			//// For recording
+			//ExecuteEvents.Execute<IPanelNoticeHandler>
+			//(
+			//	target: this.playbackManager,
+			//	eventData: null,
+			//	functor: (reciever, eventData) => reciever.OnPanelNoticeChange(noticeStatus)
+			//);
+		}
+
+
+		public bool IsConnectedToRos()
+		{
+			foreach (IRosConnection rosConnection in this.rosConnections)
+			{
+				if (!rosConnection.IsConnected())
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public void ClearRosConnections()
+		{
+			foreach (IRosConnection rosConnection in this.rosConnections)
+			{
+				rosConnection.Clear();
+			}
+
+			SIGVerseLogger.Info("Clear ROS connections");
+		}
+
+		public void CloseRosConnections()
+		{
+			foreach (IRosConnection rosConnection in this.rosConnections)
+			{
+				rosConnection.Close();
+			}
+
+			SIGVerseLogger.Info("Close ROS connections");
+		}
+
+
 	}
 }

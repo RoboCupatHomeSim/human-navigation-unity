@@ -6,8 +6,6 @@ using SIGVerse.Common;
 using System.Collections.Generic;
 using System;
 
-//using SIGVerse.RosBridge.HumanNavigation;
-
 
 namespace SIGVerse.Competition.HumanNavigation
 {
@@ -16,62 +14,21 @@ namespace SIGVerse.Competition.HumanNavigation
 		void OnSendROSAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose message);
 	}
 
-	public class HumanNaviPubAvatarPose : MonoBehaviour, IROSAvatarPoseSendHandler
+	public class HumanNaviPubAvatarPose : RosPubMessage<RosBridge.human_navigation.HumanNaviAvatarPose>, IROSAvatarPoseSendHandler
 	{
-		public string rosBridgeIP;
-		public int rosBridgePort = 9090;
-		public string sendingTopicName = "/human_navigation/message/avatar_pose";
-
-		//--------------------------------------------------
-		private RosBridgeWebSocketConnection webSocketConnection = null;
-
-		private RosBridgePublisher<RosBridge.human_navigation.HumanNaviAvatarPose> messagePublisher;
-
-
-		void Start()
+		public override void Clear()
 		{
-			if (!ConfigManager.Instance.configInfo.rosbridgeIP.Equals(string.Empty))
-			{
-				this.rosBridgeIP   = ConfigManager.Instance.configInfo.rosbridgeIP;
-				this.rosBridgePort = ConfigManager.Instance.configInfo.rosbridgePort;
-			}
-
-			this.webSocketConnection = new SIGVerse.RosBridge.RosBridgeWebSocketConnection(rosBridgeIP, rosBridgePort);
-
-			this.messagePublisher = this.webSocketConnection.Advertise<RosBridge.human_navigation.HumanNaviAvatarPose>(sendingTopicName);
-
-			// Connect to ROSbridge server
-			this.webSocketConnection.Connect();
 		}
 
-		void OnApplicationQuit()
+		public override void Close()
 		{
 			if (this.webSocketConnection != null)
 			{
-				this.webSocketConnection.Disconnect();
+				this.webSocketConnection.Unadvertise(this.publisher);
 			}
+
+			base.Close();
 		}
-
-		//void Update()
-		//{
-		//	this.webSocketConnection.Render();
-		//}
-
-		//public void SendROSMessage(RosBridge.human_navigation.HumanNaviAvatarPose message)
-		//{
-		//	SIGVerseLogger.Info("Sending pose of avatar: ");
-		//	SIGVerseLogger.Info("Head       : " + message.head.position + message.head.orientation);
-		//	SIGVerseLogger.Info("Left Hand  : " + message.left_hand.position + message.left_hand.orientation);
-		//	SIGVerseLogger.Info("Right Hand : " + message.right_hand.position + message.right_hand.orientation);
-
-		//	RosBridge.human_navigation.HumanNaviAvatarPose rosMessage = new RosBridge.human_navigation.HumanNaviAvatarPose(
-		//		message.head,
-		//		message.left_hand,
-		//		message.right_hand
-		//		);
-
-		//	this.messagePublisher.Publish(rosMessage);
-		//}
 
 		public void OnSendROSAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose message)
 		{
@@ -86,7 +43,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				message.right_hand
 				);
 
-			this.messagePublisher.Publish(rosMessage);
+			this.publisher.Publish(rosMessage);
 		}
 	}
 }

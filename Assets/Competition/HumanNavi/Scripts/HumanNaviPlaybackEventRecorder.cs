@@ -24,15 +24,11 @@ namespace SIGVerse.Competition.HumanNavigation
 	[RequireComponent(typeof(HumanNaviPlaybackEventCommon))]
 	public class HumanNaviPlaybackEventRecorder : WorldPlaybackRecorder, IEventRecoderHandler
 	{
-		void Awake()
+		protected override void Awake()
 		{
-			if (HumanNaviConfig.Instance.configInfo.playbackType == HumanNaviPlaybackEventCommon.PlaybackTypeRecord)
-			{
-			}
-			else
-			{
-				this.enabled = false;
-			}
+			this.isRecord = HumanNaviConfig.Instance.configInfo.playbackType == HumanNaviPlaybackEventCommon.PlaybackTypeRecord;
+
+			base.Awake();
 		}
 
 		protected override void Start()

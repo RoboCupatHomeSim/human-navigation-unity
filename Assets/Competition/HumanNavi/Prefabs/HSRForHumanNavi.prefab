@@ -4886,7 +4886,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1065516844827122}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ebda55cec8897594eb88212dd25d8092, type: 3}
   m_Name: 
@@ -4924,7 +4924,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ac38c5e87cdec7408a2fb0955bd8414, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  collisionNotificationDestinations: []
+  collisionNotificationDestinations:
+  - {fileID: 0}
   exclusionColliderTags:
   - GraspingCandidates
   - DummyGraspingCandidates
@@ -4973,7 +4974,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tts: {fileID: 114370841448869604}
   rosBridgeIP: 
-  rosBridgePort: 9090
+  rosBridgePort: 0
   receivingTopicName: /human_navigation/message/guidance_message
 --- !u!114 &114197016661217738
 MonoBehaviour:
@@ -5000,6 +5001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f539bfb7c4878f4caa72d6f0c2a4885, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  triggerType: 0
   fingerType: 0
 --- !u!114 &114278529493011818
 MonoBehaviour:
@@ -5061,6 +5063,8 @@ MonoBehaviour:
   language: 409
   gender: Female
   guidanceMessageTextName: GuidanceMessageText
+  destinationNames:
+  - ScoreManager
 --- !u!114 &114375633254935998
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5086,6 +5090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f539bfb7c4878f4caa72d6f0c2a4885, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  triggerType: 0
   fingerType: 1
 --- !u!114 &114405924725108586
 MonoBehaviour:
@@ -5124,6 +5129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1677765f6a2140d4faeafcd25d2de363, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  useThread: 0
 --- !u!114 &114621172758448684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5199,7 +5205,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destinationNames:
-  - HumanNaviMenu
+  - ScoreManager
 --- !u!114 &114795122015667512
 MonoBehaviour:
   m_ObjectHideFlags: 1

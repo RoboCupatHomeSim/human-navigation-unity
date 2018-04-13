@@ -11,15 +11,11 @@ namespace SIGVerse.Competition.HumanNavigation
 	{
 		public List<string> KeywordsOfAvatarPartsPathToIgnore;
 
-		void Awake()
+		protected override void Awake()
 		{
-			if(HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypeRecord)
-			{
-			}
-			else
-			{
-				this.enabled = false;
-			}
+			this.isRecord = HumanNaviConfig.Instance.configInfo.playbackType == HumanNaviPlaybackTransformCommon.PlaybackTypeRecord;
+
+			base.Awake();
 		}
 
 		protected override void Start()

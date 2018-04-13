@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using SIGVerse.Common;
 using SIGVerse.ToyotaHSR;
+using UnityEngine.EventSystems;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
@@ -17,8 +18,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			CorrectObjectIsGrasped,
 			IncorrectObjectIsGrasped,
 			TargetObjectInDestination,
-			Time,
+			CompletionTime,
 			CollisionEnter,
+			OverSpeechCount,
 		}
 
 		public static int GetScore(Type scoreType)
@@ -28,67 +30,75 @@ namespace SIGVerse.Competition.HumanNavigation
 				case Score.Type.CorrectObjectIsGrasped    : { return +20; }
 				case Score.Type.IncorrectObjectIsGrasped  : { return -10; }
 				case Score.Type.TargetObjectInDestination : { return +20; }
-				case Score.Type.Time                      : { return +30; }
+				case Score.Type.CompletionTime            : { return +30; }
 				case Score.Type.CollisionEnter            : { return -10; }
+				case Score.Type.OverSpeechCount           : { return  -3; }
 			}
 
 			throw new Exception("Illegal score type. Type = " + (int)scoreType + ", method name=(" + System.Reflection.MethodBase.GetCurrentMethod().Name + ")");
 		}
 	}
 
-	public class HumanNaviScoreManager : MonoBehaviour, IHSRCollisionHandler
+	public class HumanNaviScoreManager : MonoBehaviour, IHSRCollisionHandler, ISpeakMessageHandler
 	{
 		private const string TimeFormat = "#####0";
 		private const float DefaultTimeScale = 1.0f;
 
-		public HumanNaviModerator moderator;
-
-		[HeaderAttribute("Task status")]
-		public Text challengeInfoText;
-		public Text taskMessageText;
-
-		//[HeaderAttribute("Buttons")]
-		//public Button startButton;
-
 		[HeaderAttribute("Time left")]
 		[TooltipAttribute("seconds")]
-		public int timeLimit = 600;
+		public int timeLimit = 300;
 		public int timeLimitForGrasp = 150;
 		public int timeLimitForPlacement = 150;
 
-		public Text timeLeftValueText;
+		[HeaderAttribute("Speec Count")]
+		public int LimitOfSpeechCount = 10;
 
-		[HeaderAttribute("Score")]
-		public Text scoreValText;
-		public Text totalValText;
+		public List<string> timeIsUpDestinationTags;
+
 		//---------------------------------------------------
 
-//		private float timeLeft;
-		private float elapsedTime;
 		private float elapsedTimeForGrasp;
 		private float elapsedTimeForPlacement;
 
+		private GameObject mainMenu;
+
 		private int score;
+		private PanelMainController panelMainController;
 
-		//private List<int> scores;
+		private List<GameObject> timeIsUpDestinations;
 
-		//private int totalScore = 0;
+		private float timeLeft;
 
 		private bool isRunning;
 
+		private int speechCount;
+
+		void Awake()
+		{
+			this.mainMenu = GameObject.FindGameObjectWithTag("MainMenu");
+
+			this.panelMainController = this.mainMenu.GetComponent<PanelMainController>();
+
+			this.timeIsUpDestinations = new List<GameObject>();
+			foreach (string timeIsUpDestinationTag in this.timeIsUpDestinationTags)
+			{
+				GameObject[] timeIsUpDestinationArray = GameObject.FindGameObjectsWithTag(timeIsUpDestinationTag);
+
+				foreach (GameObject timeIsUpDestination in timeIsUpDestinationArray)
+				{
+					this.timeIsUpDestinations.Add(timeIsUpDestination);
+				}
+			}
+		}
 
 		// Use this for initialization
 		void Start()
 		{
-			//this.timeLeft = (float)this.timeLimit;
-			this.elapsedTime = 0.0f;
+			this.UpdateScoreText(0, HumanNaviConfig.Instance.GetTotalScore());
 
-			//this.timeLeftValueText.text = this.timeLeft.ToString(TimeFormat);
-			this.SetTimeValText();
-			this.scoreValText.text = "0";
+			this.timeLeft = (float)timeLimit;
 
-			this.totalValText.text = HumanNaviConfig.Instance.GetTotalScore().ToString();
-			//this.totalScore = 0;
+			this.panelMainController.SetTimeLeft(this.timeLeft);
 
 			this.isRunning = false;
 		}
@@ -98,80 +108,71 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			if (this.isRunning)
 			{
-				//	this.timeLeft = Mathf.Max(0.0f, this.timeLeft-Time.deltaTime);
+				this.timeLeft = Mathf.Max(0.0f, this.timeLeft - Time.deltaTime);
+				this.panelMainController.SetTimeLeft(this.timeLeft);
 
-				//	this.timeLeftValueText.text = this.timeLeft.ToString(TimeFormat);
-
-				//	if(this.timeLeft == 0.0f)
-				//	{
-				//		this.moderator.TimeUp();
-				//	}
-
-				//this.timeLeft = Mathf.Max(0.0f, this.timeLeft - Time.deltaTime);
-				this.elapsedTime += Time.deltaTime;
-
-				//this.timeLeftValueText.text = this.timeLeft.ToString(TimeFormat);
-				this.SetTimeValText();
-
-				//if (this.timeLeft == 0.0f)
-				if (this.elapsedTime > this.timeLimit)
+				if (this.timeLeft == 0.0f)
 				{
-					this.moderator.TimeIsUp();
+					foreach (GameObject timeIsUpDestination in this.timeIsUpDestinations)
+					{
+						ExecuteEvents.Execute<ITimeIsUpHandler>
+						(
+							target: timeIsUpDestination,
+							eventData: null,
+							functor: (reciever, eventData) => reciever.OnTimeIsUp()
+						);
+					}
 				}
 			}
 		}
 
+		//---------------------------------------------------
+
 		public void AddScore(Score.Type scoreType)
 		{
-			//this.scores[this.scores.Count - 1] = Mathf.Clamp(this.scores[this.scores.Count - 1] + Score.GetScore(scoreType), Score.MinScore, Score.MaxScore);
-			//this.scoreValText.text = this.scores[this.scores.Count - 1].ToString(timeFormat);
 			this.score = Mathf.Clamp(this.score + Score.GetScore(scoreType), Score.MinScore, Score.MaxScore);
-			this.scoreValText.text = this.score.ToString(TimeFormat);
+			this.UpdateScoreText(this.score);
 
-			//SIGVerseLogger.Info("Score add [" + Score.GetScore(scoreType) + "], Challenge " + this.scores.Count + " Score=" + this.scores[this.scores.Count - 1]);
 			SIGVerseLogger.Info("Score (grasp) add [" + Score.GetScore(scoreType) + "], Challenge " + HumanNaviConfig.Instance.numberOfTrials + " Score=" + this.score);
 		}
 
-		public void AddTimeScore(float elspsedTime, float timeLimit)
+		public void AddTimeScore(float elapsedTime, float timeLimit)
 		{
-			int timeScore = Mathf.FloorToInt(Score.GetScore(Score.Type.Time) * ((timeLimit - elapsedTime) / timeLimit));
+			int timeScore = Mathf.FloorToInt(Score.GetScore(Score.Type.CompletionTime) * ((timeLimit - elapsedTime) / timeLimit));
 			this.score = Mathf.Clamp(this.score + timeScore, Score.MinScore, Score.MaxScore);
-			this.scoreValText.text = this.score.ToString(TimeFormat);
+			this.UpdateScoreText(this.score);
 
 			SIGVerseLogger.Info("Score (time) add [" + timeScore + "], Challenge " + HumanNaviConfig.Instance.numberOfTrials + " Score=" + this.score);
 		}
 
-		public void AddTimeScore()
-		{
-			this.AddTimeScore(this.elapsedTime, this.timeLimit);
-		}
 		public void AddTimeScoreOfGrasp()
 		{
-			this.elapsedTimeForGrasp = this.elapsedTime;
-
+			this.elapsedTimeForGrasp = this.timeLimit - this.timeLeft;
 			this.AddTimeScore(this.elapsedTimeForGrasp, this.timeLimitForGrasp);
 		}
+
 		public void AddTimeScoreOfPlacement()
 		{
-			this.elapsedTimeForGrasp = this.elapsedTime - this.elapsedTimeForGrasp;
-			this.AddTimeScore(this.elapsedTimeForGrasp, this.timeLimitForPlacement);
+			this.elapsedTimeForPlacement = (this.timeLimit - this.timeLeft) - this.elapsedTimeForGrasp;
+			this.AddTimeScore(this.elapsedTimeForPlacement, this.timeLimitForPlacement);
 		}
 
+		//---------------------------------------------------
 
 		public void TaskStart()
 		{
-			this.score = 0;
-
-			this.scoreValText.text = this.score.ToString("###0");
-
 			this.isRunning = true;
+
+			this.speechCount = 0;
+
+			this.UpdateScoreText(this.score);
 		}
 
 		public void TaskEnd()
 		{
 			HumanNaviConfig.Instance.AddScore(this.score);
 
-			this.totalValText.text = HumanNaviConfig.Instance.GetTotalScore().ToString();
+			this.UpdateScoreText(this.score, HumanNaviConfig.Instance.GetTotalScore());
 
 			SIGVerseLogger.Info("Total Score=" + HumanNaviConfig.Instance.GetTotalScore());
 
@@ -180,73 +181,49 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.isRunning = false;
 		}
 
-		public void ResetTimeText()
-		{
-			//this.timeLeft = (float)this.timeLimit;
-			//this.timeLeft = Mathf.Max(0.0f, this.timeLeft - Time.deltaTime);
+		//---------------------------------------------------
 
-			this.elapsedTime = 0.0f;
-			this.SetTimeValText();
+		public void ResetTimeLeftText()
+		{
+			this.timeLeft = (float)timeLimit;
+			this.panelMainController.SetTimeLeft(this.timeLeft);
 		}
 
-		public void SetTimeValText()
+		private void UpdateScoreText(float score)
 		{
-			this.timeLeftValueText.text = this.elapsedTime.ToString(TimeFormat) + " / " + this.timeLimit.ToString(TimeFormat);
+			ExecuteEvents.Execute<IPanelScoreHandler>
+			(
+				target: this.mainMenu,
+				eventData: null,
+				functor: (reciever, eventData) => reciever.OnScoreChange(score)
+			);
 		}
 
-		public void SetTaskMessageText(string taskMessage)
+		private void UpdateScoreText(float score, float total)
 		{
-			this.taskMessageText.text = taskMessage;
+			ExecuteEvents.Execute<IPanelScoreHandler>
+			(
+				target: this.mainMenu,
+				eventData: null,
+				functor: (reciever, eventData) => reciever.OnScoreChange(score, total)
+			);
 		}
 
-		public void SetChallengeInfoText()
-		{
-			int numberOfTrials = HumanNaviConfig.Instance.numberOfTrials;
-
-			string ordinal;
-
-			if (numberOfTrials == 11 || numberOfTrials == 12 || numberOfTrials == 13)
-			{
-				ordinal = "th";
-			}
-			else
-			{
-				if (numberOfTrials % 10 == 1)
-				{
-					ordinal = "st";
-				}
-				else if (numberOfTrials % 10 == 2)
-				{
-					ordinal = "nd";
-				}
-				else if (numberOfTrials % 10 == 3)
-				{
-					ordinal = "rd";
-				}
-				else
-				{
-					ordinal = "th";
-				}
-			}
-
-			this.challengeInfoText.text = numberOfTrials + ordinal + " challenge";
-
-			SIGVerseLogger.Info("###### " + this.GetChallengeInfoText() + " #####");
-		}
-
-		public bool CheckIsRunning()
-		{
-			return this.isRunning;
-		}
-
-		public string GetChallengeInfoText()
-		{
-			return this.challengeInfoText.text;
-		}
+		//---------------------------------------------------
 
 		public void OnHsrCollisionEnter(Collision collision, float collisionVelocity, float effectScale)
 		{
 			this.AddScore(Score.Type.CollisionEnter);
+		}
+
+		public void OnSpeakMessage()
+		{
+			this.speechCount++;
+
+			if(this.speechCount > this.LimitOfSpeechCount)
+			{
+				this.AddScore(Score.Type.OverSpeechCount);
+			}
 		}
 	}
 }

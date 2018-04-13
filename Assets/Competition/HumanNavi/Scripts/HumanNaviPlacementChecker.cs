@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public class HumanNaviContactChecker : MonoBehaviour
+	public class HumanNaviPlacementChecker : MonoBehaviour
 	{
 		private const float WaitingTime = 1.0f;
 
@@ -34,7 +34,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			//this.triggers.AddRange(GetBoxColliders(this.transform));
 
 			// TODO: should be modified
-			this.moderator = GameObject.Find("HumanNaviModerator").GetComponent<HumanNaviModerator>(); 
+			this.moderator = GameObject.Find("Moderator").GetComponent<HumanNaviModerator>(); 
 		}
 
 		private void Update()

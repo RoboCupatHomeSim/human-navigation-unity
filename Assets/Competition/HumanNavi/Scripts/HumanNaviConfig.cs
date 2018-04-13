@@ -20,12 +20,12 @@ namespace SIGVerse.Competition.HumanNavigation
 	public class HumanNaviConfigInfo
 	{
 		public int  maxNumberOfTrials;
-		public bool recoveryUsingScoreFile;
+		public bool recoverUsingScoreFile;
 		public List<TaskInfo> taskInfo;
 		public int playbackType;
 		public int playbackTrialNum;
-		public string language;
 		public int executionMode;
+		public string language;
 		public List<string> guideMessagesJapanese; // for demo
 		public List<string> guideMessagesEnglish;  // for demo
 	}
@@ -75,7 +75,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				SIGVerseLogger.Warn("HumanNavi config file does not exists.");
 
 				this.configInfo.maxNumberOfTrials = 1;
-				this.configInfo.recoveryUsingScoreFile = false;
+				this.configInfo.recoverUsingScoreFile = false;
 				this.configInfo.executionMode = 1;
 				this.configInfo.playbackType = WorldPlaybackCommon.PlaybackTypeNone;
 				this.configInfo.language = "English";
@@ -91,7 +91,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.scores = new List<int>();
 
-			if (this.configInfo.recoveryUsingScoreFile)
+			if (this.configInfo.recoverUsingScoreFile)
 			{
 				// File open
 				StreamReader streamReader = new StreamReader(scoreFilePath, Encoding.UTF8);

@@ -3,6 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using SpeechLib;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+
+
+public interface ISpeakMessageHandler : IEventSystemHandler
+{
+	void OnSpeakMessage();
+}
 
 public class SAPIVoiceSynthesis : MonoBehaviour
 {
@@ -16,6 +23,8 @@ public class SAPIVoiceSynthesis : MonoBehaviour
 	[HeaderAttribute("Guidance message text")]
 	public string guidanceMessageTextName = "GuidanceMessageText"; ///// TODO /////
 
+	public List<string> destinationNames;
+	private List<GameObject> notificationDestinations;
 
 	private SpVoice voice;
 
@@ -41,6 +50,12 @@ public class SAPIVoiceSynthesis : MonoBehaviour
 
 		//this.scene_recorder = GameObject.Find(PlaybackSystemParam.WorldRecorderName);
 		guidanceMessageText = GameObject.Find(guidanceMessageTextName).GetComponent<Text>();
+
+		this.notificationDestinations = new List<GameObject>();
+		foreach (string destinationName in this.destinationNames)
+		{
+			notificationDestinations.Add(GameObject.Find(destinationName));
+		}
 	}
 
 	public void Start()
@@ -61,6 +76,16 @@ public class SAPIVoiceSynthesis : MonoBehaviour
 
 		this.voice.Speak(msg, SpeechVoiceSpeakFlags.SVSFlagsAsync);
 
+		foreach (GameObject destination in this.notificationDestinations)
+		{
+			ExecuteEvents.Execute<ISpeakMessageHandler>
+			(
+				target: destination,
+				eventData: null,
+				functor: (reciever, eventData) => reciever.OnSpeakMessage()
+			);
+		}
+
 		return true;
 	}
 
@@ -77,7 +102,7 @@ public class SAPIVoiceSynthesis : MonoBehaviour
 		this.voice.Voice = tokens.Item(0);
 	}
 
-	public bool IsSpeeching()
+	public bool IsSpeaking()
 	{
 		if (this.voice.Status.RunningState == SpeechRunState.SRSEIsSpeaking) return true;
 		else                                                                 return false;
