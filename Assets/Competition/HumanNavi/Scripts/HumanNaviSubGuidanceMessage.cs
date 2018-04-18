@@ -8,12 +8,20 @@ using System;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public interface IReceiveStringMsgHandler : IEventSystemHandler
+	public enum GuidanceMessageDisplayType
 	{
-		void OnReceiveROSStringMessage(RosBridge.std_msgs.String stringMsg);
+		All,
+		RobotOnly,
+		AvatarOnly,
+		None,
 	}
 
-	public class HumanNaviSubString : MonoBehaviour
+	public interface IReceiveHumanNaviGuidanceMsgHandler : IEventSystemHandler
+	{
+		void OnReceiveROSHumanNaviGuidanceMessage(RosBridge.human_navigation.HumanNaviGuidanceMsg guidaneMsg);
+	}
+
+	public class HumanNaviSubGuidanceMessage : MonoBehaviour
 	{
 		public SAPIVoiceSynthesis tts;
 
@@ -36,7 +44,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.webSocketConnection = new SIGVerse.RosBridge.RosBridgeWebSocketConnection(rosBridgeIP, rosBridgePort);
 
-			this.webSocketConnection.Subscribe<RosBridge.std_msgs.String>(receivingTopicName, this.SubscribeStringMessageCallback);
+			this.webSocketConnection.Subscribe<RosBridge.human_navigation.HumanNaviGuidanceMsg>(receivingTopicName, this.SubscribeHumanNaviGuidanceMessageCallback);
 
 			// Connect to ROSbridge server
 			this.webSocketConnection.Connect();
@@ -55,11 +63,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.webSocketConnection.Render();
 		}
 
-		public void SubscribeStringMessageCallback(RosBridge.std_msgs.String message)
+		public void SubscribeHumanNaviGuidanceMessageCallback(RosBridge.human_navigation.HumanNaviGuidanceMsg guidaneMsg)
 		{
-			SIGVerseLogger.Info("Received guide message : " + message.data);
+			SIGVerseLogger.Info("Received guide message : " + guidaneMsg.message + ", display type: " + guidaneMsg.display_type);
 
-			this.tts.OnReceiveRosStringMessage(message);
+			this.tts.OnReceiveROSHumanNaviGuidanceMessage(guidaneMsg);
 		}
 	}
 }

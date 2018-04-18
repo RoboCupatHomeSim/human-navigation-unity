@@ -10,7 +10,7 @@ namespace SIGVerse.Competition.HumanNavigation
 {
 	public interface ISpeakMessageHandler : IEventSystemHandler
 	{
-		void OnSpeakMessage(string message);
+		void OnSpeakMessage(string message, string displayType);
 	}
 
 	public interface IStopSpeakingHandler : IEventSystemHandler
@@ -82,7 +82,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public bool SpeakMessage(string msg)
+		public bool SpeakMessage(SIGVerse.RosBridge.human_navigation.HumanNaviGuidanceMsg guidanceMessage)
 		{
 			if (this.voice.Status.RunningState == SpeechRunState.SRSEIsSpeaking)
 			{
@@ -90,7 +90,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				return false;
 			}
 
-			this.voice.Speak(msg, SpeechVoiceSpeakFlags.SVSFlagsAsync);
+			this.voice.Speak(guidanceMessage.message, SpeechVoiceSpeakFlags.SVSFlagsAsync);
 
 			foreach (GameObject destination in this.notificationDestinations)
 			{
@@ -98,7 +98,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				(
 					target: destination,
 					eventData: null,
-					functor: (reciever, eventData) => reciever.OnSpeakMessage(msg)
+					functor: (reciever, eventData) => reciever.OnSpeakMessage(guidanceMessage.message, guidanceMessage.display_type)
 				);
 			}
 
@@ -126,9 +126,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			else return false;
 		}
 
-		public void OnReceiveRosStringMessage(SIGVerse.RosBridge.std_msgs.String stringMsg)
+		public void OnReceiveROSHumanNaviGuidanceMessage(SIGVerse.RosBridge.human_navigation.HumanNaviGuidanceMsg guidanceMsg)
 		{
-			this.SpeakMessage(stringMsg.data);
+			this.SpeakMessage(guidanceMsg);
 		}
 	}
 }

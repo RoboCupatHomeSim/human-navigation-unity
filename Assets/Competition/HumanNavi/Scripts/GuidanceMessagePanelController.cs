@@ -23,6 +23,8 @@ namespace SIGVerse.Competition.HumanNavigation
 				{
 					this.panelIdentifiers.Add(panelIdentifier);
 
+					panelIdentifier.guidanceMessageText.text = "";
+
 					if (panelIdentifier.panelType != GuidanceMessagePanelIdentifier.GuidanceMessagePanelType.OnGUI)
 					{
 						panelIdentifier.gameObject.SetActive(false);
@@ -31,31 +33,39 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public void OnSpeakMessage(string message)
+		public void OnSpeakMessage(string message, string displayType = "All")
 		{
 			foreach (GuidanceMessagePanelIdentifier panelIdentifier in this.panelIdentifiers)
 			{
-				switch (panelIdentifier.panelType)
+				if (displayType == GuidanceMessageDisplayType.All.ToString())
 				{
-					case GuidanceMessagePanelIdentifier.GuidanceMessagePanelType.OnGUI:
+					panelIdentifier.gameObject.SetActive(true);
+					panelIdentifier.guidanceMessageText.text = message;
+				}
+				else
+				{
+					switch (panelIdentifier.panelType)
 					{
-						panelIdentifier.guidanceMessageText.text = "";
-						break;
-					}
-					case GuidanceMessagePanelIdentifier.GuidanceMessagePanelType.OnHMD:
-					{
-						Debug.Log("GuidanceMessagePanelController: " + panelIdentifier.gameObject);
-						panelIdentifier.gameObject.SetActive(true);
-						break;
-					}
-					case GuidanceMessagePanelIdentifier.GuidanceMessagePanelType.OnRobot:
-					{
-						panelIdentifier.gameObject.SetActive(true);
-						break;
+						case GuidanceMessagePanelIdentifier.GuidanceMessagePanelType.OnHMD:
+						{
+							if (displayType == GuidanceMessageDisplayType.AvatarOnly.ToString())
+							{
+								panelIdentifier.gameObject.SetActive(true);
+								panelIdentifier.guidanceMessageText.text = message;
+							}
+							break;
+						}
+						case GuidanceMessagePanelIdentifier.GuidanceMessagePanelType.OnRobot:
+						{
+							if (displayType == GuidanceMessageDisplayType.RobotOnly.ToString())
+							{
+								panelIdentifier.gameObject.SetActive(true);
+								panelIdentifier.guidanceMessageText.text = message;
+							}
+							break;
+						}
 					}
 				}
-
-				panelIdentifier.guidanceMessageText.text = message;
 			}
 		}
 
@@ -65,10 +75,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				switch (panelIdentifier.panelType)
 				{
-					case GuidanceMessagePanelIdentifier.GuidanceMessagePanelType.OnGUI:
-					{
-						break;
-					}
 					case GuidanceMessagePanelIdentifier.GuidanceMessagePanelType.OnHMD:
 					{
 						panelIdentifier.gameObject.SetActive(false);

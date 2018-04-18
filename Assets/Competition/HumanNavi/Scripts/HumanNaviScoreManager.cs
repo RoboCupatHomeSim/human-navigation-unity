@@ -216,7 +216,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.AddScore(Score.Type.CollisionEnter);
 		}
 
-		public void OnSpeakMessage(string message)
+		public void OnSpeakMessage(string message, string displayType)
 		{
 			this.speechCount++;
 
