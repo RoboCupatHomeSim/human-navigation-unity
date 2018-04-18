@@ -4,113 +4,131 @@ using UnityEngine;
 using SpeechLib;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using SIGVerse.Common;
 
-
-public interface ISpeakMessageHandler : IEventSystemHandler
+namespace SIGVerse.Competition.HumanNavigation
 {
-	void OnSpeakMessage();
-}
-
-public class SAPIVoiceSynthesis : MonoBehaviour
-{
-	//[HeaderAttribute("GUI")]
-	//public Text guidanceMessageText;
-
-	[HeaderAttribute("SAPI")]
-	public string language = "409";
-	public string gender   = "Female";
-
-	[HeaderAttribute("Guidance message text")]
-	public string guidanceMessageTextName = "GuidanceMessageText"; ///// TODO /////
-
-	public List<string> destinationNames;
-	private List<GameObject> notificationDestinations;
-
-	private SpVoice voice;
-
-	private Text guidanceMessageText;
-
-	// Use this for initialization
-	void Awake()
+	public interface ISpeakMessageHandler : IEventSystemHandler
 	{
-		this.voice = new SpVoice
-		{
-			Volume = 100, // Volume (no xml)
-			Rate = 0      //   Rate (no xml)
-		};
-
-		SpObjectTokenCategory tokenCat = new SpObjectTokenCategory();
-		tokenCat.SetId(SpeechLib.SpeechStringConstants.SpeechCategoryVoices, false);
-
-		// Select tokens by specifying a semicolon-separated attribute.
-		//     (Language:409=English (United States)/411=Japanese, Gender:Male/Female ... )
-		ISpeechObjectTokens tokens = tokenCat.EnumerateTokens("Language=" + this.language + "; Gender=" + this.gender, null);
-
-		this.voice.Voice = tokens.Item(0);
-
-		//this.scene_recorder = GameObject.Find(PlaybackSystemParam.WorldRecorderName);
-		guidanceMessageText = GameObject.Find(guidanceMessageTextName).GetComponent<Text>();
-
-		this.notificationDestinations = new List<GameObject>();
-		foreach (string destinationName in this.destinationNames)
-		{
-			notificationDestinations.Add(GameObject.Find(destinationName));
-		}
+		void OnSpeakMessage(string message);
 	}
 
-	public void Start()
+	public interface IStopSpeakingHandler : IEventSystemHandler
 	{
-		this.guidanceMessageText.text = "";
+		void OnStopSpeaking();
 	}
 
-	//void Update()
-	//{
-	//}
-
-	public bool SpeakMessage(string msg)
+	public class SAPIVoiceSynthesis : MonoBehaviour
 	{
-		if (this.voice.Status.RunningState == SpeechRunState.SRSEIsSpeaking)
+		[HeaderAttribute("SAPI")]
+		public string language = "409";
+		public string gender = "Female";
+
+		private List<GameObject> notificationDestinations;
+
+		private SpVoice voice;
+
+		//private Text guidanceMessageText;
+
+		bool isSpeaking;
+
+		// Use this for initialization
+		void Awake()
 		{
-			return false;
+			this.voice = new SpVoice
+			{
+				Volume = 100, // Volume (no xml)
+				Rate = 0      //   Rate (no xml)
+			};
+
+			SpObjectTokenCategory tokenCat = new SpObjectTokenCategory();
+			tokenCat.SetId(SpeechLib.SpeechStringConstants.SpeechCategoryVoices, false);
+
+			// Select tokens by specifying a semicolon-separated attribute.
+			//     (Language:409=English (United States)/411=Japanese, Gender:Male/Female ... )
+			ISpeechObjectTokens tokens = tokenCat.EnumerateTokens("Language=" + this.language + "; Gender=" + this.gender, null);
+
+			this.voice.Voice = tokens.Item(0);
+
+			//this.scene_recorder = GameObject.Find(PlaybackSystemParam.WorldRecorderName);
+
+			this.notificationDestinations = new List<GameObject>();
+
+			this.notificationDestinations.Add(GameObject.FindObjectOfType<HumanNaviScoreManager>().gameObject);
+			this.notificationDestinations.Add(GameObject.FindObjectOfType<GuidanceMessagePanelController>().gameObject);
+
+			this.isSpeaking = false;
 		}
 
-		this.voice.Speak(msg, SpeechVoiceSpeakFlags.SVSFlagsAsync);
+		//public void Start()
+		//{
+		//}
 
-		foreach (GameObject destination in this.notificationDestinations)
+		void Update()
 		{
-			ExecuteEvents.Execute<ISpeakMessageHandler>
-			(
-				target: destination,
-				eventData: null,
-				functor: (reciever, eventData) => reciever.OnSpeakMessage()
-			);
+			if (this.isSpeaking && this.voice.Status.RunningState == SpeechRunState.SRSEDone)
+			{
+				foreach (GameObject destination in this.notificationDestinations)
+				{
+					ExecuteEvents.Execute<IStopSpeakingHandler>
+					(
+						target: destination,
+						eventData: null,
+						functor: (reciever, eventData) => reciever.OnStopSpeaking()
+					);
+				}
+
+				this.isSpeaking = false;
+			}
 		}
 
-		return true;
-	}
+		public bool SpeakMessage(string msg)
+		{
+			if (this.voice.Status.RunningState == SpeechRunState.SRSEIsSpeaking)
+			{
+				SIGVerseLogger.Info("Speech API: SpeechRunState.SRSEIsSpeaking");
+				return false;
+			}
 
-	public void SetLanguage(string language, string gender)
-	{
-		if      (language == "English")  { language = "409"; }
-		else if (language == "Japanese") { language = "411"; }
-		else { return; }
+			this.voice.Speak(msg, SpeechVoiceSpeakFlags.SVSFlagsAsync);
 
-		SpObjectTokenCategory tokenCat = new SpObjectTokenCategory();
-		tokenCat.SetId(SpeechLib.SpeechStringConstants.SpeechCategoryVoices, false);
-		ISpeechObjectTokens tokens = tokenCat.EnumerateTokens("Language=" + language + "; Gender=" + gender, null);
+			foreach (GameObject destination in this.notificationDestinations)
+			{
+				ExecuteEvents.Execute<ISpeakMessageHandler>
+				(
+					target: destination,
+					eventData: null,
+					functor: (reciever, eventData) => reciever.OnSpeakMessage(msg)
+				);
+			}
 
-		this.voice.Voice = tokens.Item(0);
-	}
+			this.isSpeaking = true;
 
-	public bool IsSpeaking()
-	{
-		if (this.voice.Status.RunningState == SpeechRunState.SRSEIsSpeaking) return true;
-		else                                                                 return false;
-	}
+			return true;
+		}
 
-	public void OnReceiveRosStringMessage(SIGVerse.RosBridge.std_msgs.String stringMsg)
-	{
-		this.guidanceMessageText.text = stringMsg.data;
-		this.SpeakMessage(stringMsg.data);
+		public void SetLanguage(string language, string gender)
+		{
+			if (language == "English") { language = "409"; }
+			else if (language == "Japanese") { language = "411"; }
+			else { return; }
+
+			SpObjectTokenCategory tokenCat = new SpObjectTokenCategory();
+			tokenCat.SetId(SpeechLib.SpeechStringConstants.SpeechCategoryVoices, false);
+			ISpeechObjectTokens tokens = tokenCat.EnumerateTokens("Language=" + language + "; Gender=" + gender, null);
+
+			this.voice.Voice = tokens.Item(0);
+		}
+
+		public bool IsSpeaking()
+		{
+			if (this.voice.Status.RunningState == SpeechRunState.SRSEIsSpeaking) return true;
+			else return false;
+		}
+
+		public void OnReceiveRosStringMessage(SIGVerse.RosBridge.std_msgs.String stringMsg)
+		{
+			this.SpeakMessage(stringMsg.data);
+		}
 	}
 }

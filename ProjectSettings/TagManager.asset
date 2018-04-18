@@ -20,6 +20,10 @@ TagManager:
   - MainMenu
   - Moderator
   - Avatar
+  - AudienceCamera
+  - GuidanceMessageText
+  - GuidanceMessagePanelForAvatar
+  - GuidanceMessagePanelForAudience
   layers:
   - Default
   - TransparentFX

@@ -61,6 +61,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		[HeaderAttribute("Robot")]
 		public GameObject robotPrefab;
+		public string robotName;
 
 		[HeaderAttribute("Environment")]
 		public List<GameObject> environmentPrefabs;
@@ -448,11 +449,12 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			if (this.robot != null)
 			{
+				this.robot.SetActive(false); // For guidance message panel controller
 				Destroy(this.robot);
 			}
 
 			this.robot = MonoBehaviour.Instantiate(this.robotPrefab);
-			this.robot.name = this.robotPrefab.name;
+			this.robot.name = this.robotName;
 			this.robot.SetActive(true);
 		}
 
