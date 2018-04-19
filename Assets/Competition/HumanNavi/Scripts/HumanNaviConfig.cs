@@ -21,7 +21,7 @@ namespace SIGVerse.Competition.HumanNavigation
 	{
 		public int  maxNumberOfTrials;
 		public bool recoverUsingScoreFile;
-		public List<TaskInfo> taskInfo;
+		public List<TaskInfo> taskInfoList;
 		public int playbackType;
 		public int playbackTrialNum;
 		public int executionMode;
@@ -81,7 +81,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.configInfo.language = "English";
 				List<TaskInfo> taskInfoList = new List<TaskInfo>();
 				taskInfoList.Add(new TaskInfo() { environment = "Default_Environment", target = "petbottle_500ml_empty_01", destination = "trashbox_01" });
-				this.configInfo.taskInfo = taskInfoList;
+				this.configInfo.taskInfoList = taskInfoList;
 
 				this.SaveConfig();
 			}

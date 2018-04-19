@@ -60,11 +60,11 @@ namespace SIGVerse.Competition.HumanNavigation
 		public NewtonVR.NVRHand rightHand;
 
 		[HeaderAttribute("Robot")]
-		public GameObject robotPrefab;
+		public GameObject robot;
 		public string robotName;
 
 		[HeaderAttribute("Environment")]
-		public List<GameObject> environmentPrefabs;
+		public List<GameObject> environments;
 
 		[HeaderAttribute("Panels for avatar")]
 		public GameObject noticePanelForAvatar;
@@ -91,14 +91,16 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		//-----------------------------
 
-		private GameObject robot;
-		private GameObject environment;
+		private Vector3 initialAvatarPosition;
+		private Vector3 initialAvatarRotation;
+
+		private GameObject currentRobot;
+
+		//private List<GameObject> environments;
+		private GameObject currentEnvironment;
 
 		private GameObject mainMenu;
 		private PanelMainController panelMainController;
-
-		private Vector3 initialAvatarPosition;
-		private Vector3 initialAvatarRotation;
 
 		private List<SIGVerse.Competition.HumanNavigation.TaskInfo> taskInfoList;
 		private SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo taskInfoForRobot;
@@ -131,14 +133,13 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			try
 			{
-				this.taskInfoList = new List<SIGVerse.Competition.HumanNavigation.TaskInfo>();
-
-				List<GameObject> existingEnvironments = GameObject.FindGameObjectsWithTag("Environment").ToList<GameObject>();
-				foreach(GameObject existingEnvironment in existingEnvironments)
+				// Environments 
+				foreach (GameObject existingEnvironment in GameObject.FindGameObjectsWithTag("Environment"))
 				{
 					existingEnvironment.SetActive(false);
 				}
 
+				// Robot
 				if (HumanNaviConfig.Instance.configInfo.playbackType != WorldPlaybackCommon.PlaybackTypePlay) ///// TODO
 				{
 					List<GameObject> existingRobots = GameObject.FindGameObjectsWithTag("Robot").ToList<GameObject>();
@@ -147,17 +148,18 @@ namespace SIGVerse.Competition.HumanNavigation
 						existingRobot.SetActive(false);
 					}
 				}
-				this.ResetRobot();
-
-				this.playbackTransformRecorder = this.playbackSystem.GetComponent<HumanNaviPlaybackTransformRecorder>();
-				this.playbackTransformPlayer   = this.playbackSystem.GetComponent<HumanNaviPlaybackTransformPlayer>();
-				this.playbackEventRecorder     = this.playbackSystem.GetComponent<HumanNaviPlaybackEventRecorder>();
-
-
-				foreach (TaskInfo info in HumanNaviConfig.Instance.configInfo.taskInfo)
+				
+				// TaskInfo
+				this.taskInfoList = new List<SIGVerse.Competition.HumanNavigation.TaskInfo>();
+				foreach (TaskInfo info in HumanNaviConfig.Instance.configInfo.taskInfoList)
 				{
 					taskInfoList.Add(info);
 					SIGVerseLogger.Info("Environment_ID: " + info.environment + ", Target_object_name: " + info.target + ", Destination: " + info.destination);
+
+					if(this.environments.Where(obj => obj.name == info.environment).SingleOrDefault() == null)
+					{
+						SIGVerseLogger.Error("Environment not found.");
+					}
 				}
 
 				/////
@@ -165,22 +167,33 @@ namespace SIGVerse.Competition.HumanNavigation
 				//Debug.Log(this.environmentPrefabs.Where(obj => obj.name == info.environment).SingleOrDefault());
 				/////
 
-				this.mainMenu = GameObject.FindGameObjectWithTag("MainMenu");
-				this.panelMainController = mainMenu.GetComponent<PanelMainController>();
+				// Robot
+				this.ResetRobot();
 
-
+				// Playback system
+				this.playbackTransformRecorder = this.playbackSystem.GetComponent<HumanNaviPlaybackTransformRecorder>();
+				this.playbackTransformPlayer   = this.playbackSystem.GetComponent<HumanNaviPlaybackTransformPlayer>();
+				this.playbackEventRecorder     = this.playbackSystem.GetComponent<HumanNaviPlaybackEventRecorder>();
+			
+				// Avatar 
 				this.initialAvatarPosition = this.avatar.transform.position;
 				this.initialAvatarRotation = this.avatar.transform.eulerAngles;
+
+				// GUI
+				this.mainMenu = GameObject.FindGameObjectWithTag("MainMenu");
+				this.panelMainController = mainMenu.GetComponent<PanelMainController>();
 
 				this.noticePanelForAvatar.SetActive(false);
 				this.noticeTextForAvatar.text = "";
 
+				// MessageMap
 				this.receivedMessageMap = new Dictionary<string, bool>();
 				this.receivedMessageMap.Add(MsgIamReady, false);
 				this.receivedMessageMap.Add(MsgGetAvatarPose, false);
 				this.receivedMessageMap.Add(MsgConfirmSpeechState, false);
 				this.receivedMessageMap.Add(MsgGiveUp, false);
 
+				// ROSBridge
 				this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
 				SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
 			}
@@ -195,7 +208,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		void Start()
 		{
-			this.environment = null;
+			this.currentEnvironment = null;
 
 			this.step = Step.Initialize;
 
@@ -382,7 +395,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.currentTaskInfo = taskInfoList[HumanNaviConfig.Instance.numberOfTrials - 1];
 
 			this.taskInfoForRobot = new SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo();
-			this.taskInfoForRobot.environment_id = this.environment.name;
+			this.taskInfoForRobot.environment_id = this.currentEnvironment.name;
 			this.SetObjectListToHumanNaviTaskInfo();
 			this.SetDestinationToHumanNaviTaskInfo();
 
@@ -447,37 +460,39 @@ namespace SIGVerse.Competition.HumanNavigation
 				return;
 			}
 
-			if (this.robot != null)
+			if (this.currentRobot != null)
 			{
-				this.robot.SetActive(false); // For guidance message panel controller
-				Destroy(this.robot);
+				this.currentRobot.SetActive(false); // For guidance message panel controller
+				Destroy(this.currentRobot);
 			}
 
-			this.robot = MonoBehaviour.Instantiate(this.robotPrefab);
-			this.robot.name = this.robotName;
-			this.robot.SetActive(true);
+			this.currentRobot = MonoBehaviour.Instantiate(this.robot);
+			this.currentRobot.name = this.robotName;
+			this.currentRobot.SetActive(true);
 		}
 
 		private void SetDefaultEnvironment()
 		{
-			if (this.environment != null)
+			if (this.currentEnvironment != null)
 			{
-				Destroy(this.environment);
+				this.currentEnvironment.SetActive(false);
+				Destroy(this.currentEnvironment);
 			}
-			this.environment = MonoBehaviour.Instantiate(this.environmentPrefabs.Where(obj => obj.name == "Default_Environment").SingleOrDefault());
-			this.environment.name = "Default_Environment";
-			this.environment.SetActive(true);
+			this.currentEnvironment = MonoBehaviour.Instantiate(this.environments.Where(obj => obj.name == "Default_Environment").SingleOrDefault());
+			this.currentEnvironment.name = "Default_Environment";
+			this.currentEnvironment.SetActive(true);
 		}
 
 		private void ResetEnvironment()
 		{
-			if (this.environment != null)
+			if (this.currentEnvironment != null)
 			{
-				Destroy(this.environment);
+				this.currentEnvironment.SetActive(false);
+				Destroy(this.currentEnvironment);
 			}
-			this.environment = MonoBehaviour.Instantiate(this.environmentPrefabs.Where(obj => obj.name == this.taskInfoList[HumanNaviConfig.Instance.numberOfTrials - 1].environment).SingleOrDefault());
-			this.environment.name = this.environmentPrefabs.Where(obj => obj.name == this.taskInfoList[HumanNaviConfig.Instance.numberOfTrials - 1].environment).SingleOrDefault().name;
-			this.environment.SetActive(true);
+			this.currentEnvironment = MonoBehaviour.Instantiate(this.environments.Where(obj => obj.name == this.taskInfoList[HumanNaviConfig.Instance.numberOfTrials - 1].environment).SingleOrDefault());
+			this.currentEnvironment.name = this.taskInfoList[HumanNaviConfig.Instance.numberOfTrials - 1].environment;
+			this.currentEnvironment.SetActive(true);
 		}
 
 		private void SetObjectListToHumanNaviTaskInfo()
@@ -557,7 +572,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void TimeIsUp()
 		{
-			string strTimeup = "Time is up";
+			string strTimeup = "Time_is_up";
 			this.SendRosHumanNaviMessage(MsgTaskFailed, strTimeup);
 			//base.StartCoroutine(this.ShowNoticeMessagePanel(strTimeup, 3.0f));
 			this.SendPanelNotice(strTimeup, 100, PanelNoticeStatus.Red);
@@ -608,10 +623,10 @@ namespace SIGVerse.Competition.HumanNavigation
 				}
 				else if (humanNaviMsg.message == MsgConfirmSpeechState)
 				{
-					if (this.robot != null && this.isDuringTrial)
+					if (this.currentRobot != null && this.isDuringTrial)
 					{
 						string detail;
-						if (this.robot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesis>().IsSpeaking()) { detail = "Is_speaking"; }
+						if (this.currentRobot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesis>().IsSpeaking()) { detail = "Is_speaking"; }
 						else                                                                                                 { detail = "Is_not_speaking"; }
 						this.SendRosHumanNaviMessage(MsgSpeechState, detail);
 					}
@@ -971,7 +986,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				this.interruptedReason = HumanNaviModerator.ReasonGiveUp;
 
-				string strGiveup = "Give up";
+				string strGiveup = "Give_up";
 				this.SendRosHumanNaviMessage(MsgTaskFailed, strGiveup);
 				//base.StartCoroutine(this.ShowNoticeMessagePanel(strGiveup, 3.0f));
 				this.SendPanelNotice(strGiveup, 100, PanelNoticeStatus.Red);

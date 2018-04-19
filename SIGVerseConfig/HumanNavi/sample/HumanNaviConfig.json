@@ -1,9 +1,9 @@
 {
 	"recoverUsingScoreFile": false,
 	"maxNumberOfTrials": 2,
-	"taskInfo":[
+	"playbackType": 0,
+	"taskInfoList":[
 		{"environment":"Example_Environment_01","target":"petbottle_500ml_empty_01","destination":"trashbox_01"},
 		{"environment":"Example_Environment_01","target":"pink_mugcup_01","destination":"cabinet_A_lower_03"}
-		],
-	"playbackType": 0
+	]
 }
