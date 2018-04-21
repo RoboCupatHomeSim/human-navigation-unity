@@ -24,6 +24,9 @@ namespace SIGVerse.Competition.HumanNavigation
 		public string language = "409";
 		public string gender = "Female";
 
+		[HeaderAttribute("Guidance message param")]
+		public int maxCharcters = 400;
+
 		private List<GameObject> notificationDestinations;
 
 		private SpVoice voice;
@@ -90,7 +93,19 @@ namespace SIGVerse.Competition.HumanNavigation
 				return false;
 			}
 
-			this.voice.Speak(guidanceMessage.message, SpeechVoiceSpeakFlags.SVSFlagsAsync);
+			string messageString;
+
+			if(guidanceMessage.message.Length > maxCharcters)
+			{
+				messageString = guidanceMessage.message.Substring(0, maxCharcters);
+				SIGVerseLogger.Info("Length of guidance message is over 400 charcters.");
+			}
+			else
+			{
+				messageString = guidanceMessage.message;
+			}
+
+			this.voice.Speak(messageString, SpeechVoiceSpeakFlags.SVSFlagsAsync);
 
 			foreach (GameObject destination in this.notificationDestinations)
 			{
@@ -98,7 +113,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				(
 					target: destination,
 					eventData: null,
-					functor: (reciever, eventData) => reciever.OnSpeakMessage(guidanceMessage.message, guidanceMessage.display_type)
+					functor: (reciever, eventData) => reciever.OnSpeakMessage(messageString, guidanceMessage.display_type)
 				);
 			}
 
