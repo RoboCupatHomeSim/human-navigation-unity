@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public class GuidanceMessagePanelController : MonoBehaviour, ISpeakMessageHandler, IStopSpeakingHandler
+	public class GuidanceMessagePanelController : MonoBehaviour, ISpeakGuidanceMessageHandler, IStopSpeakingHandler
 	{
 		private List<GuidanceMessagePanelIdentifier> panelIdentifiers;
 
@@ -33,14 +33,14 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public void OnSpeakMessage(string message, string displayType = "All")
+		public void OnSpeakGuidanceMessage(GuidanceMessageStatus guidanceMessageStatus)
 		{
 			foreach (GuidanceMessagePanelIdentifier panelIdentifier in this.panelIdentifiers)
 			{
-				if (displayType == GuidanceMessageDisplayType.All.ToString())
+				if (guidanceMessageStatus.DisplayType == GuidanceMessageDisplayType.All.ToString())
 				{
 					panelIdentifier.gameObject.SetActive(true);
-					panelIdentifier.guidanceMessageText.text = message;
+					panelIdentifier.guidanceMessageText.text = guidanceMessageStatus.Message;
 				}
 				else
 				{
@@ -48,19 +48,19 @@ namespace SIGVerse.Competition.HumanNavigation
 					{
 						case GuidanceMessagePanelIdentifier.GuidanceMessagePanelType.OnHMD:
 						{
-							if (displayType == GuidanceMessageDisplayType.AvatarOnly.ToString())
+							if (guidanceMessageStatus.DisplayType == GuidanceMessageDisplayType.AvatarOnly.ToString())
 							{
 								panelIdentifier.gameObject.SetActive(true);
-								panelIdentifier.guidanceMessageText.text = message;
+								panelIdentifier.guidanceMessageText.text = guidanceMessageStatus.Message;
 							}
 							break;
 						}
 						case GuidanceMessagePanelIdentifier.GuidanceMessagePanelType.OnRobot:
 						{
-							if (displayType == GuidanceMessageDisplayType.RobotOnly.ToString())
+							if (guidanceMessageStatus.DisplayType == GuidanceMessageDisplayType.RobotOnly.ToString())
 							{
 								panelIdentifier.gameObject.SetActive(true);
-								panelIdentifier.guidanceMessageText.text = message;
+								panelIdentifier.guidanceMessageText.text = guidanceMessageStatus.Message;
 							}
 							break;
 						}

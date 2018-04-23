@@ -39,7 +39,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		}
 	}
 
-	public class HumanNaviScoreManager : MonoBehaviour, IHSRCollisionHandler, ISpeakMessageHandler
+	public class HumanNaviScoreManager : MonoBehaviour, IHSRCollisionHandler, ISpeakGuidanceMessageHandler
 	{
 		private const string TimeFormat = "#####0";
 		private const float DefaultTimeScale = 1.0f;
@@ -52,6 +52,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		[HeaderAttribute("Speec Count")]
 		public int LimitOfSpeechCount = 10;
+
+		public List<GameObject> scoreNotificationDestinations;
 
 		public List<string> timeIsUpDestinationTags;
 
@@ -130,19 +132,50 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void AddScore(Score.Type scoreType)
 		{
-			this.score = Mathf.Clamp(this.score + Score.GetScore(scoreType), Score.MinScore, Score.MaxScore);
+			int additionalScore = Score.GetScore(scoreType);
+
+			this.score = Mathf.Clamp(this.score + additionalScore, Score.MinScore, Score.MaxScore);
+
 			this.UpdateScoreText(this.score);
 
 			SIGVerseLogger.Info("Score (grasp) add [" + Score.GetScore(scoreType) + "], Challenge " + HumanNaviConfig.Instance.numberOfTrials + " Score=" + this.score);
+
+			// Send the Score Notification
+			ScoreStatus scoreStatus = new ScoreStatus(additionalScore, this.score, HumanNaviConfig.Instance.GetTotalScore());
+
+			foreach (GameObject scoreNotificationDestination in this.scoreNotificationDestinations)
+			{
+				ExecuteEvents.Execute<IScoreHandler>
+				(
+					target: scoreNotificationDestination,
+					eventData: null,
+					functor: (reciever, eventData) => reciever.OnScoreChange(scoreStatus)
+				);
+			}
+
 		}
 
 		public void AddTimeScore(float elapsedTime, float timeLimit)
 		{
-			int timeScore = Mathf.FloorToInt(Score.GetScore(Score.Type.CompletionTime) * ((timeLimit - elapsedTime) / timeLimit));
-			this.score = Mathf.Clamp(this.score + timeScore, Score.MinScore, Score.MaxScore);
+			int additionalScore = Mathf.FloorToInt(Score.GetScore(Score.Type.CompletionTime) * ((timeLimit - elapsedTime) / timeLimit));
+
+			this.score = Mathf.Clamp(this.score + additionalScore, Score.MinScore, Score.MaxScore);
 			this.UpdateScoreText(this.score);
 
-			SIGVerseLogger.Info("Score (time) add [" + timeScore + "], Challenge " + HumanNaviConfig.Instance.numberOfTrials + " Score=" + this.score);
+			SIGVerseLogger.Info("Score (time) add [" + additionalScore + "], Challenge " + HumanNaviConfig.Instance.numberOfTrials + " Score=" + this.score);
+
+			// Send the Score Notification
+			ScoreStatus scoreStatus = new ScoreStatus(additionalScore, this.score, HumanNaviConfig.Instance.GetTotalScore());
+
+			foreach (GameObject scoreNotificationDestination in this.scoreNotificationDestinations)
+			{
+				ExecuteEvents.Execute<IScoreHandler>
+				(
+					target: scoreNotificationDestination,
+					eventData: null,
+					functor: (reciever, eventData) => reciever.OnScoreChange(scoreStatus)
+				);
+			}
 		}
 
 		public void AddTimeScoreOfGrasp()
@@ -216,7 +249,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.AddScore(Score.Type.CollisionEnter);
 		}
 
-		public void OnSpeakMessage(string message, string displayType)
+		public void OnSpeakGuidanceMessage(GuidanceMessageStatus guidanceMessageStatus)
 		{
 			this.speechCount++;
 

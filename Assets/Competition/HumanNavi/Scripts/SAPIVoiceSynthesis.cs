@@ -8,17 +8,27 @@ using SIGVerse.Common;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public interface ISpeakMessageHandler : IEventSystemHandler
+	public interface IPlaybackGuidanceMessageHandler : IEventSystemHandler
 	{
-		void OnSpeakMessage(string message, string displayType);
+		void OnPlaybackGuidanceMessage(GuidanceMessageStatus guidanceMessageStatus);
 	}
+
+	public interface ISpeakGuidanceMessageHandler : IEventSystemHandler
+	{
+		void OnSpeakGuidanceMessage(GuidanceMessageStatus guidanceMessageStatus);
+	}
+
+	//public interface ISpeakMessageHandler : IEventSystemHandler
+	//{
+	//	void OnSpeakMessage(string message, string displayType);
+	//}
 
 	public interface IStopSpeakingHandler : IEventSystemHandler
 	{
 		void OnStopSpeaking();
 	}
 
-	public class SAPIVoiceSynthesis : MonoBehaviour
+	public class SAPIVoiceSynthesis : MonoBehaviour, IPlaybackGuidanceMessageHandler
 	{
 		[HeaderAttribute("SAPI")]
 		public string language = "409";
@@ -59,6 +69,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.notificationDestinations.Add(GameObject.FindObjectOfType<HumanNaviScoreManager>().gameObject);
 			this.notificationDestinations.Add(GameObject.FindObjectOfType<GuidanceMessagePanelController>().gameObject);
+			this.notificationDestinations.Add(GameObject.FindObjectOfType<HumanNaviPlaybackCommon>().gameObject);
 
 			this.isSpeaking = false;
 		}
@@ -85,7 +96,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public bool SpeakMessage(SIGVerse.RosBridge.human_navigation.HumanNaviGuidanceMsg guidanceMessage)
+		public bool SpeakMessage(string message, string displayType)
 		{
 			if (this.voice.Status.RunningState == SpeechRunState.SRSEIsSpeaking)
 			{
@@ -93,27 +104,38 @@ namespace SIGVerse.Competition.HumanNavigation
 				return false;
 			}
 
-			string messageString;
+			string truncatedMessage;
 
-			if(guidanceMessage.message.Length > maxCharcters)
+			if(message.Length > maxCharcters)
 			{
-				messageString = guidanceMessage.message.Substring(0, maxCharcters);
+				truncatedMessage = message.Substring(0, maxCharcters);
 				SIGVerseLogger.Info("Length of guidance message is over 400 charcters.");
 			}
 			else
 			{
-				messageString = guidanceMessage.message;
+				truncatedMessage = message;
 			}
 
-			this.voice.Speak(messageString, SpeechVoiceSpeakFlags.SVSFlagsAsync);
+			this.voice.Speak(truncatedMessage, SpeechVoiceSpeakFlags.SVSFlagsAsync);
 
+			//foreach (GameObject destination in this.notificationDestinations)
+			//{
+			//	ExecuteEvents.Execute<ISpeakMessageHandler>
+			//	(
+			//		target: destination,
+			//		eventData: null,
+			//		functor: (reciever, eventData) => reciever.OnSpeakMessage(truncatedMessage, displayType)
+			//	);
+			//}
+
+			// For recording
 			foreach (GameObject destination in this.notificationDestinations)
 			{
-				ExecuteEvents.Execute<ISpeakMessageHandler>
+				ExecuteEvents.Execute<ISpeakGuidanceMessageHandler>
 				(
 					target: destination,
 					eventData: null,
-					functor: (reciever, eventData) => reciever.OnSpeakMessage(messageString, guidanceMessage.display_type)
+					functor: (reciever, eventData) => reciever.OnSpeakGuidanceMessage(new GuidanceMessageStatus(message, displayType))
 				);
 			}
 
@@ -124,7 +146,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void SetLanguage(string language, string gender)
 		{
-			if (language == "English") { language = "409"; }
+			if      (language == "English")  { language = "409"; }
 			else if (language == "Japanese") { language = "411"; }
 			else { return; }
 
@@ -143,7 +165,12 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnReceiveROSHumanNaviGuidanceMessage(SIGVerse.RosBridge.human_navigation.HumanNaviGuidanceMsg guidanceMsg)
 		{
-			this.SpeakMessage(guidanceMsg);
+			this.SpeakMessage(guidanceMsg.message, guidanceMsg.display_type);
+		}
+
+		public void OnPlaybackGuidanceMessage(GuidanceMessageStatus guidanceMessageStatus)
+		{
+			this.SpeakMessage(guidanceMessageStatus.Message, guidanceMessageStatus.DisplayType);
 		}
 	}
 }
