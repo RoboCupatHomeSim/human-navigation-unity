@@ -375,7 +375,8 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.currentTaskInfo = this.sessionManager.GetCurrentTaskInfo();
 
 			this.taskInfoForRobot = new SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo();
-			this.taskInfoForRobot.environment_id = this.sessionManager.GetCurrentEnvironment().name;
+			string currentEnvironmentName = this.sessionManager.GetCurrentEnvironment().name;
+			this.taskInfoForRobot.environment_id = currentEnvironmentName.Substring(0, currentEnvironmentName.Length - 3);
 			this.SetObjectListToHumanNaviTaskInfo();
 			this.SetDestinationToHumanNaviTaskInfo();
 
@@ -450,14 +451,14 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				if (graspableObject.name == currentTaskInfo.target)
 				{
-					taskInfoForRobot.target_object.name = graspableObject.name;
+					taskInfoForRobot.target_object.name = graspableObject.name.Substring(0, graspableObject.name.Length - 3);
 					taskInfoForRobot.target_object.position = positionInROS;
 				}
 				else
 				{
 					SIGVerse.RosBridge.human_navigation.HumanNaviObjectInfo objInfo = new SIGVerse.RosBridge.human_navigation.HumanNaviObjectInfo
 					{
-						name = graspableObject.name,
+						name = graspableObject.name.Substring(0, graspableObject.name.Length - 3),
 						position = positionInROS
 					};
 
