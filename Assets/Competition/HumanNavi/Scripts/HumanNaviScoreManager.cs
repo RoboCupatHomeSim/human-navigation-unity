@@ -198,6 +198,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.speechCount = 0;
 
+			this.score = 0;
+
 			this.UpdateScoreText(this.score);
 		}
 
