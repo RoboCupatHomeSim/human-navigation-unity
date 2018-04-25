@@ -28,7 +28,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			switch(scoreType)
 			{
 				case Score.Type.CorrectObjectIsGrasped    : { return +20; }
-				case Score.Type.IncorrectObjectIsGrasped  : { return -10; }
+				case Score.Type.IncorrectObjectIsGrasped  : { return  -5; }
 				case Score.Type.TargetObjectInDestination : { return +20; }
 				case Score.Type.CompletionTime            : { return +30; }
 				case Score.Type.CollisionEnter            : { return -10; }
