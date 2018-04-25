@@ -4,6 +4,6 @@
 	"playbackType": 0,
 	"taskInfoList":[
 		{"environment":"Example_Environment_01","target":"small_empty_plastic_bottle_01","destination":"trashcan_01"},
-		{"environment":"Example_Environment_01","target":"pink_mugcup_01","destination":"wall_cabinet_lower_03"}
+		{"environment":"Example_Environment_01","target":"pink_cup_01","destination":"wall_cabinet_lower_03"}
 	]
 }
