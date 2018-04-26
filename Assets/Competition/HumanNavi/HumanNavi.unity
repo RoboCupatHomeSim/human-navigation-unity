@@ -3101,7 +3101,7 @@ GameObject:
   - component: {fileID: 563410414}
   - component: {fileID: 563410413}
   m_Layer: 0
-  m_Name: small_plastic_bottle_01
+  m_Name: plastic_bottle_01
   m_TagString: Graspables
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3530,7 +3530,7 @@ GameObject:
   - component: {fileID: 603420512}
   - component: {fileID: 603420511}
   m_Layer: 0
-  m_Name: small_plastic_bottle_01
+  m_Name: plastic_bottle_01
   m_TagString: Graspables
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8606,7 +8606,7 @@ GameObject:
   - component: {fileID: 1420004258}
   - component: {fileID: 1420004257}
   m_Layer: 0
-  m_Name: small_empty_plastic_bottle_01
+  m_Name: empty_plastic_bottle_01
   m_TagString: Graspables
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11159,7 +11159,7 @@ GameObject:
   - component: {fileID: 1824336833}
   - component: {fileID: 1824336832}
   m_Layer: 0
-  m_Name: small_empty_plastic_bottle_01
+  m_Name: empty_plastic_bottle_01
   m_TagString: Graspables
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
