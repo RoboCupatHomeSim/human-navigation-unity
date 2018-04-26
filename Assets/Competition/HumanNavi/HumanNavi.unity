@@ -5810,7 +5810,8 @@ MonoBehaviour:
   bodyAnchor: {fileID: 1996027568}
   fixedParts:
   - {fileID: 584458367}
-  animatorMoveSpeed: 4
+  moveSpeedByController: 1
+  moveSpeedByHmd: 5
 --- !u!95 &923700003
 Animator:
   serializedVersion: 3
