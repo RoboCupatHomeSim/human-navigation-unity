@@ -72,13 +72,10 @@ namespace SIGVerse.Competition.HumanNavigation
 
 	public class PlaybackGuidanceMessageEventController : PlaybackEventControllerBase<PlaybackGuidanceMessageEventList, PlaybackGuidanceMessageEvent>
 	{
-		//private TrialPlaybackPlayer playbackPlayer;
-		//private GuidanceMessageStatus guidanceMessageStatus;
 		private GameObject destination;
 
 		public PlaybackGuidanceMessageEventController(GameObject destination)
 		{
-			//this.playbackPlayer = playbackPlayer;
 			this.destination = destination;
 		}
 

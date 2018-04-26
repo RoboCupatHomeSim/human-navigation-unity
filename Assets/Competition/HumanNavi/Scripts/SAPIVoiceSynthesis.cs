@@ -18,11 +18,6 @@ namespace SIGVerse.Competition.HumanNavigation
 		void OnSpeakGuidanceMessage(GuidanceMessageStatus guidanceMessageStatus);
 	}
 
-	//public interface ISpeakMessageHandler : IEventSystemHandler
-	//{
-	//	void OnSpeakMessage(string message, string displayType);
-	//}
-
 	public interface IStopSpeakingHandler : IEventSystemHandler
 	{
 		void OnStopSpeaking();
@@ -40,8 +35,6 @@ namespace SIGVerse.Competition.HumanNavigation
 		private List<GameObject> notificationDestinations;
 
 		private SpVoice voice;
-
-		//private Text guidanceMessageText;
 
 		bool isSpeaking;
 
@@ -62,8 +55,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			ISpeechObjectTokens tokens = tokenCat.EnumerateTokens("Language=" + this.language + "; Gender=" + this.gender, null);
 
 			this.voice.Voice = tokens.Item(0);
-
-			//this.scene_recorder = GameObject.Find(PlaybackSystemParam.WorldRecorderName);
 
 			this.notificationDestinations = new List<GameObject>();
 
@@ -117,16 +108,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 
 			this.voice.Speak(truncatedMessage, SpeechVoiceSpeakFlags.SVSFlagsAsync);
-
-			//foreach (GameObject destination in this.notificationDestinations)
-			//{
-			//	ExecuteEvents.Execute<ISpeakMessageHandler>
-			//	(
-			//		target: destination,
-			//		eventData: null,
-			//		functor: (reciever, eventData) => reciever.OnSpeakMessage(truncatedMessage, displayType)
-			//	);
-			//}
 
 			// For recording
 			foreach (GameObject destination in this.notificationDestinations)

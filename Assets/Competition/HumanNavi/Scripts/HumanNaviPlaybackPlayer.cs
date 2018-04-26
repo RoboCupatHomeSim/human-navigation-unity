@@ -28,7 +28,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				Transform robot = GameObject.FindGameObjectWithTag("Robot").transform;
 
-//				robot.Find("CompetitionScripts").gameObject.SetActive(false);
+				//robot.Find("CompetitionScripts").gameObject.SetActive(false);
 				robot.Find("RosBridgeScripts")  .gameObject.SetActive(false);
 
 				Transform moderator = GameObject.FindGameObjectWithTag("Moderator").transform;

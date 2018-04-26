@@ -23,33 +23,14 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		protected override void Awake()
 		{
-			// Video Player
-			this.targetVideoPlayers = new List<VideoPlayer>();
-
 			//base.Awake();
 
-			//// Robot
-			//Transform robot = GameObject.FindGameObjectWithTag("Robot").transform;
-
-			//this.targetTransforms.Add(robot);
-
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.BaseFootPrintName));
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.ArmLiftLinkName));
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.ArmFlexLinkName));
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.ArmRollLinkName));
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.WristFlexLinkName));
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.WristRollLinkName));
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.HeadPanLinkName));
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.HeadTiltLinkName));
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.TorsoLiftLinkName));
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.HandLProximalLinkName));
-			//this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.HandRProximalLinkName));
+			// Video Player
+			this.targetVideoPlayers = new List<VideoPlayer>();
 		}
 
 		public void SetPlaybackTargets()
 		{
-			//HumanNaviPlaybackCommon common = this.GetComponent<HumanNaviPlaybackCommon>();
-
 			this.targetTransforms = new List<Transform>();
 
 			// Robot
@@ -97,8 +78,6 @@ namespace SIGVerse.Competition.HumanNavigation
 				}
 			}
 		}
-
-
 	}
 }
 

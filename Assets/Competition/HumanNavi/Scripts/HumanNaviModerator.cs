@@ -43,7 +43,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			SendTaskInfo,
 			WaitForEndOfSession,
 			WaitForNextTrial,
-			//Playback,
 		};
 
 		//-----------------------------
@@ -67,7 +66,6 @@ namespace SIGVerse.Competition.HumanNavigation
 		public UnityEngine.UI.Text noticeTextForAvatar;
 
 		[HeaderAttribute("Menu")]
-//		public HumanNaviMenu humanNaviMenu;
 		public Camera birdviewCamera;
 		public GameObject startTrialPanel;
 		public GameObject goToNextTrialPanel;
@@ -89,7 +87,6 @@ namespace SIGVerse.Competition.HumanNavigation
 		private GameObject mainMenu;
 		private PanelMainController panelMainController;
 
-		//private List<SIGVerse.Competition.HumanNavigation.TaskInfo> taskInfoList;
 		private SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo taskInfoForRobot;
 		private SIGVerse.Competition.HumanNavigation.TaskInfo currentTaskInfo;
 
@@ -108,15 +105,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private StepTimer stepTimer;
 
-		//private GameObject worldRecorder;
 		private HumanNaviPlaybackRecorder playbackRecorder;
-		//private HumanNaviPlaybackPlayer playbackPlayer;
-		//private HumanNaviPlaybackTransformRecorder playbackTransformRecorder;
-		//private HumanNaviPlaybackTransformPlayer playbackTransformPlayer;
-		//private HumanNaviPlaybackEventRecorder playbackEventRecorder;
-
-		//-----------------------------
-
 
 		//-----------------------------
 
@@ -127,26 +116,8 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			try
 			{
-				//this.sessionManager = new HumanNaviSessionManager();
-
- 			//	this.sessionManager.ClearExistingEnvironments();	// Environments
-				//this.sessionManager.ClearExistingRobots();          // Robot
-
-
-				// TaskInfo
-				//this.sessionManager.InitializeTaskInfo();
-
-
-
-				// Robot
-				//this.sessionManager.ResetRobot();
-
 				// Playback system
 				this.playbackRecorder = this.playbackManager.GetComponent<HumanNaviPlaybackRecorder>();
-				//this.playbackPlayer   = this.playbackManager.GetComponent<HumanNaviPlaybackPlayer>();
-				//this.playbackTransformRecorder = this.playbackSystem.GetComponent<HumanNaviPlaybackTransformRecorder>();
-				//this.playbackTransformPlayer   = this.playbackSystem.GetComponent<HumanNaviPlaybackTransformPlayer>();
-				//this.playbackEventRecorder     = this.playbackSystem.GetComponent<HumanNaviPlaybackEventRecorder>();
 
 				// Avatar 
 				this.initialAvatarPosition = this.avatar.transform.position;
@@ -187,8 +158,6 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			this.step = Step.Initialize;
 
-			//this.sessionManager.SetDefaultEnvironment();
-
 			this.ShowStartTaskPanel();
 
 			this.interruptedReason = string.Empty;
@@ -212,7 +181,6 @@ namespace SIGVerse.Competition.HumanNavigation
 				{
 					SIGVerseLogger.Info("Failed '" + this.interruptedReason + "'");
 					this.SendPanelNotice("Failed\n" + interruptedReason.Replace('_', ' '), 100, PanelNoticeStatus.Red);
-					//this.GoToNextTaskTaskFailed(this.interruptedReason);
 					this.TimeIsUp();
 				}
 
@@ -254,12 +222,6 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.TrialStart:
 					{
-						//if (HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypePlay)
-						//{
-						//	this.StartPlaybackPlay();
-						//	this.step = Step.Playback; // TODO
-						//}
-
 						SIGVerseLogger.Info("Trial start!");
 						//this.RecordEvent("Trial_start");
 
@@ -275,12 +237,6 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.WaitForIamReady:
 					{
-						//if (HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypePlay)
-						//{
-						//	this.StartPlaybackPlay();
-						//	this.step = Step.Playback; // TODO
-						//}
-
 						if (this.receivedMessageMap[MsgIamReady])
 						{
 							this.StartPlaybackRecord();
@@ -294,7 +250,6 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.SendTaskInfo:
 					{
-						//this.pubTaskInfo.SendROSMessage(this.taskInfoForRobot);
 						//this.RecordEventROSMessageSent("TaskInfo", "");
 						this.SendRosTaskInfoMessage(this.taskInfoForRobot);
 
@@ -318,7 +273,6 @@ namespace SIGVerse.Competition.HumanNavigation
 							SIGVerseLogger.Info("Go to next trial");
 							//this.RecordEvent("Go_to_next_trial");
 
-							//if (HumanNaviConfig.Instance.configInfo.playbackType != HumanNaviPlaybackParam.PlaybackTypePlay) // TODO: delete
 							this.SendRosHumanNaviMessage(MsgGoToNextTrial, "");
 
 							this.step = Step.Initialize;
@@ -326,10 +280,6 @@ namespace SIGVerse.Competition.HumanNavigation
 
 						break;
 					}
-					//case Step.Playback:
-					//{
-					//	break;
-					//}
 				}
 			}
 			catch (Exception exception)
@@ -392,7 +342,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			if (HumanNaviConfig.Instance.numberOfTrials == HumanNaviConfig.Instance.configInfo.maxNumberOfTrials)
 			{
 				this.SendRosHumanNaviMessage(MsgMissionComplete, "");
-				//base.StartCoroutine(this.ShowNoticeMessagePanel("Mission complete", 5.0f));
 				this.SendPanelNotice("Mission complete", 100, PanelNoticeStatus.Green);
 				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Mission complete", 5.0f));
 
@@ -408,7 +357,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				base.StartCoroutine(this.ShowGotoNextPanel(3.0f));
 			}
 
-			this.StopPlayback();
+			this.StopPlaybackRecord();
 
 			this.isDuringTrial = false;
 			this.interruptedReason = string.Empty;
@@ -514,7 +463,6 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			string strTimeup = "Time_is_up";
 			this.SendRosHumanNaviMessage(MsgTaskFailed, strTimeup);
-			//base.StartCoroutine(this.ShowNoticeMessagePanel(strTimeup, 3.0f));
 			this.SendPanelNotice(strTimeup, 100, PanelNoticeStatus.Red);
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strTimeup, 3.0f));
 
@@ -632,17 +580,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		//public void StartPlaybackPlay()
-		//{
-		//	if (HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypePlay)
-		//	{
-		//		bool isStarted = this.playbackTransformPlayer.Play();
-
-		//		if (!isStarted) { SIGVerseLogger.Warn("Cannot start the world playback playing"); }
-		//	}
-		//}
-
-		public void StopPlayback()
+		public void StopPlaybackRecord()
 		{
 			if (HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypeRecord)
 			{
@@ -653,12 +591,6 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				if (!isStopped) { SIGVerseLogger.Warn("Cannot stop the world playback recording"); }
 			}
-			//if (HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypePlay)
-			//{
-			//	bool isStopped = this.playbackTransformPlayer.Stop();
-
-			//	if (!isStopped) { SIGVerseLogger.Warn("Cannot stop the world playback playing"); }
-			//}
 		}
 
 		//private void RecordEventObjectGrasped(string objectName, string whichHandUsed)
@@ -701,64 +633,6 @@ namespace SIGVerse.Competition.HumanNavigation
 		//	);
 		//}
 
-
-
-		//private void StartRecording()
-		//{
-		//	if (HumanNaviConfig.Instance.configInfo.playbackType == HumanNaviPlaybackParam.PlaybackTypeRecord)
-		//	{
-		//		ExecuteEvents.Execute<IPlaybackDataHandler>
-		//		(
-		//			target: this.worldRecorder,
-		//			eventData: null,
-		//			functor: (reciever, eventData) => reciever.OnRecord(HumanNaviConfig.Instance.numberOfTrials)
-		//		);
-		//	}
-		//}
-
-		//private void StopRecording()
-		//{
-		//	if (HumanNaviConfig.Instance.configInfo.playbackType == HumanNaviPlaybackParam.PlaybackTypeRecord)
-		//	{
-		//		ExecuteEvents.Execute<IPlaybackDataHandler>
-		//		(
-		//			target: this.worldRecorder,
-		//			eventData: null,
-		//			functor: (reciever, eventData) => reciever.OnStop()
-		//		);
-		//	}
-		//}
-
-		//private void StartPlaying()
-		//{
-		//	if (HumanNaviConfig.Instance.configInfo.playbackType == HumanNaviPlaybackParam.PlaybackTypePlay)
-		//	{
-		//		ExecuteEvents.Execute<IPlaybackPlayerDataHandler>
-		//		(
-		//			target: this.worldRecorder,
-		//			eventData: null,
-		//			functor: (reciever, eventData) => reciever.OnPlay()
-		//			//functor: (reciever, eventData) => reciever.OnPlay(HumanNaviConfig.Instance.numberOfTrials)
-		//		);
-
-		//		this.step = Step.WaitForTaskFinished;
-		//	}
-		//}
-
-		//private void StopPlaying()
-		//{
-		//	if (HumanNaviConfig.Instance.configInfo.playbackType == HumanNaviPlaybackParam.PlaybackTypePlay)
-		//	{
-		//		ExecuteEvents.Execute<IPlaybackPlayerDataHandler>
-		//		(
-		//			target: this.worldRecorder,
-		//			eventData: null,
-		//			functor: (reciever, eventData) => reciever.OnStop()
-		//		);
-		//	}
-
-		//	this.step = Step.WaitForNextTask;
-		//}
 
 		//private void addCommandLog(string name, string data)
 		//{
@@ -835,7 +709,6 @@ namespace SIGVerse.Competition.HumanNavigation
 
 						//this.RecordEventObjectGrasped(whichHandUsed, this.currentTaskInfo.target);
 
-
 						if (hand.CurrentlyInteracting.name == this.currentTaskInfo.target)
 						{
 							if (!this.isTargetAlreadyGrasped)
@@ -843,7 +716,6 @@ namespace SIGVerse.Competition.HumanNavigation
 								SIGVerseLogger.Info("Target object is grasped");
 								//this.RecordEvent("Target_object_is_grasped");
 
-								//base.StartCoroutine(this.ShowNoticeMessagePanel("Target object is grasped", 3.0f));
 								this.SendPanelNotice("Target object is grasped", 100, PanelNoticeStatus.Green);
 
 								this.scoreManager.AddScore(Score.Type.CorrectObjectIsGrasped);
@@ -859,7 +731,6 @@ namespace SIGVerse.Competition.HumanNavigation
 								SIGVerseLogger.Info("Wrong object is grasped");
 								//this.RecordEvent("Wrong_object_is_grasped");
 
-								//base.StartCoroutine(this.ShowNoticeMessagePanel("Wrong object is grasped", 3.0f));
 								this.SendPanelNotice("Wrong object is grasped", 100, PanelNoticeStatus.Red);
 
 								this.scoreManager.AddScore(Score.Type.IncorrectObjectIsGrasped);
@@ -908,7 +779,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.scoreManager.AddTimeScoreOfPlacement();
 
 			this.SendRosHumanNaviMessage(MsgTaskSucceeded, "");
-			//base.StartCoroutine(this.ShowNoticeMessagePanel("Task succeeded", 3.0f));
 			this.SendPanelNotice("Task succeeded", 100, PanelNoticeStatus.Green);
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Task succeeded", 3.0f));
 
@@ -922,14 +792,12 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnGiveUp()
 		{
-			//if (this.step > Step.TrialStart && this.step < Step.WaitNextTrial)
 			if (this.isDuringTrial)
 			{
 				this.interruptedReason = HumanNaviModerator.ReasonGiveUp;
 
 				string strGiveup = "Give_up";
 				this.SendRosHumanNaviMessage(MsgTaskFailed, strGiveup);
-				//base.StartCoroutine(this.ShowNoticeMessagePanel(strGiveup, 3.0f));
 				this.SendPanelNotice(strGiveup, 100, PanelNoticeStatus.Red);
 				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strGiveup, 3.0f));
 
@@ -963,14 +831,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void ShowStartTaskPanel()
 		{
-			//if (this.startTrialPanel.activeSelf)
-			//{
-			//	this.startTrialPanel.SetActive(false);
-			//}
-			//else
-			//{
-				this.startTrialPanel.SetActive(true);
-			//}
+			this.startTrialPanel.SetActive(true);
 		}
 
 		private void SendPanelNotice(string message, int fontSize, Color color)
