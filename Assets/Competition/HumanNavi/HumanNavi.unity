@@ -2221,7 +2221,8 @@ MonoBehaviour:
   timeLimitForGrasp: 150
   timeLimitForPlacement: 150
   LimitOfSpeechCount: 10
-  scoreNotificationDestinations: []
+  scoreNotificationDestinations:
+  - {fileID: 1429366511}
   timeIsUpDestinationTags:
   - Moderator
 --- !u!4 &429690133
@@ -8627,7 +8628,7 @@ GameObject:
   - component: {fileID: 1429366513}
   - component: {fileID: 1429366512}
   m_Layer: 0
-  m_Name: PlaybackSystem
+  m_Name: PlaybackManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
