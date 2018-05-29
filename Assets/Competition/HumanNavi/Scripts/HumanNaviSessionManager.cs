@@ -16,12 +16,15 @@ namespace SIGVerse.Competition.HumanNavigation
 		public GameObject robot;
 		public string robotName;
 
+		[HeaderAttribute("Camera Controller")]
+		public HumanNaviBirdsEyeViewCameraController birdsEyeViewCameraControllerForRobot;
+
 		private List<SIGVerse.Competition.HumanNavigation.TaskInfo> taskInfoList;
 
 		private GameObject currentEnvironment;
 		private GameObject currentRobot;
 
-		private SAPIVoiceSynthesis tts;
+		private SAPIVoiceSynthesisExternal tts;
 
 		private void Awake()
 		{
@@ -65,7 +68,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.currentRobot.name = this.robotName;
 			this.currentRobot.SetActive(true);
 
-			this.tts = this.currentRobot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesis>();
+			this.tts = this.currentRobot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesisExternal>();
+
+			this.birdsEyeViewCameraControllerForRobot.SetTarget(this.currentRobot.transform.Find("odom/base_footprint").gameObject);
 		}
 
 		public void InitializeTaskInfo()
@@ -144,10 +149,15 @@ namespace SIGVerse.Competition.HumanNavigation
 			return this.currentEnvironment;
 		}
 
-		public string GetSeechRunState()
+		public string GetSeechRunStateMsgString()
 		{
 			if (this.tts.IsSpeaking()) { return "Is_speaking"; }
 			else                       { return "Is_not_speaking"; }
+		}
+
+		public bool GetSeechRunState()
+		{
+			return this.tts.IsSpeaking();
 		}
 	}
 }

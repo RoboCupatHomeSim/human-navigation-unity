@@ -15,7 +15,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 	public class HumanNaviSubMessage : RosSubMessage<RosBridge.human_navigation.HumanNaviMsg>
 	{
-		public HumanNaviModerator moderator;
+		public List<GameObject> destinations;
 
 		public override void Clear()
 		{
@@ -35,7 +35,15 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			SIGVerseLogger.Info("Received message :" + humanNaviMsg.message);
 
-			this.moderator.OnReceiveROSMessage(humanNaviMsg);
+			foreach (GameObject destination in this.destinations)
+			{
+				ExecuteEvents.Execute<IReceiveHumanNaviMsgHandler>
+				(
+					target: destination,
+					eventData: null,
+					functor: (reciever, eventData) => reciever.OnReceiveRosMessage(humanNaviMsg)
+				);
+			}
 		}
 	}
 }

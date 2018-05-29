@@ -50,9 +50,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.HandRProximalLinkName));
 
 			// Avatar
-			Transform moderator = GameObject.FindGameObjectWithTag("Avatar").transform;
+			Transform avatar = GameObject.FindGameObjectWithTag("Avatar").transform;
 
-			Transform[] avatarTransforms = moderator.GetComponentsInChildren<Transform>(true);
+			Transform[] avatarTransforms = avatar.GetComponentsInChildren<Transform>(true);
 
 			foreach (Transform avatarTransform in avatarTransforms)
 			{

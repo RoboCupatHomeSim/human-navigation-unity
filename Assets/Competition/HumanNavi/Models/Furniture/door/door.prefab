@@ -140,6 +140,7 @@ GameObject:
   - component: {fileID: 4681658502312462}
   - component: {fileID: 33122103990782330}
   - component: {fileID: 23775268901244262}
+  - component: {fileID: 64839826422156242}
   m_Layer: 0
   m_Name: Front_Doorknob
   m_TagString: Untagged
@@ -191,6 +192,7 @@ GameObject:
   - component: {fileID: 4485404739728470}
   - component: {fileID: 33863706608023508}
   - component: {fileID: 23397721085146268}
+  - component: {fileID: 65096810743075404}
   m_Layer: 0
   m_Name: Front_Door
   m_TagString: Untagged
@@ -327,6 +329,7 @@ GameObject:
   - component: {fileID: 4490230702386000}
   - component: {fileID: 33299223690789712}
   - component: {fileID: 23476084404008848}
+  - component: {fileID: 64512211218562864}
   m_Layer: 0
   m_Name: base
   m_TagString: Untagged
@@ -1490,3 +1493,43 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1858001501122466}
   m_Mesh: {fileID: 4300024, guid: 06db9d82971eb1644a7bba7539406f4a, type: 3}
+--- !u!64 &64512211218562864
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1903216798989422}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 0
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 4300000, guid: 06db9d82971eb1644a7bba7539406f4a, type: 3}
+--- !u!64 &64839826422156242
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1407391507412306}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: -1
+  m_SkinWidth: 0.001
+  m_Mesh: {fileID: 4300020, guid: 06db9d82971eb1644a7bba7539406f4a, type: 3}
+--- !u!65 &65096810743075404
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1498445349534062}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.77141607, y: 0.5833407, z: 0.5669191}
+  m_Center: {x: -0.38683444, y: -0.39396787, z: -0.016545791}

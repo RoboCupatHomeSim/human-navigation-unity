@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public class HumanNaviModerator : MonoBehaviour, ITimeIsUpHandler, IStartTrialHandler, IGoToNextTrialHandler//, IGiveUpHandler
+	public class HumanNaviModerator : MonoBehaviour, ITimeIsUpHandler, IStartTrialHandler, IGoToNextTrialHandler, IReceiveHumanNaviMsgHandler//, IGiveUpHandler
 	{
 		private const int SendingAreYouReadyInterval = 1000;
 
@@ -55,11 +55,11 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		[HeaderAttribute("Avatar")]
 		public GameObject avatar;
-		public GameObject cameraRig;
-		public GameObject Ethan;
 		public GameObject head;
 		public NewtonVR.NVRHand LeftHand;
 		public NewtonVR.NVRHand rightHand;
+		public GameObject cameraRig;
+		public GameObject Ethan;
 
 		[HeaderAttribute("Panels for avatar")]
 		public GameObject noticePanelForAvatar;
@@ -184,10 +184,12 @@ namespace SIGVerse.Competition.HumanNavigation
 					this.TimeIsUp();
 				}
 
-				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringTrial && HumanNaviConfig.Instance.configInfo.playbackType != WorldPlaybackCommon.PlaybackTypePlay)
+				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringTrial)
 				{
-					this.SendRosHumanNaviMessage(MsgRequest, "");
-					//this.RecordEvent("Guidance_message_is_requested");
+					if (!this.sessionManager.GetSeechRunState())
+					{
+						this.SendRosHumanNaviMessage(MsgRequest, "");
+					}
 				}
 
 				switch (this.step)
@@ -222,8 +224,10 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.TrialStart:
 					{
+						this.goToNextTrialPanel.SetActive(false);
+
 						SIGVerseLogger.Info("Trial start!");
-						//this.RecordEvent("Trial_start");
+						this.RecordEventLog("Trial_start");
 
 						this.scoreManager.TaskStart();
 
@@ -250,7 +254,6 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.SendTaskInfo:
 					{
-						//this.RecordEventROSMessageSent("TaskInfo", "");
 						this.SendRosTaskInfoMessage(this.taskInfoForRobot);
 
 						SIGVerseLogger.Info("Waiting for end of trial");
@@ -271,7 +274,7 @@ namespace SIGVerse.Competition.HumanNavigation
 						if(this.goNextTrial)
 						{
 							SIGVerseLogger.Info("Go to next trial");
-							//this.RecordEvent("Go_to_next_trial");
+							this.RecordEventLog("Go_to_next_trial");
 
 							this.SendRosHumanNaviMessage(MsgGoToNextTrial, "");
 
@@ -374,15 +377,16 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void ResetAvatarTransform()
 		{
+#if HUMAN_NAVI_USING_FINAL_IK
 			this.avatar.transform.position = this.initialAvatarPosition;
 			this.avatar.transform.eulerAngles = this.initialAvatarRotation;
+#else
 			this.cameraRig.transform.localPosition = Vector3.zero;
 			this.cameraRig.transform.localRotation = Quaternion.identity;
 			this.Ethan.transform.localPosition = Vector3.zero;
 			this.Ethan.transform.localRotation = Quaternion.identity;
+#endif
 		}
-
-
 
 		private void SetObjectListToHumanNaviTaskInfo()
 		{
@@ -466,8 +470,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.SendPanelNotice(strTimeup, 100, PanelNoticeStatus.Red);
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strTimeup, 3.0f));
 
-			//this.RecordEvent("Time_is_up");
-
 			this.TaskFinished();
 		}
 
@@ -475,7 +477,8 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			yield return new WaitForSeconds(waitTime);
 			this.goToNextTrialPanel.SetActive(true);
-			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Waiting for the next trial to start", 3.0f));
+			this.ShowNoticeMessagePanelForAvatar("Waiting for the next trial to start");
+			//base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Waiting for the next trial to start", 10.0f));
 		}
 
 		private void TaskFinished()
@@ -484,10 +487,8 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.PostProcess();
 		}
 
-		public void OnReceiveROSMessage(RosBridge.human_navigation.HumanNaviMsg humanNaviMsg)
+		public void OnReceiveRosMessage(RosBridge.human_navigation.HumanNaviMsg humanNaviMsg)
 		{
-			//this.RecordEventROSMessageReceived("HumanNaviMsg", humanNaviMsg.message + "\t" + humanNaviMsg.detail);
-
 			if (this.receivedMessageMap.ContainsKey(humanNaviMsg.message))
 			{
 				this.receivedMessageMap[humanNaviMsg.message] = true;
@@ -513,7 +514,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				{
 					if (this.isDuringTrial)
 					{
-						this.SendRosHumanNaviMessage(MsgSpeechState, this.sessionManager.GetSeechRunState());
+						this.SendRosHumanNaviMessage(MsgSpeechState, this.sessionManager.GetSeechRunStateMsgString());
 					}
 				}
 			}
@@ -571,10 +572,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			if (HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypeRecord)
 			{
-				//bool isStarted = false;
 				bool isStarted = this.playbackRecorder.Record();
-				//isStarted |= this.playbackTransformRecorder.Record();
-				//isStarted |= this.playbackEventRecorder.Record();
 
 				if (!isStarted) { SIGVerseLogger.Warn("Cannot start the world playback recording"); }
 			}
@@ -584,68 +582,11 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			if (HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypeRecord)
 			{
-				//bool isStopped = false;
 				bool isStopped = this.playbackRecorder.Stop();
-				//isStopped |= this.playbackTransformRecorder.Stop();
-				//isStopped |= this.playbackEventRecorder.Stop();
 
 				if (!isStopped) { SIGVerseLogger.Warn("Cannot stop the world playback recording"); }
 			}
 		}
-
-		//private void RecordEventObjectGrasped(string objectName, string whichHandUsed)
-		//{
-		//	ExecuteEvents.Execute<IHumanNaviRecoderHandler>
-		//	(
-		//		target: this.playbackManager,
-		//		eventData: null,
-		//		functor: (reciever, eventData) => reciever.OnObjectGrasped(objectName, whichHandUsed)
-		//	);
-		//}
-
-		//private void RecordEvent(string detail)
-		//{
-		//	ExecuteEvents.Execute<IEventRecoderHandler>
-		//	(
-		//		target: this.playbackManager,
-		//		eventData: null,
-		//		functor: (reciever, eventData) => reciever.OnEventOccured(detail)
-		//	);
-		//}
-
-		//private void RecordEventRosMessageSent(string messageType, string message)
-		//{
-		//	ExecuteEvents.Execute<IEventRecoderHandler>
-		//	(
-		//		target: this.playbackSystem,
-		//		eventData: null,
-		//		functor: (reciever, eventData) => reciever.OnROSMessageSent(messageType, message)
-		//	);
-		//}
-
-		//private void RecordEventROSMessageReceived(string messageType, string message)
-		//{
-		//	ExecuteEvents.Execute<IEventRecoderHandler>
-		//	(
-		//		target: this.playbackSystem,
-		//		eventData: null,
-		//		functor: (reciever, eventData) => reciever.OnROSMessageReceived(messageType, message)
-		//	);
-		//}
-
-
-		//private void addCommandLog(string name, string data)
-		//{
-		//	if (HumanNaviConfig.Instance.configInfo.playbackType == HumanNaviPlaybackParam.PlaybackTypeRecord)
-		//	{
-		//		ExecuteEvents.Execute<IPlaybackDataHandler>
-		//		(
-		//			target: this.worldRecorder,
-		//			eventData: null,
-		//			functor: (reciever, eventData) => reciever.addEventLog(name, data)
-		//		);
-		//	}
-		//}
 
 		private IEnumerator ShowNoticeMessagePanelForAvatar(string text, float waitTime = 1.0f)
 		{
@@ -657,37 +598,58 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.noticePanelForAvatar.SetActive(false);
 		}
 
+		private void ShowNoticeMessagePanelForAvatar(string text)
+		{
+			this.noticeTextForAvatar.text = text;
+			this.noticePanelForAvatar.SetActive(true);
+		}
+
 		private void SendRosHumanNaviMessage(string message, string detail)
 		{
-			//this.RecordEventRosMessageSent("HumanNaviMsg", message + "\t" + detail);
-
 			ExecuteEvents.Execute<IRosHumanNaviMessageSendHandler>
 			(
 				target: this.gameObject, 
 				eventData: null, 
 				functor: (reciever, eventData) => reciever.OnSendRosHumanNaviMessage(message, detail)
 			);
+
+			ExecuteEvents.Execute<IPlaybackRosMessageHandler>
+			(
+				target: this.playbackManager,
+				eventData: null,
+				functor: (reciever, eventData) => reciever.OnSendRosMessage(new SIGVerse.RosBridge.human_navigation.HumanNaviMsg(message, detail))
+			);
 		}
 
 		private void SendRosAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose avatarPose)
 		{
-			//this.RecordEventRosMessageSent("AvatarPose", "");
-
-			ExecuteEvents.Execute<IROSAvatarPoseSendHandler>
+			ExecuteEvents.Execute<IRosAvatarPoseSendHandler>
 			(
 				target: this.gameObject,
 				eventData: null,
-				functor: (reciever, eventData) => reciever.OnSendROSAvatarPoseMessage(avatarPose)
+				functor: (reciever, eventData) => reciever.OnSendRosAvatarPoseMessage(avatarPose)
+			);
+
+			ExecuteEvents.Execute<IRosAvatarPoseSendHandler>
+			(
+				target: this.playbackManager,
+				eventData: null,
+				functor: (reciever, eventData) => reciever.OnSendRosAvatarPoseMessage(avatarPose)
 			);
 		}
 
 		private void SendRosTaskInfoMessage(RosBridge.human_navigation.HumanNaviTaskInfo taskInfo)
 		{
-			//this.RecordEventRosMessageSent("TaskInfo", "");
-
 			ExecuteEvents.Execute<IRosTaskInfoSendHandler>
 			(
 				target: this.gameObject,
+				eventData: null,
+				functor: (reciever, eventData) => reciever.OnSendRosTaskInfoMessage(taskInfo)
+			);
+
+			ExecuteEvents.Execute<IRosTaskInfoSendHandler>
+			(
+				target: this.playbackManager,
 				eventData: null,
 				functor: (reciever, eventData) => reciever.OnSendRosTaskInfoMessage(taskInfo)
 			);
@@ -701,20 +663,17 @@ namespace SIGVerse.Competition.HumanNavigation
 				{
 					if (hand.CurrentlyInteracting.tag == "Graspables")
 					{
-						//this.addEventLog("Interaction", hand.name + ".IsGrasping: " + hand.CurrentlyInteracting + hand.CurrentlyInteracting.transform.position);
+						this.RecordEventLog("Interaction" + "\t" + hand.name + ".IsGrasping" + "\t" + hand.CurrentlyInteracting + hand.CurrentlyInteracting.transform.position);
 
-						string whichHandUsed = string.Empty;
-						if      (hand.IsLeft)  { whichHandUsed = "LeftHand";  }
-						else if (hand.IsRight) { whichHandUsed = "RightHand"; }
-
-						//this.RecordEventObjectGrasped(whichHandUsed, this.currentTaskInfo.target);
+						//string whichHandUsed = string.Empty;
+						//if      (hand.IsLeft)  { whichHandUsed = "LeftHand";  }
+						//else if (hand.IsRight) { whichHandUsed = "RightHand"; }
 
 						if (hand.CurrentlyInteracting.name == this.currentTaskInfo.target)
 						{
 							if (!this.isTargetAlreadyGrasped)
 							{
 								SIGVerseLogger.Info("Target object is grasped");
-								//this.RecordEvent("Target_object_is_grasped");
 
 								this.SendPanelNotice("Target object is grasped", 100, PanelNoticeStatus.Green);
 
@@ -729,7 +688,6 @@ namespace SIGVerse.Competition.HumanNavigation
 							if (!this.isTargetAlreadyGrasped)
 							{
 								SIGVerseLogger.Info("Wrong object is grasped");
-								//this.RecordEvent("Wrong_object_is_grasped");
 
 								this.SendPanelNotice("Wrong object is grasped", 100, PanelNoticeStatus.Red);
 
@@ -741,19 +699,13 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 			else if (hand.HoldButtonDown)
 			{
-//				this.addEventLog("Interaction", hand.name + ".HoldButtonDown");
+				this.RecordEventLog("Interaction" + "\t" + hand.name + ".HoldButtonDown");
 			}
 			else if (hand.IsHovering)
 			{
-//				this.addEventLog("Interaction", hand.name + ".IsHovering");
+				this.RecordEventLog("Interaction" + "\t" + hand.name + ".IsHovering");
 			}
-			else
-			{
-//				this.addEventLog("Interaction", hand.name + ".Nothing");
-			}
-
 		}
-
 
 		public string GetTargetObjectName()
 		{
@@ -772,15 +724,20 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void TargetPlacedOnDestination()
 		{
+			if(!this.isDuringTrial)
+			{
+				return;
+			} 
+
 			SIGVerseLogger.Info("Target is plasced on the destination.");
-			//this.RecordEvent("Target_object_placed_on_the_destination");
+			this.RecordEventLog("Target is plasced on the destination.");
 
 			this.scoreManager.AddScore(Score.Type.TargetObjectInDestination);
 			this.scoreManager.AddTimeScoreOfPlacement();
 
 			this.SendRosHumanNaviMessage(MsgTaskSucceeded, "");
 			this.SendPanelNotice("Task succeeded", 100, PanelNoticeStatus.Green);
-			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Task succeeded", 3.0f));
+			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Task succeeded", 10.0f));
 
 			this.TaskFinished();
 		}
@@ -801,8 +758,6 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.SendPanelNotice(strGiveup, 100, PanelNoticeStatus.Red);
 				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strGiveup, 3.0f));
 
-				//this.RecordEvent("Give_up");
-
 				this.panelMainController.giveUpPanel.SetActive(false);
 
 
@@ -817,7 +772,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		public void OnStartTrial()
 		{
 			SIGVerseLogger.Info("Task start!");
-			//this.RecordEvent("Task_start");
+			//this.RecordEventLog("Task_start");
 
 			this.startTrialPanel.SetActive(false);
 			this.isCompetitionStarted = true;
@@ -855,6 +810,16 @@ namespace SIGVerse.Competition.HumanNavigation
 			);
 		}
 
+		private void RecordEventLog(string log)
+		{
+			// For recording
+			ExecuteEvents.Execute<IPlaybackRosMessageHandler>
+			(
+				target: this.playbackManager,
+				eventData: null,
+				functor: (reciever, eventData) => reciever.OnRecordEvent(log)
+			);
+		}
 
 		public bool IsConnectedToRos()
 		{

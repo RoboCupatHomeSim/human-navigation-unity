@@ -23,7 +23,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 	public class HumanNaviSubGuidanceMessage : MonoBehaviour
 	{
-		public SAPIVoiceSynthesis tts;
+		//public SAPIVoiceSynthesis tts;
+		public SAPIVoiceSynthesisExternal tts;
 
 		public string rosBridgeIP;
 		public int rosBridgePort = 9090;

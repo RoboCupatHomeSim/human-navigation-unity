@@ -51,7 +51,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		public int timeLimitForPlacement = 150;
 
 		[HeaderAttribute("Speec Count")]
-		public int LimitOfSpeechCount = 10;
+		public int LimitOfSpeechCount = 15;
 
 		public List<GameObject> scoreNotificationDestinations;
 
@@ -132,6 +132,11 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void AddScore(Score.Type scoreType)
 		{
+			if (!this.isRunning)
+			{
+				return;
+			}
+
 			int additionalScore = Score.GetScore(scoreType);
 
 			this.score = Mathf.Clamp(this.score + additionalScore, Score.MinScore, Score.MaxScore);

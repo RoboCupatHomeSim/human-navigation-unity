@@ -9,12 +9,12 @@ using System;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public interface IROSAvatarPoseSendHandler : IEventSystemHandler
+	public interface IRosAvatarPoseSendHandler : IEventSystemHandler
 	{
-		void OnSendROSAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose message);
+		void OnSendRosAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose message);
 	}
 
-	public class HumanNaviPubAvatarPose : RosPubMessage<RosBridge.human_navigation.HumanNaviAvatarPose>, IROSAvatarPoseSendHandler
+	public class HumanNaviPubAvatarPose : RosPubMessage<RosBridge.human_navigation.HumanNaviAvatarPose>, IRosAvatarPoseSendHandler
 	{
 		public override void Clear()
 		{
@@ -30,7 +30,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			base.Close();
 		}
 
-		public void OnSendROSAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose message)
+		public void OnSendRosAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose message)
 		{
 			SIGVerseLogger.Info("Sending pose of avatar: ");
 			SIGVerseLogger.Info("Head       : " + message.head.position + message.head.orientation);
