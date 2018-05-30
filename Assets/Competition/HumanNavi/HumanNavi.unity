@@ -1010,7 +1010,7 @@ MonoBehaviour:
   - {fileID: 1781901571}
   robot: {fileID: 721632488}
   robotName: HSR-B
-  birdsEyeViewCameraControllerForRobot: {fileID: 0}
+  birdsEyeViewCameraControllerForRobot: {fileID: 684947783}
 --- !u!1 &205199177
 GameObject:
   m_ObjectHideFlags: 0
@@ -4293,6 +4293,7 @@ GameObject:
   - component: {fileID: 684947779}
   - component: {fileID: 684947781}
   - component: {fileID: 684947780}
+  - component: {fileID: 684947783}
   m_Layer: 0
   m_Name: BirdsEyeViewCamera
   m_TagString: Untagged
@@ -4363,6 +4364,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 42.6, y: 45, z: 0}
+--- !u!114 &684947783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 684947778}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b9a298fb3ba53d49aeb64885b2b8553, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 1899864856}
 --- !u!1 &687628007
 GameObject:
   m_ObjectHideFlags: 0
