@@ -37,10 +37,9 @@ https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.23
 7. Click [Yes] on "Update Oculus Utilities Plugin" window.
 8. Click [Restart] on "Restart Unity" window.
 
-### Import dll for TTS
-1. Prepare "Interop.SpeechLib.dll".
-2. Open this project with Unity.
-3. Copy the "Interop.SpeechLib.dll" to [Assets]-[Plugins].
+### Import executable file and dll for TTS
+1. Prepare "ConsoleSimpleTTS.exe" and "Interop.SpeechLib.dll".
+2. Copy those files to the [TSS] folder in the same directory as README.md.
 
 ### Build
 1. Create a "Build" folder in this project folder.

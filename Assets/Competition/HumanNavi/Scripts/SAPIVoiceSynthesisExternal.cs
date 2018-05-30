@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using SpeechLib;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using SIGVerse.Common;
@@ -35,10 +34,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private List<GameObject> notificationDestinations;
 
-		private SpVoice voice;
-
 		bool isSpeaking;
-		//bool endOfSpeaking;
 
 		private System.Diagnostics.Process process;
 
@@ -66,7 +62,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.ResetNotificationDestinations();
 
 			this.isSpeaking = false;
-			//this.endOfSpeaking = false;
 		}
 
 		//public void Start()
@@ -87,7 +82,6 @@ namespace SIGVerse.Competition.HumanNavigation
 					);
 				}
 
-				//this.endOfSpeaking = false;
 				this.isSpeaking = false;
 			}
 		}
@@ -101,7 +95,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 
 			string truncatedMessage;
-			if(message.Length > maxCharcters)
+			if (message.Length > maxCharcters)
 			{
 				truncatedMessage = message.Substring(0, maxCharcters);
 				SIGVerseLogger.Info("Length of guidance message is over " + this.maxCharcters.ToString() + " charcters.");
@@ -134,23 +128,8 @@ namespace SIGVerse.Competition.HumanNavigation
 			return true;
 		}
 
-		//public void SetLanguage(string language, string gender)
-		//{
-		//	if      (language == "English")  { language = "409"; }
-		//	else if (language == "Japanese") { language = "411"; }
-		//	else { return; }
-
-		//	SpObjectTokenCategory tokenCat = new SpObjectTokenCategory();
-		//	tokenCat.SetId(SpeechLib.SpeechStringConstants.SpeechCategoryVoices, false);
-		//	ISpeechObjectTokens tokens = tokenCat.EnumerateTokens("Language=" + language + "; Gender=" + gender, null);
-
-		//	this.voice.Voice = tokens.Item(0);
-		//}
-
 		public bool IsSpeaking()
 		{
-			//if (this.voice.Status.RunningState == SpeechRunState.SRSEIsSpeaking) return true;
-			//else return false;
 			return this.isSpeaking;
 		}
 

@@ -910,11 +910,11 @@ MonoBehaviour:
   scoreManager: {fileID: 429690132}
   sessionManager: {fileID: 167816793}
   avatar: {fileID: 1202938717}
-  cameraRig: {fileID: 889009230}
-  Ethan: {fileID: 923699999}
   head: {fileID: 1062108285}
   LeftHand: {fileID: 530280373}
   rightHand: {fileID: 1503529773}
+  cameraRig: {fileID: 889009230}
+  Ethan: {fileID: 923699999}
   noticePanelForAvatar: {fileID: 807809740}
   noticeTextForAvatar: {fileID: 1129980541}
   birdviewCamera: {fileID: 684947779}
@@ -979,7 +979,7 @@ MonoBehaviour:
   rosBridgeIP: 
   rosBridgePort: 0
   topicName: /human_navigation/message/to_moderator
-  moderator: {fileID: 167816787}
+  destinations: []
 --- !u!114 &167816792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1010,6 +1010,7 @@ MonoBehaviour:
   - {fileID: 1781901571}
   robot: {fileID: 721632488}
   robotName: HSR-B
+  birdsEyeViewCameraControllerForRobot: {fileID: 0}
 --- !u!1 &205199177
 GameObject:
   m_ObjectHideFlags: 0
@@ -4626,9 +4627,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 721632484}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 108c64e696657bd4e8df8588b3755820, type: 3}
+  m_Script: {fileID: 11500000, guid: 087f26b5387a1014a8e04e4be6f229af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  path: /../TTS/ConsoleSimpleTTS.exe
   language: 409
   gender: Female
   maxCharcters: 400
