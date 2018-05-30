@@ -1,0 +1,19 @@
+{
+	"recoverUsingScoreFile": true,
+	"maxNumberOfTrials": 12,
+	"playbackType": 1,
+	"taskInfoList":[
+		{"environment":"RoomX_01","target":"pink_cup_01","destination":"wood_table_01"},
+		{"environment":"RoomY_01","target":"cigarette_01","destination":"white_table_01"},
+		{"environment":"RoomX_02","target":"fryingpan_01","destination":"IH_01"},
+		{"environment":"RoomY_02","target":"dog_doll_01","destination":"drawer_unit_white_01"},
+		{"environment":"RoomZ_01","target":"tumbler_08","destination":"modular_kitchen_sink_02"},
+		{"environment":"RoomU_01","target":"canned_juice_04","destination":"round_table_01"},		
+		{"environment":"RoomX_02","target":"empty_plastic_bottle_02","destination":"trashcan_large_02"},
+		{"environment":"RoomY_01","target":"block_car_02","destination":"drawer_unit_white_01_2nd"},
+		{"environment":"RoomZ_01","target":"pink_cup_07","destination":"shelf_02"},
+		{"environment":"RoomY_02","target":"apple_01","destination":"trashcan_large_02"},
+		{"environment":"RoomZ_02","target":"canned_juice_07","destination":"wood_table_03"},
+		{"environment":"RoomU_01","target":"block_car_08","destination":"cardboard_box_01"}
+	]
+}
