@@ -489,8 +489,10 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnReceiveRosMessage(RosBridge.human_navigation.HumanNaviMsg humanNaviMsg)
 		{
+			Debug.Log(humanNaviMsg.message);
 			if (this.receivedMessageMap.ContainsKey(humanNaviMsg.message))
 			{
+
 				this.receivedMessageMap[humanNaviMsg.message] = true;
 
 				if (humanNaviMsg.message == MsgGiveUp)
