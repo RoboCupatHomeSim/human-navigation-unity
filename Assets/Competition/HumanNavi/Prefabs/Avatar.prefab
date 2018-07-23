@@ -598,7 +598,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1308831294254514
 GameObject:
   m_ObjectHideFlags: 1
@@ -1798,7 +1798,7 @@ GameObject:
   - component: {fileID: 114896139262355906}
   - component: {fileID: 114670532783940012}
   m_Layer: 13
-  m_Name: HumanNaviAvatar
+  m_Name: Avatar
   m_TagString: Avatar
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4143,7 +4143,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Put it in a trash can on the left.
+  m_Text: 
 --- !u!114 &114464405607684646
 MonoBehaviour:
   m_ObjectHideFlags: 1

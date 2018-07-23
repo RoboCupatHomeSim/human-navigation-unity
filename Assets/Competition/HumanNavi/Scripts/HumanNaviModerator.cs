@@ -192,6 +192,11 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 				}
 
+				if (this.avatar.transform.position.y < -0.1f)
+				{
+					this.ResetAvatarTransform();
+				}
+
 				switch (this.step)
 				{
 					case Step.Initialize:
@@ -381,6 +386,8 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.avatar.transform.position = this.initialAvatarPosition;
 			this.avatar.transform.eulerAngles = this.initialAvatarRotation;
 #else
+			this.avatar.transform.position = this.initialAvatarPosition;
+			this.avatar.transform.eulerAngles = this.initialAvatarRotation;
 			this.cameraRig.transform.localPosition = Vector3.zero;
 			this.cameraRig.transform.localRotation = Quaternion.identity;
 			this.Ethan.transform.localPosition = Vector3.zero;
