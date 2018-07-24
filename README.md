@@ -13,7 +13,7 @@ https://github.com/PartnerRobotChallengeVirtual/console-simple-tts
 ## Prerequisites
 
 - OS: Windows 10
-- Unity version: 2017.3
+- Unity version: 2017.3.1
 
 ## How to Build
 
@@ -27,8 +27,8 @@ https://github.com/PartnerRobotChallengeVirtual/console-simple-tts
 
 ### Import Oculus Utilities for Unity
 
-1. Download Oculus Utilities for Unity ver.1.23.0 from the following link.  
-https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.23.0/
+1. Download Oculus Utilities for Unity ver.1.24.0 from the following link.  
+https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.24.0/
 2. Unzip the downloaded file.
 3. Open this project with Unity.
 4. Click [Assets]-[Import Package]-[Custom Package...].
