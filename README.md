@@ -39,7 +39,7 @@ https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.24
 
 ### Import executable file and dll for TTS
 1. Prepare "ConsoleSimpleTTS.exe" and "Interop.SpeechLib.dll".
-2. Copy those files to the [TSS] folder in the same directory as README.md.
+2. Copy those files to the [TTS] folder in the same directory as README.md.
 
 ### Build
 1. Create a "Build" folder in this project folder.
