@@ -19,7 +19,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private const string MsgTaskSucceeded   = "Task_succeeded";
 		private const string MsgTaskFailed      = "Task_failed";
 		private const string MsgTaskFinished    = "Task_finished";
-		private const string MsgGoToNextTrial   = "Go_to_next_trial";
+		private const string MsgGoToNextSession   = "Go_to_next_session";
 		private const string MsgMissionComplete = "Mission_complete";
 
 		private const string ReasonTimeIsUp = "Time_is_up";
@@ -38,11 +38,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			Initialize,
 			InitializePlayback,
 			WaitForStart,
-			TrialStart,
+			SessionStart,
 			WaitForIamReady,
 			SendTaskInfo,
 			WaitForEndOfSession,
-			WaitForNextTrial,
+			WaitForNextSession,
 		};
 
 		//-----------------------------
@@ -95,11 +95,11 @@ namespace SIGVerse.Competition.HumanNavigation
 		private float waitingTime;
 
 		private bool isCompetitionStarted = false;
-		private bool isDuringTrial = false;
+		private bool isDuringSession = false;
 
 		private Dictionary<string, bool> receivedMessageMap;
 		private bool isTargetAlreadyGrasped;
-		private bool goNextTrial = false;
+		private bool goNextSession = false;
 		private bool isAllTaskFinished = false;
 		private string interruptedReason;
 
@@ -177,14 +177,14 @@ namespace SIGVerse.Competition.HumanNavigation
 					return;
 				}
 
-				if (this.interruptedReason != string.Empty && this.step != Step.WaitForNextTrial)
+				if (this.interruptedReason != string.Empty && this.step != Step.WaitForNextSession)
 				{
 					SIGVerseLogger.Info("Failed '" + this.interruptedReason + "'");
 					this.SendPanelNotice("Failed\n" + interruptedReason.Replace('_', ' '), 100, PanelNoticeStatus.Red);
 					this.TimeIsUp();
 				}
 
-				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringTrial)
+				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringSession)
 				{
 					if (!this.sessionManager.GetSeechRunState())
 					{
@@ -227,19 +227,19 @@ namespace SIGVerse.Competition.HumanNavigation
 
 						break;
 					}
-					case Step.TrialStart:
+					case Step.SessionStart:
 					{
 						this.goToNextTrialPanel.SetActive(false);
 
-						SIGVerseLogger.Info("Trial start!");
-						this.RecordEventLog("Trial_start");
+						SIGVerseLogger.Info("Session start!");
+						this.RecordEventLog("Session_start");
 
 						this.scoreManager.TaskStart();
 
-						this.SendPanelNotice("Trial start!", 100, PanelNoticeStatus.Green);
-						base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Trial start!", 3.0f));
+						this.SendPanelNotice("Session start!", 100, PanelNoticeStatus.Green);
+						base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Session start!", 3.0f));
 
-						this.isDuringTrial = true;
+						this.isDuringSession = true;
 						this.step++;
 
 						break;
@@ -261,7 +261,7 @@ namespace SIGVerse.Competition.HumanNavigation
 					{
 						this.SendRosTaskInfoMessage(this.taskInfoForRobot);
 
-						SIGVerseLogger.Info("Waiting for end of trial");
+						SIGVerseLogger.Info("Waiting for end of session");
 
 						this.step++;
 
@@ -274,14 +274,14 @@ namespace SIGVerse.Competition.HumanNavigation
 
 						break;
 					}
-					case Step.WaitForNextTrial:
+					case Step.WaitForNextSession:
 					{
-						if(this.goNextTrial)
+						if(this.goNextSession)
 						{
-							SIGVerseLogger.Info("Go to next trial");
-							this.RecordEventLog("Go_to_next_trial");
+							SIGVerseLogger.Info("Go to next session");
+							this.RecordEventLog("Go_to_next_session");
 
-							this.SendRosHumanNaviMessage(MsgGoToNextTrial, "");
+							this.SendRosHumanNaviMessage(MsgGoToNextSession, "");
 
 							this.step = Step.Initialize;
 						}
@@ -367,17 +367,17 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.StopPlaybackRecord();
 
-			this.isDuringTrial = false;
+			this.isDuringSession = false;
 			this.interruptedReason = string.Empty;
 
-			this.step = Step.WaitForNextTrial;
+			this.step = Step.WaitForNextSession;
 		}
 
 		private void ResetFlags()
 		{
 			this.receivedMessageMap[MsgIamReady] = false;
 			this.isTargetAlreadyGrasped = false;
-			this.goNextTrial = false;
+			this.goNextSession = false;
 		}
 
 		private void ResetAvatarTransform()
@@ -484,8 +484,8 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			yield return new WaitForSeconds(waitTime);
 			this.goToNextTrialPanel.SetActive(true);
-			this.ShowNoticeMessagePanelForAvatar("Waiting for the next trial to start");
-			//base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Waiting for the next trial to start", 10.0f));
+			this.ShowNoticeMessagePanelForAvatar("Waiting for the next session to start");
+			//base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Waiting for the next session to start", 10.0f));
 		}
 
 		private void TaskFinished()
@@ -521,7 +521,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				}
 				else if (humanNaviMsg.message == MsgConfirmSpeechState)
 				{
-					if (this.isDuringTrial)
+					if (this.isDuringSession)
 					{
 						this.SendRosHumanNaviMessage(MsgSpeechState, this.sessionManager.GetSeechRunStateMsgString());
 					}
@@ -733,7 +733,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void TargetPlacedOnDestination()
 		{
-			if(!this.isDuringTrial)
+			if(!this.isDuringSession)
 			{
 				return;
 			} 
@@ -758,7 +758,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnGiveUp()
 		{
-			if (this.isDuringTrial)
+			if (this.isDuringSession)
 			{
 				this.interruptedReason = HumanNaviModerator.ReasonGiveUp;
 
@@ -790,7 +790,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		public void OnGoToNextTrial()
 		{
 			this.goToNextTrialPanel.SetActive(false);
-			this.goNextTrial = true;
+			this.goNextSession = true;
 		}
 
 		public void ShowStartTaskPanel()
