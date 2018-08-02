@@ -21,6 +21,10 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				if (panelIdentifier.transform.root.gameObject.activeSelf)
 				{
+					string path = UnityEditor.AssetDatabase.GetAssetOrScenePath(panelIdentifier.gameObject);
+					bool isScene = path.Contains(".unity");
+					if (!isScene) { continue; }
+
 					this.panelIdentifiers.Add(panelIdentifier);
 
 					panelIdentifier.guidanceMessageText.text = "";
