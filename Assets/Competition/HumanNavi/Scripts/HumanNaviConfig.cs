@@ -38,8 +38,9 @@ namespace SIGVerse.Competition.HumanNavigation
 
 	public class HumanNaviConfig : Singleton<HumanNaviConfig>
 	{
-		private const string FileName = "/../SIGVerseConfig/HumanNavi/HumanNaviConfig.json";
-		private const string ScoreFileName = "/../SIGVerseConfig/HumanNavi/HumanNaviScore.txt";
+		public const string FolderPath = "/../SIGVerseConfig/HumanNavi/";
+		public const string ConfigFileName = "HumanNaviConfig.json";
+		public const string ScoreFileName = "HumanNaviScore.txt";
 
 		private string configFilePath;
 		private string scoreFilePath;
@@ -56,7 +57,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		void Awake()
 		{
-			this.configFilePath = Application.dataPath + FileName;
+			this.configFilePath = Application.dataPath + HumanNaviConfig.FolderPath + HumanNaviConfig.ConfigFileName;
 
 			this.configInfo = new HumanNaviConfigInfo();
 
@@ -87,7 +88,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 
 
-			this.scoreFilePath = Application.dataPath + HumanNaviConfig.ScoreFileName;
+			this.scoreFilePath = Application.dataPath + HumanNaviConfig.FolderPath + HumanNaviConfig.ScoreFileName;
 
 			this.scores = new List<int>();
 
@@ -172,7 +173,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void RecordScoreInFile()
 		{
-			string filePath = Application.dataPath + HumanNaviConfig.ScoreFileName;
+			string filePath = Application.dataPath + HumanNaviConfig.FolderPath + HumanNaviConfig.ScoreFileName;
 
 			bool append = true;
 
