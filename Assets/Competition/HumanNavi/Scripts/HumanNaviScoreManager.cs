@@ -21,18 +21,22 @@ namespace SIGVerse.Competition.HumanNavigation
 			CompletionTime,
 			CollisionEnter,
 			OverSpeechCount,
+			DistancePenaltyForTargetObject,
+			DistancePenaltyForDestination,
 		}
 
 		public static int GetScore(Type scoreType)
 		{
 			switch(scoreType)
 			{
-				case Score.Type.CorrectObjectIsGrasped    : { return +20; }
-				case Score.Type.IncorrectObjectIsGrasped  : { return  -5; }
-				case Score.Type.TargetObjectInDestination : { return +20; }
-				case Score.Type.CompletionTime            : { return +30; }
-				case Score.Type.CollisionEnter            : { return -10; }
-				case Score.Type.OverSpeechCount           : { return  -3; }
+				case Score.Type.CorrectObjectIsGrasped         : { return +20; }
+				case Score.Type.IncorrectObjectIsGrasped       : { return  -5; }
+				case Score.Type.TargetObjectInDestination      : { return +20; }
+				case Score.Type.CompletionTime                 : { return +30; }
+				case Score.Type.CollisionEnter                 : { return -10; }
+				case Score.Type.OverSpeechCount                : { return  -3; }
+				case Score.Type.DistancePenaltyForTargetObject : { return -20; }
+				case Score.Type.DistancePenaltyForDestination  : { return -20; }
 			}
 
 			throw new Exception("Illegal score type. Type = " + (int)scoreType + ", method name=(" + System.Reflection.MethodBase.GetCurrentMethod().Name + ")");
@@ -50,8 +54,11 @@ namespace SIGVerse.Competition.HumanNavigation
 		public int timeLimitForGrasp = 150;
 		public int timeLimitForPlacement = 150;
 
-		[HeaderAttribute("Speec Count")]
+		[HeaderAttribute("Speech Count")]
 		public int LimitOfSpeechCount = 15;
+
+		[HeaderAttribute("Distance from Target")]
+		public float limitDistanceFromTarget = 3.0f;
 
 		public List<GameObject> scoreNotificationDestinations;
 
@@ -74,6 +81,9 @@ namespace SIGVerse.Competition.HumanNavigation
 		private bool isRunning;
 
 		private int speechCount;
+
+		private bool isAlreadyGivenDistancePenaltyForTargetObject;
+		private bool isAlreadyGivenDistancePenaltyForDestination;
 
 		void Awake()
 		{
@@ -143,7 +153,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.UpdateScoreText(this.score);
 
-			SIGVerseLogger.Info("Score (grasp) add [" + Score.GetScore(scoreType) + "], Challenge " + HumanNaviConfig.Instance.numberOfTrials + " Score=" + this.score);
+			SIGVerseLogger.Info("Score (" + scoreType.ToString() + ") add [" + Score.GetScore(scoreType) + "], Challenge " + HumanNaviConfig.Instance.numberOfTrials + " Score=" + this.score);
 
 			// Send the Score Notification
 			ScoreStatus scoreStatus = new ScoreStatus(additionalScore, this.score, HumanNaviConfig.Instance.GetTotalScore());
@@ -197,6 +207,29 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		//---------------------------------------------------
 
+		public bool IsAlreadyGivenDistancePenaltyForTargetObject()
+		{
+			return this.isAlreadyGivenDistancePenaltyForTargetObject;
+		}
+		public bool IsAlreadyGivenDistancePenaltyForDestination()
+		{
+			return this.isAlreadyGivenDistancePenaltyForDestination;
+		}
+
+		public void AddDistancePenaltyForTargetObject()
+		{
+			this.isAlreadyGivenDistancePenaltyForTargetObject = true;
+			this.AddScore(Score.Type.DistancePenaltyForTargetObject);
+		}
+		public void AddDistancePenaltyForDestination()
+		{
+			this.isAlreadyGivenDistancePenaltyForDestination = true;
+			this.AddScore(Score.Type.DistancePenaltyForDestination);
+		}
+
+
+		//---------------------------------------------------
+
 		public void TaskStart()
 		{
 			this.isRunning = true;
@@ -206,6 +239,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.score = 0;
 
 			this.UpdateScoreText(this.score);
+
+			this.isAlreadyGivenDistancePenaltyForTargetObject = false;
+			this.isAlreadyGivenDistancePenaltyForDestination  = false;
 		}
 
 		public void TaskEnd()

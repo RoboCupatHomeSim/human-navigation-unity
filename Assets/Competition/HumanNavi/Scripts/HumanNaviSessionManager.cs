@@ -159,5 +159,14 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			return this.tts.IsSpeaking();
 		}
+
+		public float GetDistanceFromRobot(Vector3 targetPosition)
+		{
+			Vector3 currentRobotPosition = this.currentRobot.transform.Find("odom/base_footprint").gameObject.transform.position;
+			Vector2 robotPosition2D = new Vector2(currentRobotPosition.x, currentRobotPosition.z);
+			Vector2 targetPosition2D = new Vector2(targetPosition.x, targetPosition.z);
+
+			return (robotPosition2D - targetPosition2D).magnitude;
+		}
 	}
 }

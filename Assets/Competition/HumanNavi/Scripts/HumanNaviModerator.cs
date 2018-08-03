@@ -107,6 +107,9 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private HumanNaviPlaybackRecorder playbackRecorder;
 
+		private Vector3 initialTargetObjectPosition;
+		private Vector3 initialDestinationPosition;
+
 		//-----------------------------
 
 		private IRosConnection[] rosConnections;
@@ -272,6 +275,25 @@ namespace SIGVerse.Competition.HumanNavigation
 						this.CheckHandInteraction(this.LeftHand);
 						this.CheckHandInteraction(this.rightHand);
 
+						// for penalty
+						if (!this.scoreManager.IsAlreadyGivenDistancePenaltyForTargetObject())
+						{
+							float distanceFromTargetObject = this.sessionManager.GetDistanceFromRobot(this.initialTargetObjectPosition);
+							if(distanceFromTargetObject < this.scoreManager.limitDistanceFromTarget)
+							{
+								this.scoreManager.AddDistancePenaltyForTargetObject();
+							}
+
+						}
+						if (!this.scoreManager.IsAlreadyGivenDistancePenaltyForDestination())
+						{
+							float distanceFromDestination  = this.sessionManager.GetDistanceFromRobot(this.initialDestinationPosition);
+							if(distanceFromDestination < this.scoreManager.limitDistanceFromTarget)
+							{
+								this.scoreManager.AddDistancePenaltyForDestination();
+							}
+						}
+
 						break;
 					}
 					case Step.WaitForNextSession:
@@ -413,6 +435,9 @@ namespace SIGVerse.Competition.HumanNavigation
 				{
 					taskInfoForRobot.target_object.name = graspableObject.name.Substring(0, graspableObject.name.Length - 3);
 					taskInfoForRobot.target_object.position = positionInROS;
+
+					// for penalty
+					this.initialTargetObjectPosition = graspableObject.transform.position;
 				}
 				else
 				{
@@ -449,6 +474,9 @@ namespace SIGVerse.Competition.HumanNavigation
 				{
 					Vector3 conterOfCollider = destination.GetComponent<BoxCollider>().center;
 					taskInfoForRobot.destination = this.ConvertCoorinateSystemUnityToROS_Position(destination.transform.position + conterOfCollider);
+
+					// for penalty
+					this.initialDestinationPosition = destination.transform.position + conterOfCollider;
 				}
 			}
 			SIGVerseLogger.Info("Destination : " + taskInfoForRobot.destination);
