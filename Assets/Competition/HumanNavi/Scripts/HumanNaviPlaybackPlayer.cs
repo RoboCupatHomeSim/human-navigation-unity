@@ -75,7 +75,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				//	graspingCandidatePosition.SetActive(false);
 				//}
 
-				this.timeLimit = this.scoreManager.timeLimit;
+				this.timeLimit = HumanNaviConfig.Instance.configInfo.sessionTimeLimit;
 			}
 		}
 

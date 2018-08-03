@@ -1,4 +1,5 @@
 {
+	"sessionTimeLimit":"300",
 	"recoverUsingScoreFile": false,
 	"maxNumberOfTrials": 12,
 	"playbackType": 0,

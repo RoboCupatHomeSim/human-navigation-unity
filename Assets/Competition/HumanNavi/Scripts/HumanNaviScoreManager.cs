@@ -50,7 +50,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		[HeaderAttribute("Time left")]
 		[TooltipAttribute("seconds")]
-		public int timeLimit = 300;
+		//public int timeLimit = 300;
 		public int timeLimitForGrasp = 150;
 		public int timeLimitForPlacement = 150;
 
@@ -65,6 +65,8 @@ namespace SIGVerse.Competition.HumanNavigation
 		public List<string> timeIsUpDestinationTags;
 
 		//---------------------------------------------------
+
+		private int timeLimit;
 
 		private float elapsedTimeForGrasp;
 		private float elapsedTimeForPlacement;
@@ -87,6 +89,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		void Awake()
 		{
+			this.timeLimit = HumanNaviConfig.Instance.configInfo.sessionTimeLimit;
+
 			this.mainMenu = GameObject.FindGameObjectWithTag("MainMenu");
 
 			this.panelMainController = this.mainMenu.GetComponent<PanelMainController>();
@@ -108,7 +112,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			this.UpdateScoreText(0, HumanNaviConfig.Instance.GetTotalScore());
 
-			this.timeLeft = (float)timeLimit;
+			this.timeLeft = (float)this.timeLimit;
 
 			this.panelMainController.SetTimeLeft(this.timeLeft);
 

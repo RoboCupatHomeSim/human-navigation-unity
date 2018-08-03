@@ -19,6 +19,7 @@ namespace SIGVerse.Competition.HumanNavigation
 	[System.Serializable]
 	public class HumanNaviConfigInfo
 	{
+		public int sessionTimeLimit;
 		public int  maxNumberOfTrials;
 		public bool recoverUsingScoreFile;
 		public List<TaskInfo> taskInfoList;
@@ -66,6 +67,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				// File open
 				StreamReader streamReader = new StreamReader(configFilePath, Encoding.UTF8);
 
+				this.configInfo.sessionTimeLimit = 300;
 				this.configInfo = JsonUtility.FromJson<HumanNaviConfigInfo>(streamReader.ReadToEnd());
 
 				streamReader.Close();
@@ -75,6 +77,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				SIGVerseLogger.Warn("HumanNavi config file does not exists.");
 
+				this.configInfo.sessionTimeLimit = 300;
 				this.configInfo.maxNumberOfTrials = 1;
 				this.configInfo.recoverUsingScoreFile = false;
 				this.configInfo.executionMode = 1;
