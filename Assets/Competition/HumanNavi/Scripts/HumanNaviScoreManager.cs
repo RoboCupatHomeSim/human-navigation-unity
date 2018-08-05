@@ -13,33 +13,48 @@ namespace SIGVerse.Competition.HumanNavigation
 		public const int MaxScore = +999;
 		public const int MinScore = -999;
 
-		public enum Type
+		public enum ScoreType
 		{
 			CorrectObjectIsGrasped,
-			IncorrectObjectIsGrasped,
 			TargetObjectInDestination,
 			CompletionTime,
 			CollisionEnter,
-			OverSpeechCount,
 			DistancePenaltyForTargetObject,
 			DistancePenaltyForDestination,
 		}
 
-		public static int GetScore(Type scoreType)
+		public enum TimePnaltyType
+		{
+			IncorrectObjectIsGrasped,
+			OverSpeechCount,
+		}
+
+		public static int GetScore(ScoreType scoreType)
 		{
 			switch(scoreType)
 			{
-				case Score.Type.CorrectObjectIsGrasped         : { return +20; }
-				case Score.Type.IncorrectObjectIsGrasped       : { return  -5; }
-				case Score.Type.TargetObjectInDestination      : { return +20; }
-				case Score.Type.CompletionTime                 : { return +30; }
-				case Score.Type.CollisionEnter                 : { return -10; }
-				case Score.Type.OverSpeechCount                : { return  -3; }
-				case Score.Type.DistancePenaltyForTargetObject : { return -20; }
-				case Score.Type.DistancePenaltyForDestination  : { return -20; }
+				case Score.ScoreType.CorrectObjectIsGrasped         : { return +20; }
+				//case Score.ScoreType.IncorrectObjectIsGrasped       : { return  -5; }
+				case Score.ScoreType.TargetObjectInDestination      : { return +20; }
+				case Score.ScoreType.CompletionTime                 : { return +30; }
+				case Score.ScoreType.CollisionEnter                 : { return -10; }
+				//case Score.ScoreType.OverSpeechCount                : { return  -3; }
+				case Score.ScoreType.DistancePenaltyForTargetObject : { return -20; }
+				case Score.ScoreType.DistancePenaltyForDestination  : { return -20; }
 			}
 
-			throw new Exception("Illegal score type. Type = " + (int)scoreType + ", method name=(" + System.Reflection.MethodBase.GetCurrentMethod().Name + ")");
+			throw new Exception("Illegal score type. ScoreType = " + (int)scoreType + ", method name=(" + System.Reflection.MethodBase.GetCurrentMethod().Name + ")");
+		}
+
+		public static int GetTimePenalty(TimePnaltyType penaltyType)
+		{
+			switch (penaltyType)
+			{
+				case Score.TimePnaltyType.IncorrectObjectIsGrasped: { return -25; }
+				case Score.TimePnaltyType.OverSpeechCount:          { return -15; }
+			}
+
+			throw new Exception("Illegal time penalty type. PenaltyType = " + (int)penaltyType + ", method name=(" + System.Reflection.MethodBase.GetCurrentMethod().Name + ")");
 		}
 	}
 
@@ -50,7 +65,6 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		[HeaderAttribute("Time left")]
 		[TooltipAttribute("seconds")]
-		//public int timeLimit = 300;
 		public int timeLimitForGrasp = 150;
 		public int timeLimitForPlacement = 150;
 
@@ -144,7 +158,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		//---------------------------------------------------
 
-		public void AddScore(Score.Type scoreType)
+		public void AddScore(Score.ScoreType scoreType)
 		{
 			if (!this.isRunning)
 			{
@@ -176,7 +190,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void AddTimeScore(float elapsedTime, float timeLimit)
 		{
-			int additionalScore = Mathf.FloorToInt(Score.GetScore(Score.Type.CompletionTime) * ((timeLimit - elapsedTime) / timeLimit));
+			int additionalScore = Mathf.FloorToInt(Score.GetScore(Score.ScoreType.CompletionTime) * ((timeLimit - elapsedTime) / timeLimit));
 
 			this.score = Mathf.Clamp(this.score + additionalScore, Score.MinScore, Score.MaxScore);
 			this.UpdateScoreText(this.score);
@@ -209,6 +223,18 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.AddTimeScore(this.elapsedTimeForPlacement, this.timeLimitForPlacement);
 		}
 
+		public void ImposeTimePenalty(Score.TimePnaltyType penaltyType)
+		{
+			if (!this.isRunning)
+			{
+				return;
+			}
+
+			// event (send notification) for playback [TODO]
+
+			this.timeLeft = Mathf.Max(0.0f, this.timeLeft + Score.GetTimePenalty(penaltyType));
+		}
+
 		//---------------------------------------------------
 
 		public bool IsAlreadyGivenDistancePenaltyForTargetObject()
@@ -223,12 +249,12 @@ namespace SIGVerse.Competition.HumanNavigation
 		public void AddDistancePenaltyForTargetObject()
 		{
 			this.isAlreadyGivenDistancePenaltyForTargetObject = true;
-			this.AddScore(Score.Type.DistancePenaltyForTargetObject);
+			this.AddScore(Score.ScoreType.DistancePenaltyForTargetObject);
 		}
 		public void AddDistancePenaltyForDestination()
 		{
 			this.isAlreadyGivenDistancePenaltyForDestination = true;
-			this.AddScore(Score.Type.DistancePenaltyForDestination);
+			this.AddScore(Score.ScoreType.DistancePenaltyForDestination);
 		}
 
 
@@ -293,7 +319,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnHsrCollisionEnter(Collision collision, float collisionVelocity, float effectScale)
 		{
-			this.AddScore(Score.Type.CollisionEnter);
+			this.AddScore(Score.ScoreType.CollisionEnter);
 		}
 
 		public void OnSpeakGuidanceMessage(GuidanceMessageStatus guidanceMessageStatus)
@@ -302,7 +328,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			if(this.speechCount > this.LimitOfSpeechCount)
 			{
-				this.AddScore(Score.Type.OverSpeechCount);
+				//this.AddScore(Score.ScoreType.OverSpeechCount);
+				this.ImposeTimePenalty(Score.TimePnaltyType.OverSpeechCount);
 			}
 		}
 	}

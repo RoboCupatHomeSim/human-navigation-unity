@@ -67,7 +67,6 @@ namespace SIGVerse.Competition.HumanNavigation
 				// File open
 				StreamReader streamReader = new StreamReader(configFilePath, Encoding.UTF8);
 
-				this.configInfo.sessionTimeLimit = 300;
 				this.configInfo = JsonUtility.FromJson<HumanNaviConfigInfo>(streamReader.ReadToEnd());
 
 				streamReader.Close();
