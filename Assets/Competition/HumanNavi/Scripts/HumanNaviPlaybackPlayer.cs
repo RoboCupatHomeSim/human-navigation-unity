@@ -37,7 +37,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				moderator.GetComponent<HumanNaviPubMessage>().enabled = false;
 				moderator.GetComponent<HumanNaviSubMessage>().enabled = false;
 				moderator.GetComponent<HumanNaviPubTaskInfo>().enabled = false;
-				moderator.GetComponent<HumanNaviPubAvatarPose>().enabled = false;
+				moderator.GetComponent<HumanNaviPubAvatarStatus>().enabled = false;
 
 				robot.GetComponentInChildren<HumanNaviSubGuidanceMessage>().enabled = false;
 

@@ -26,12 +26,14 @@ namespace SIGVerse.Competition.HumanNavigation
 		private const string ReasonGiveUp = "Give_up";
 
 		private const string MsgIamReady           = "I_am_ready";
-		private const string MsgGetAvatarPose      = "Get_avatar_pose";
+		private const string MsgGetAvatarStatus    = "Get_avatar_status";
 		private const string MsgConfirmSpeechState = "Confirm_speech_state";
 		private const string MsgGiveUp             = "Give_up";
 
 		private const string MsgRequest     = "Guidance_request";
 		private const string MsgSpeechState = "Speech_state";
+
+		private const string TagNameOfGraspables = "Graspables";
 
 		private enum Step
 		{
@@ -56,6 +58,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		[HeaderAttribute("Avatar")]
 		public GameObject avatar;
 		public GameObject head;
+		public GameObject body;
 		public NewtonVR.NVRHand LeftHand;
 		public NewtonVR.NVRHand rightHand;
 		public GameObject cameraRig;
@@ -74,7 +77,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		[HeaderAttribute("ROS Message")]
 		public HumanNaviPubMessage pubHumanNaviMessage;
 		public HumanNaviPubTaskInfo pubTaskInfo;
-		public HumanNaviPubAvatarPose pubAvatarPose;
+		public HumanNaviPubAvatarStatus pubAvatarStatus;
 
 		[HeaderAttribute("Scenario Logger")]
 		public GameObject playbackManager;
@@ -110,6 +113,9 @@ namespace SIGVerse.Competition.HumanNavigation
 		private Vector3 initialTargetObjectPosition;
 		private Vector3 initialDestinationPosition;
 
+		private string objectIdInLeftHand;
+		private string objectIdInRightHand;
+
 		//-----------------------------
 
 		private IRosConnection[] rosConnections;
@@ -136,7 +142,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				// MessageMap
 				this.receivedMessageMap = new Dictionary<string, bool>();
 				this.receivedMessageMap.Add(MsgIamReady, false);
-				this.receivedMessageMap.Add(MsgGetAvatarPose, false);
+				this.receivedMessageMap.Add(MsgGetAvatarStatus, false);
 				this.receivedMessageMap.Add(MsgConfirmSpeechState, false);
 				this.receivedMessageMap.Add(MsgGiveUp, false);
 
@@ -272,27 +278,18 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.WaitForEndOfSession:
 					{
-						this.CheckHandInteraction(this.LeftHand);
-						this.CheckHandInteraction(this.rightHand);
+						// for score (grasp)
+						this.JudgeGraspingObject();
+						//this.CheckHandInteraction(this.LeftHand);
+						//this.CheckHandInteraction(this.rightHand);
 
-						// for penalty
-						if (!this.scoreManager.IsAlreadyGivenDistancePenaltyForTargetObject())
-						{
-							float distanceFromTargetObject = this.sessionManager.GetDistanceFromRobot(this.initialTargetObjectPosition);
-							if(distanceFromTargetObject < this.scoreManager.limitDistanceFromTarget)
-							{
-								this.scoreManager.AddDistancePenaltyForTargetObject();
-							}
+						// for avatar status
+						this.objectIdInLeftHand  = this.GetGraspingObjectId(this.LeftHand);
+						this.objectIdInRightHand = this.GetGraspingObjectId(this.rightHand);
 
-						}
-						if (!this.scoreManager.IsAlreadyGivenDistancePenaltyForDestination())
-						{
-							float distanceFromDestination  = this.sessionManager.GetDistanceFromRobot(this.initialDestinationPosition);
-							if(distanceFromDestination < this.scoreManager.limitDistanceFromTarget)
-							{
-								this.scoreManager.AddDistancePenaltyForDestination();
-							}
-						}
+						// for penalty of distance between the robot and the target/destination
+						this.JudgeDistanceFromTargetObject();
+						this.JudgeDistanceFromDestination();
 
 						break;
 					}
@@ -364,6 +361,9 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.interruptedReason = string.Empty;
 
+			this.objectIdInLeftHand  = "";
+			this.objectIdInRightHand = "";
+
 			SIGVerseLogger.Info("End of PreProcess");
 		}
 
@@ -420,7 +420,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private void SetObjectListToHumanNaviTaskInfo()
 		{
 			// Get grasping candidates
-			List<GameObject> graspableObjects = GameObject.FindGameObjectsWithTag("Graspables").ToList<GameObject>();
+			List<GameObject> graspableObjects = GameObject.FindGameObjectsWithTag(TagNameOfGraspables).ToList<GameObject>();
 			if (graspableObjects.Count == 0)
 			{
 				throw new Exception("Graspable object is not found.");
@@ -534,18 +534,9 @@ namespace SIGVerse.Competition.HumanNavigation
 				{
 					this.OnGiveUp();
 				}
-				else if(humanNaviMsg.message == MsgGetAvatarPose)
+				else if(humanNaviMsg.message == MsgGetAvatarStatus)
 				{
-					RosBridge.human_navigation.HumanNaviAvatarPose avatarPose = new RosBridge.human_navigation.HumanNaviAvatarPose();
-
-					avatarPose.head.position = ConvertCoorinateSystemUnityToROS_Position(this.head.transform.position);
-					avatarPose.head.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.head.transform.rotation);
-					avatarPose.left_hand.position = ConvertCoorinateSystemUnityToROS_Position(this.LeftHand.transform.position);
-					avatarPose.left_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.LeftHand.transform.rotation);
-					avatarPose.right_hand.position = ConvertCoorinateSystemUnityToROS_Position(this.rightHand.transform.position);
-					avatarPose.right_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.rightHand.transform.rotation);
-
-					this.SendRosAvatarPoseMessage(avatarPose);
+					this.SendRosAvatarStatusMessage();
 				}
 				else if (humanNaviMsg.message == MsgConfirmSpeechState)
 				{
@@ -658,20 +649,35 @@ namespace SIGVerse.Competition.HumanNavigation
 			);
 		}
 
-		private void SendRosAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose avatarPose)
+		private void SendRosAvatarStatusMessage()
 		{
-			ExecuteEvents.Execute<IRosAvatarPoseSendHandler>
+			RosBridge.human_navigation.HumanNaviAvatarStatus avatarStatus = new RosBridge.human_navigation.HumanNaviAvatarStatus();
+
+			avatarStatus.head.position = ConvertCoorinateSystemUnityToROS_Position(this.head.transform.position);
+			avatarStatus.head.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.head.transform.rotation);
+			avatarStatus.body.position = ConvertCoorinateSystemUnityToROS_Position(this.body.transform.position);
+			avatarStatus.body.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.body.transform.rotation);
+			avatarStatus.left_hand.position = ConvertCoorinateSystemUnityToROS_Position(this.LeftHand.transform.position);
+			avatarStatus.left_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.LeftHand.transform.rotation);
+			avatarStatus.right_hand.position = ConvertCoorinateSystemUnityToROS_Position(this.rightHand.transform.position);
+			avatarStatus.right_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.rightHand.transform.rotation);
+			avatarStatus.object_in_left_hand = this.objectIdInLeftHand == "" ? "" : this.objectIdInLeftHand.Substring(0, this.objectIdInLeftHand.Length - 3);
+			avatarStatus.object_in_right_hand = this.objectIdInRightHand == "" ? "" : this.objectIdInRightHand.Substring(0, this.objectIdInRightHand.Length - 3);
+			avatarStatus.is_target_object_in_left_hand = this.IsTargetObject(this.objectIdInLeftHand);
+			avatarStatus.is_target_object_in_right_hand = this.IsTargetObject(this.objectIdInRightHand);
+
+			ExecuteEvents.Execute<IRosAvatarStatusSendHandler>
 			(
 				target: this.gameObject,
 				eventData: null,
-				functor: (reciever, eventData) => reciever.OnSendRosAvatarPoseMessage(avatarPose)
+				functor: (reciever, eventData) => reciever.OnSendRosAvatarStatusMessage(avatarStatus)
 			);
 
-			ExecuteEvents.Execute<IRosAvatarPoseSendHandler>
+			ExecuteEvents.Execute<IRosAvatarStatusSendHandler>
 			(
 				target: this.playbackManager,
 				eventData: null,
-				functor: (reciever, eventData) => reciever.OnSendRosAvatarPoseMessage(avatarPose)
+				functor: (reciever, eventData) => reciever.OnSendRosAvatarStatusMessage(avatarStatus)
 			);
 		}
 
@@ -692,56 +698,112 @@ namespace SIGVerse.Competition.HumanNavigation
 			);
 		}
 
-		private void CheckHandInteraction(NewtonVR.NVRHand hand)
+		private void JudgeGraspingObject()
 		{
-			if (hand.IsInteracting)
+			this.CheckGraspOfObject(this.LeftHand);
+			this.CheckGraspOfObject(this.rightHand);
+		}
+
+		private void CheckGraspOfObject(NewtonVR.NVRHand hand)
+		{
+			if (hand.HoldButtonDown && hand.IsInteracting)
 			{
-				if (hand.HoldButtonDown)
+				if (hand.CurrentlyInteracting.tag == TagNameOfGraspables)
 				{
-					if (hand.CurrentlyInteracting.tag == "Graspables")
+					if (this.IsTargetObject(hand.CurrentlyInteracting.name))
 					{
-						this.RecordEventLog("Interaction" + "\t" + hand.name + ".IsGrasping" + "\t" + hand.CurrentlyInteracting + hand.CurrentlyInteracting.transform.position);
-
-						//string whichHandUsed = string.Empty;
-						//if      (hand.IsLeft)  { whichHandUsed = "LeftHand";  }
-						//else if (hand.IsRight) { whichHandUsed = "RightHand"; }
-
-						if (hand.CurrentlyInteracting.name == this.currentTaskInfo.target)
+						if (!this.isTargetAlreadyGrasped)
 						{
-							if (!this.isTargetAlreadyGrasped)
-							{
-								SIGVerseLogger.Info("Target object is grasped");
+							SIGVerseLogger.Info("Target object is grasped");
 
-								this.SendPanelNotice("Target object is grasped", 100, PanelNoticeStatus.Green);
+							this.SendPanelNotice("Target object is grasped", 100, PanelNoticeStatus.Green);
 
-								this.scoreManager.AddScore(Score.ScoreType.CorrectObjectIsGrasped);
-								this.scoreManager.AddTimeScoreOfGrasp();
+							this.scoreManager.AddScore(Score.ScoreType.CorrectObjectIsGrasped);
+							this.scoreManager.AddTimeScoreOfGrasp();
 
-								this.isTargetAlreadyGrasped = true;
-							}
+							this.isTargetAlreadyGrasped = true;
 						}
-						else
+					}
+					else
+					{
+						//if (!this.isTargetAlreadyGrasped)
 						{
-							if (!this.isTargetAlreadyGrasped)
-							{
-								SIGVerseLogger.Info("Wrong object is grasped");
+							SIGVerseLogger.Info("Wrong object is grasped");
 
-								this.SendPanelNotice("Wrong object is grasped", 100, PanelNoticeStatus.Red);
+							this.SendPanelNotice("Wrong object is grasped", 100, PanelNoticeStatus.Red);
 
-								//this.scoreManager.AddScore(Score.ScoreType.IncorrectObjectIsGrasped);
-								this.scoreManager.ImposeTimePenalty(Score.TimePnaltyType.IncorrectObjectIsGrasped);
-							}
+							//this.scoreManager.AddScore(Score.ScoreType.IncorrectObjectIsGrasped);
+							this.scoreManager.ImposeTimePenalty(Score.TimePnaltyType.IncorrectObjectIsGrasped);
 						}
 					}
 				}
 			}
-			else if (hand.HoldButtonDown)
+		}
+
+		private string GetGraspingObjectId(NewtonVR.NVRHand hand)
+		{
+			string graspingObject = "";
+
+			if (hand.HoldButtonPressed)
+			{
+				if (hand.IsInteracting)
+				{
+					if (hand.CurrentlyInteracting.tag == TagNameOfGraspables)
+					{
+						graspingObject = hand.CurrentlyInteracting.name;
+					}
+				}
+			}
+
+			return graspingObject;
+		}
+
+		private bool IsTargetObject(string objectLabel)
+		{
+			if (objectLabel == this.currentTaskInfo.target) return true;
+			else                                            return false;
+		}
+
+		private void CheckGraspingStatus(NewtonVR.NVRHand hand)
+		{
+			if (hand.HoldButtonDown)
 			{
 				this.RecordEventLog("Interaction" + "\t" + hand.name + ".HoldButtonDown");
 			}
-			else if (hand.IsHovering)
+
+			if (hand.HoldButtonUp)
 			{
-				this.RecordEventLog("Interaction" + "\t" + hand.name + ".IsHovering");
+				if (hand.IsInteracting)
+				{
+					this.RecordEventLog("Interaction" + "\t" + hand.name + ".ReleaseObject");
+				}
+				else
+				{
+					this.RecordEventLog("Interaction" + "\t" + hand.name + ".HoldButtonUp");
+				}
+			}
+		}
+
+		private void JudgeDistanceFromTargetObject()
+		{
+			if (!this.scoreManager.IsAlreadyGivenDistancePenaltyForTargetObject())
+			{
+				float distanceFromTargetObject = this.sessionManager.GetDistanceFromRobot(this.initialTargetObjectPosition);
+				if (distanceFromTargetObject < this.scoreManager.limitDistanceFromTarget)
+				{
+					this.scoreManager.AddDistancePenaltyForTargetObject();
+				}
+			}
+		}
+		private void JudgeDistanceFromDestination()
+		{
+			if (!this.scoreManager.IsAlreadyGivenDistancePenaltyForDestination())
+			{
+				float distanceFromDestination = this.sessionManager.GetDistanceFromRobot(this.initialDestinationPosition);
+				if (distanceFromDestination < this.scoreManager.limitDistanceFromTarget)
+				{
+					this.scoreManager.AddDistancePenaltyForDestination();
+				}
 			}
 		}
 

@@ -27,7 +27,7 @@ namespace SIGVerse.Competition.HumanNavigation
 	}
 
 	[RequireComponent(typeof (HumanNaviPlaybackCommon))]
-	public class HumanNaviPlaybackRecorder : TrialPlaybackRecorder, ISpeakGuidanceMessageHandler, IPlaybackRosMessageHandler, IReceiveHumanNaviMsgHandler, IRosTaskInfoSendHandler, IRosAvatarPoseSendHandler
+	public class HumanNaviPlaybackRecorder : TrialPlaybackRecorder, ISpeakGuidanceMessageHandler/*, IPlaybackRosMessageHandler, IReceiveHumanNaviMsgHandler, IRosTaskInfoSendHandler, IRosAvatarStatusSendHandler*/
 	{
 		public List<string> KeywordsOfAvatarPartsPathToIgnore;
 
@@ -78,9 +78,9 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			this.dataLines.Add(GetDataLine(this.GetHeaderElapsedTime(), message, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageSent));
 		}
-		public void OnSendRosAvatarPoseMessage(SIGVerse.RosBridge.human_navigation.HumanNaviAvatarPose avatarPose)
+		public void OnSendRosAvatarStatusMessage(SIGVerse.RosBridge.human_navigation.HumanNaviAvatarStatus avatarStatus)
 		{
-			this.dataLines.Add(GetDataLine(this.GetHeaderElapsedTime(), avatarPose, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageSent));
+			this.dataLines.Add(GetDataLine(this.GetHeaderElapsedTime(), avatarStatus, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageSent));
 		}
 		public void OnSendRosTaskInfoMessage(SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo taskInfo)
 		{
@@ -103,13 +103,18 @@ namespace SIGVerse.Competition.HumanNavigation
 			return dataLine;
 		}
 
-		private string GetDataLine(string elapsedTime, SIGVerse.RosBridge.human_navigation.HumanNaviAvatarPose avatarPose, string dataType)
+		private string GetDataLine(string elapsedTime, SIGVerse.RosBridge.human_navigation.HumanNaviAvatarStatus avatarStatus, string dataType)
 		{
 			string dataLine = elapsedTime + "," + dataType;
 			dataLine += "\t" + "HumanNaviAvatarPose";
-			dataLine += "\t" + "head[position:" + avatarPose.head.position.ToString() + ", orientation:" + avatarPose.head.orientation.ToString()+"]";
-			dataLine += "\t" + "left_hand[position:" + avatarPose.left_hand.position.ToString() + ", orientation:" + avatarPose.left_hand.orientation.ToString() + "]";
-			dataLine += "\t" + "right_hand[position:" + avatarPose.right_hand.position.ToString() + ", orientation:" + avatarPose.right_hand.orientation.ToString() + "]";
+			dataLine += "\t" + "head[position:" + avatarStatus.head.position.ToString() + ", orientation:" + avatarStatus.head.orientation.ToString() + "]";
+			dataLine += "\t" + "body[position:" + avatarStatus.body.position.ToString() + ", orientation:" + avatarStatus.body.orientation.ToString() + "]";
+			dataLine += "\t" + "left_hand[position:" + avatarStatus.left_hand.position.ToString() + ", orientation:" + avatarStatus.left_hand.orientation.ToString() + "]";
+			dataLine += "\t" + "right_hand[position:" + avatarStatus.right_hand.position.ToString() + ", orientation:" + avatarStatus.right_hand.orientation.ToString() + "]";
+			dataLine += "\t" + "object_in_left_hand:" + avatarStatus.object_in_left_hand;
+			dataLine += "\t" + "object_in_right_hand:" + avatarStatus.object_in_right_hand;
+			dataLine += "\t" + "is_target_object_in_left_hand:" + avatarStatus.is_target_object_in_left_hand.ToString();
+			dataLine += "\t" + "is_target_object_in_right_hand:" + avatarStatus.is_target_object_in_right_hand.ToString();
 
 			return dataLine;
 		}

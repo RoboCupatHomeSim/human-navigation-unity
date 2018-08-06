@@ -647,22 +647,22 @@ namespace SIGVerse.Competition.HumanNavigation
 			);
 		}
 
-		private void SendRosAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose avatarPose)
-		{
-			ExecuteEvents.Execute<IRosAvatarPoseSendHandler>
-			(
-				target: this.gameObject,
-				eventData: null,
-				functor: (reciever, eventData) => reciever.OnSendRosAvatarPoseMessage(avatarPose)
-			);
+		//private void SendRosAvatarPoseMessage(RosBridge.human_navigation.HumanNaviAvatarPose avatarPose)
+		//{
+		//	ExecuteEvents.Execute<IRosAvatarPoseSendHandler>
+		//	(
+		//		target: this.gameObject,
+		//		eventData: null,
+		//		functor: (reciever, eventData) => reciever.OnSendRosAvatarPoseMessage(avatarPose)
+		//	);
 
-			ExecuteEvents.Execute<IRosAvatarPoseSendHandler>
-			(
-				target: this.playbackManager,
-				eventData: null,
-				functor: (reciever, eventData) => reciever.OnSendRosAvatarPoseMessage(avatarPose)
-			);
-		}
+		//	ExecuteEvents.Execute<IRosAvatarPoseSendHandler>
+		//	(
+		//		target: this.playbackManager,
+		//		eventData: null,
+		//		functor: (reciever, eventData) => reciever.OnSendRosAvatarPoseMessage(avatarPose)
+		//	);
+		//}
 
 		private void SendRosTaskInfoMessage(RosBridge.human_navigation.HumanNaviTaskInfo taskInfo)
 		{
