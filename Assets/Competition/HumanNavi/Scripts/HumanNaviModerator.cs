@@ -63,6 +63,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		public NewtonVR.NVRHand rightHand;
 		public GameObject cameraRig;
 		public GameObject Ethan;
+		public float heightThresholdForPoseReset = -0.5f;
 
 		[HeaderAttribute("Panels for avatar")]
 		public GameObject noticePanelForAvatar;
@@ -195,7 +196,7 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 				}
 
-				if (this.avatar.transform.position.y < -0.1f)
+				if (this.avatar.transform.position.y < heightThresholdForPoseReset)
 				{
 					this.ResetAvatarTransform();
 				}
