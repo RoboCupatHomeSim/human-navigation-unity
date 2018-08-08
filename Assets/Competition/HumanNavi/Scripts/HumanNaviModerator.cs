@@ -73,12 +73,6 @@ namespace SIGVerse.Competition.HumanNavigation
 		public GameObject startTrialPanel;
 		public GameObject goToNextTrialPanel;
 
-
-		[HeaderAttribute("ROS Message")]
-		public HumanNaviPubMessage pubHumanNaviMessage;
-		public HumanNaviPubTaskInfo pubTaskInfo;
-		public HumanNaviPubAvatarStatus pubAvatarStatus;
-
 		[HeaderAttribute("Scenario Logger")]
 		public GameObject playbackManager;
 
