@@ -48,7 +48,6 @@ https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.24
 4. Click [Build].
 5. Select the "Build" folder.
 6. Type a file name (e.g. HumanNavigation) and save the file.  
-(Note: For now, please ignore errors of "ReflectionTypeLoadException" in NewtonVR)
 
 ## How to Set Up
 
