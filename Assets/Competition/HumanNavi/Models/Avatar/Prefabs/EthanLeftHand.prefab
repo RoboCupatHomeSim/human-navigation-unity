@@ -785,6 +785,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4462664808673248}
+  - component: {fileID: 114659872407895498}
   m_Layer: 11
   m_Name: EthanLeftHand
   m_TagString: Untagged
@@ -2477,6 +2478,18 @@ Transform:
   m_Father: {fileID: 4607438873722726}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114659872407895498
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1664661818404876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd22623eb353b4408e74863ad231cc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handType: 0
 --- !u!135 &135358641918629258
 SphereCollider:
   m_ObjectHideFlags: 1

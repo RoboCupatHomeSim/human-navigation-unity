@@ -377,6 +377,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 55385905}
+  - component: {fileID: 55385906}
   m_Layer: 13
   m_Name: EthanRightHand
   m_TagString: Untagged
@@ -404,6 +405,18 @@ Transform:
   m_Father: {fileID: 1514220224}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &55385906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 55385904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd22623eb353b4408e74863ad231cc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handType: 1
 --- !u!1001 &70746344
 Prefab:
   m_ObjectHideFlags: 0
@@ -3827,6 +3840,8 @@ MonoBehaviour:
   subviewPositionType: 3
   offsetX: 5
   offsetY: 5
+  sizeX: 480
+  sizeY: 320
 --- !u!114 &566434536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3843,6 +3858,8 @@ MonoBehaviour:
   subviewPositionType: 3
   offsetX: 5
   offsetY: 145
+  sizeX: 480
+  sizeY: 320
 --- !u!4 &566434537
 Transform:
   m_ObjectHideFlags: 0
@@ -4072,6 +4089,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 600965132}
+  - component: {fileID: 600965133}
   m_Layer: 13
   m_Name: EthanLeftHand
   m_TagString: Untagged
@@ -4099,6 +4117,18 @@ Transform:
   m_Father: {fileID: 1863912314}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &600965133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 600965131}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fd22623eb353b4408e74863ad231cc4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  handType: 0
 --- !u!1 &607080481
 GameObject:
   m_ObjectHideFlags: 0
@@ -8337,7 +8367,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294959103
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -9341,10 +9371,12 @@ MonoBehaviour:
   EditorPlayspacePreview: {fileID: 0}
   EditorPlayspaceOverride: 0
   EditorPlayspaceDefault: {x: 2, y: 1.5}
-  OverrideAll: 0
-  OverrideAllLeftHand: {fileID: 0}
+  OverrideAll: 1
+  OverrideAllLeftHand: {fileID: 1984377803473158, guid: 3ab01ba9aa88e5948b280cc81469c1fd,
+    type: 2}
   OverrideAllLeftHandPhysicalColliders: {fileID: 0}
-  OverrideAllRightHand: {fileID: 0}
+  OverrideAllRightHand: {fileID: 1989187096289166, guid: ed6cd462e002ce245b7f617395ff9649,
+    type: 2}
   OverrideAllRightHandPhysicalColliders: {fileID: 0}
   OverrideSteamVR: 0
   OverrideSteamVRLeftHand: {fileID: 0}
