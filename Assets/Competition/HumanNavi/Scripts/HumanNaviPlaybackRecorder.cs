@@ -127,14 +127,14 @@ namespace SIGVerse.Competition.HumanNavigation
 			dataLine += "\t" + "target_object:" + taskInfo.target_object.name + ", " + taskInfo.target_object.position.ToString();
 			dataLine += "\t" + "destination:" + taskInfo.destination.ToString();
 
-			dataLine += "\t objects_info:";
-			for(int i = 0; i < taskInfo.objects_info.Count; i++)
+			dataLine += "\t non_target_objects:";
+			for(int i = 0; i < taskInfo.non_target_objects.Count; i++)
 			{
 				if (i != 0)
 				{
 					dataLine += ", ";
 				}
-				dataLine += taskInfo.objects_info[i].name + taskInfo.objects_info[i].position.ToString();
+				dataLine += taskInfo.non_target_objects[i].name + taskInfo.non_target_objects[i].position.ToString();
 			}
 
 			return dataLine;

@@ -352,11 +352,11 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.currentTaskInfo = this.sessionManager.GetCurrentTaskInfo();
 
-			this.taskInfoForRobot = new SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo();
-			string currentEnvironmentName = this.sessionManager.GetCurrentEnvironment().name;
-			this.taskInfoForRobot.environment_id = currentEnvironmentName.Substring(0, currentEnvironmentName.Length - 3);
-			this.SetObjectListToHumanNaviTaskInfo();
-			this.SetDestinationToHumanNaviTaskInfo();
+			//this.taskInfoForRobot = new SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo();
+			//string currentEnvironmentName = this.sessionManager.GetCurrentEnvironment().name;
+			//this.taskInfoForRobot.environment_id = currentEnvironmentName.Substring(0, currentEnvironmentName.Length - 3);
+			//this.SetObjectListToHumanNaviTaskInfo();
+			//this.SetDestinationToHumanNaviTaskInfo();
 
 			this.waitingTime = 0.0f;
 
@@ -414,69 +414,69 @@ namespace SIGVerse.Competition.HumanNavigation
 
 
 
-		private void SetObjectListToHumanNaviTaskInfo()
-		{
-			// Get grasping candidates
-			List<GameObject> graspableObjects = GameObject.FindGameObjectsWithTag("Graspables").ToList<GameObject>();
-			if (graspableObjects.Count == 0)
-			{
-				throw new Exception("Graspable object is not found.");
-			}
+		//private void SetObjectListToHumanNaviTaskInfo()
+		//{
+		//	// Get grasping candidates
+		//	List<GameObject> graspableObjects = GameObject.FindGameObjectsWithTag("Graspables").ToList<GameObject>();
+		//	if (graspableObjects.Count == 0)
+		//	{
+		//		throw new Exception("Graspable object is not found.");
+		//	}
 
-			foreach (GameObject graspableObject in graspableObjects)
-			{
-				// transtrate the coordinate system of GameObject (left-handed, Z-axis:front, Y-axis:up) to ROS coodinate system (right-handed, X-axis:front, Z-axis:up)
-				Vector3 positionInROS = this.ConvertCoorinateSystemUnityToROS_Position(graspableObject.transform.position);
+		//	foreach (GameObject graspableObject in graspableObjects)
+		//	{
+		//		// transtrate the coordinate system of GameObject (left-handed, Z-axis:front, Y-axis:up) to ROS coodinate system (right-handed, X-axis:front, Z-axis:up)
+		//		Vector3 positionInROS = this.ConvertCoorinateSystemUnityToROS_Position(graspableObject.transform.position);
 
-				if (graspableObject.name == currentTaskInfo.target)
-				{
-					taskInfoForRobot.target_object.name = graspableObject.name.Substring(0, graspableObject.name.Length - 3);
-					taskInfoForRobot.target_object.position = positionInROS;
-				}
-				else
-				{
-					SIGVerse.RosBridge.human_navigation.HumanNaviObjectInfo objInfo = new SIGVerse.RosBridge.human_navigation.HumanNaviObjectInfo
-					{
-						name = graspableObject.name.Substring(0, graspableObject.name.Length - 3),
-						position = positionInROS
-					};
+		//		if (graspableObject.name == currentTaskInfo.target)
+		//		{
+		//			taskInfoForRobot.target_object.name = graspableObject.name.Substring(0, graspableObject.name.Length - 3);
+		//			taskInfoForRobot.target_object.position = positionInROS;
+		//		}
+		//		else
+		//		{
+		//			SIGVerse.RosBridge.human_navigation.HumanNaviObjectInfo objInfo = new SIGVerse.RosBridge.human_navigation.HumanNaviObjectInfo
+		//			{
+		//				name = graspableObject.name.Substring(0, graspableObject.name.Length - 3),
+		//				position = positionInROS
+		//			};
 
-					taskInfoForRobot.objects_info.Add(objInfo);
+		//			taskInfoForRobot.objects_info.Add(objInfo);
 
-					SIGVerseLogger.Info("Object : " + objInfo.name + " " + objInfo.position);
-				}
-			}
-			SIGVerseLogger.Info("Target object : " + taskInfoForRobot.target_object.name + " " + taskInfoForRobot.target_object.position);
+		//			SIGVerseLogger.Info("Object : " + objInfo.name + " " + objInfo.position);
+		//		}
+		//	}
+		//	SIGVerseLogger.Info("Target object : " + taskInfoForRobot.target_object.name + " " + taskInfoForRobot.target_object.position);
 
-			if (taskInfoForRobot.target_object.name == "")
-			{
-				throw new Exception("Target object is not found.");
-			}
-		}
+		//	if (taskInfoForRobot.target_object.name == "")
+		//	{
+		//		throw new Exception("Target object is not found.");
+		//	}
+		//}
 
-		private void SetDestinationToHumanNaviTaskInfo()
-		{
-			List<GameObject> destinations = GameObject.FindGameObjectsWithTag("Destination").ToList<GameObject>();
-			if (destinations.Count == 0)
-			{
-				throw new Exception("Destination candidate is not found.");
-			}
+		//private void SetDestinationToHumanNaviTaskInfo()
+		//{
+		//	List<GameObject> destinations = GameObject.FindGameObjectsWithTag("Destination").ToList<GameObject>();
+		//	if (destinations.Count == 0)
+		//	{
+		//		throw new Exception("Destination candidate is not found.");
+		//	}
 
-			foreach (GameObject destination in destinations)
-			{
-				if (destination.name == this.currentTaskInfo.destination)
-				{
-					Vector3 conterOfCollider = destination.GetComponent<BoxCollider>().center;
-					taskInfoForRobot.destination = this.ConvertCoorinateSystemUnityToROS_Position(destination.transform.position + conterOfCollider);
-				}
-			}
-			SIGVerseLogger.Info("Destination : " + taskInfoForRobot.destination);
+		//	foreach (GameObject destination in destinations)
+		//	{
+		//		if (destination.name == this.currentTaskInfo.destination)
+		//		{
+		//			Vector3 conterOfCollider = destination.GetComponent<BoxCollider>().center;
+		//			taskInfoForRobot.destination = this.ConvertCoorinateSystemUnityToROS_Position(destination.transform.position + conterOfCollider);
+		//		}
+		//	}
+		//	SIGVerseLogger.Info("Destination : " + taskInfoForRobot.destination);
 
-			//if (taskInfoForRobot.destination == null)
-			//{
-			//	throw new Exception("Destination is not found.");
-			//}
-		}
+		//	//if (taskInfoForRobot.destination == null)
+		//	//{
+		//	//	throw new Exception("Destination is not found.");
+		//	//}
+		//}
 
 		private void SendMessageAtIntervals(string message, string detail, int interval_ms = 1000)
 		{

@@ -1,20 +1,14 @@
 {
 	"sessionTimeLimit":"300",
 	"recoverUsingScoreFile": false,
-	"maxNumberOfTrials": 12,
+	"maxNumberOfTrials": 6,
 	"playbackType": 0,
 	"taskInfoList":[
-		{"environment":"LayoutX_01","target":"pink_cup_01","destination":"wood_table_01"},
-		{"environment":"LayoutY_01","target":"cigarette_01","destination":"white_table_01"},
-		{"environment":"LayoutX_02","target":"fryingpan_01","destination":"IH_01"},
-		{"environment":"LayoutY_02","target":"dog_doll_01","destination":"drawer_unit_white_01"},
-		{"environment":"LayoutZ_01","target":"tumbler_08","destination":"modular_kitchen_sink_02"},
-		{"environment":"LayoutU_01","target":"canned_juice_04","destination":"round_table_01"},		
-		{"environment":"LayoutX_02","target":"empty_plastic_bottle_02","destination":"trashcan_large_02"},
-		{"environment":"LayoutY_01","target":"block_car_02","destination":"drawer_unit_white_01_2nd"},
-		{"environment":"LayoutZ_01","target":"pink_cup_07","destination":"shelf_02"},
-		{"environment":"LayoutY_02","target":"apple_01","destination":"trashcan_large_02"},
-		{"environment":"LayoutZ_02","target":"canned_juice_07","destination":"wood_table_03"},
-		{"environment":"LayoutU_01","target":"block_car_08","destination":"cardboard_box_01"}
+		{"environment":"LayoutX_01","target":"pink_cup_01","destination":"destination_01"},
+		{"environment":"LayoutX_02","target":"empty_plastic_bottle_02","destination":"destination_01"},
+		{"environment":"LayoutY_01","target":"canned_juice_04","destination":"destination_02"},
+		{"environment":"LayoutX_01","target":"pink_cup_02","destination":"destination_02"},
+		{"environment":"LayoutX_02","target":"fryingpan_01","destination":"destination_03"},
+		{"environment":"LayoutY_01","target":"block_car_05","destination":"destination_01"}
 	]
 }

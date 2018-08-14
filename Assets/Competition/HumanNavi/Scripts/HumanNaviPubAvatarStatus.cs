@@ -32,7 +32,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnSendRosAvatarStatusMessage(RosBridge.human_navigation.HumanNaviAvatarStatus message)
 		{
-			SIGVerseLogger.Info("Sending pose of avatar: ");
+			SIGVerseLogger.Info("Send pose of avatar: ");
 			SIGVerseLogger.Info("Head       : " + message.head.position + message.head.orientation);
 			SIGVerseLogger.Info("Body       : " + message.body.position + message.body.orientation);
 			SIGVerseLogger.Info("Left Hand  : " + message.left_hand.position + message.left_hand.orientation);

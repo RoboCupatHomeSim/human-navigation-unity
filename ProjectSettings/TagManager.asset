@@ -24,6 +24,7 @@ TagManager:
   - GuidanceMessageText
   - GuidanceMessagePanelForAvatar
   - GuidanceMessagePanelForAudience
+  - Furniture
   layers:
   - Default
   - TransparentFX
@@ -40,7 +41,7 @@ TagManager:
   - Collider.AvatarOnly
   - Avatar
   - Graspables
-  - 
+  - Furniture
   - 
   - 
   - 

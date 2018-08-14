@@ -11,30 +11,31 @@ namespace SIGVerse.RosBridge
 {
 	namespace human_navigation
 	{
-
 		[System.Serializable]
 		public class HumanNaviTaskInfo : RosMessage
 		{
 			public string environment_id;
-			public System.Collections.Generic.List<human_navigation.HumanNaviObjectInfo> objects_info;
 			public human_navigation.HumanNaviObjectInfo target_object;
-			public UnityEngine.Vector3 destination;
+			public human_navigation.HumanNaviDestination destination;
+			public System.Collections.Generic.List<human_navigation.HumanNaviObjectInfo> non_target_objects;
+			public System.Collections.Generic.List<human_navigation.HumanNaviObjectInfo> furniture;
 
 			public HumanNaviTaskInfo()
 			{
 				environment_id = "";
-				objects_info = new System.Collections.Generic.List<human_navigation.HumanNaviObjectInfo>();
 				target_object = new human_navigation.HumanNaviObjectInfo();
-				destination = new UnityEngine.Vector3();
-
+				destination = new human_navigation.HumanNaviDestination();
+				non_target_objects = new System.Collections.Generic.List<human_navigation.HumanNaviObjectInfo>();
+				furniture = new System.Collections.Generic.List<human_navigation.HumanNaviObjectInfo>();
 			}
 
-			public HumanNaviTaskInfo(string _environment_id, System.Collections.Generic.List<human_navigation.HumanNaviObjectInfo> _objects_info, human_navigation.HumanNaviObjectInfo _target_object, UnityEngine.Vector3 _destination)
+			public HumanNaviTaskInfo(string _environment_id, human_navigation.HumanNaviObjectInfo _target_object, human_navigation.HumanNaviDestination _destination, System.Collections.Generic.List<human_navigation.HumanNaviObjectInfo> _non_target_objects, System.Collections.Generic.List<human_navigation.HumanNaviObjectInfo> _furniture)
 			{
 				environment_id = _environment_id;
-				objects_info = _objects_info;
 				target_object = _target_object;
 				destination = _destination;
+				non_target_objects = _non_target_objects;
+				furniture = _furniture;
 			}
 
 			new public static string GetMessageType()
@@ -44,11 +45,9 @@ namespace SIGVerse.RosBridge
 
 			new public static string GetMD5Hash()
 			{
-				return "a171437ef155a1af48679c78f18cbc7d";
+				return "72a83c8dcb8252f4b5e97040679254a7";
 			}
 
 		} // class HumanNaviTaskInfo
-
 	} // namespace human_navigation
-
 } // namespace ROSBridgeLib

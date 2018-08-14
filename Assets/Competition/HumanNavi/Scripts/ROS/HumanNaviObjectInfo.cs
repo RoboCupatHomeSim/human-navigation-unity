@@ -16,19 +16,21 @@ namespace SIGVerse.RosBridge
 		{
 			public string name;
 			public UnityEngine.Vector3 position;
-
+			public UnityEngine.Quaternion orientation;
 
 			public HumanNaviObjectInfo()
 			{
 				name = "";
 				position = new UnityEngine.Vector3();
+				orientation = new UnityEngine.Quaternion();
 
 			}
 
-			public HumanNaviObjectInfo(string _name, UnityEngine.Vector3 _position)
+			public HumanNaviObjectInfo(string _name, UnityEngine.Vector3 _position, UnityEngine.Quaternion _orientation)
 			{
 				name = _name;
 				position = _position;
+				orientation = _orientation;
 			}
 
 			new public static string GetMessageType()
@@ -38,7 +40,7 @@ namespace SIGVerse.RosBridge
 
 			new public static string GetMD5Hash()
 			{
-				return "899cf99e2e01a64170a87c0171b5b2ec";
+				return "65b1250e41281e50a63b24196f1ad619";
 			}
 
 		} // class HumanNaviObjectInfo
