@@ -15,6 +15,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		[HeaderAttribute("Robot")]
 		public GameObject robot;
 		public string robotName;
+		public string basefootprintPath = "odom/base_footprint_pos_noise/base_footprint_rigidbody/base_footprint_rot_noise/base_footprint";
 
 		[HeaderAttribute("Camera Controller")]
 		public HumanNaviBirdsEyeViewCameraController birdsEyeViewCameraControllerForRobot;
@@ -70,7 +71,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.tts = this.currentRobot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesisExternal>();
 
-			this.birdsEyeViewCameraControllerForRobot.SetTarget(this.currentRobot.transform.Find("odom/base_footprint").gameObject);
+			this.birdsEyeViewCameraControllerForRobot.SetTarget(this.currentRobot.transform.Find(this.basefootprintPath).gameObject);
 		}
 
 		public void InitializeTaskInfo()
@@ -162,7 +163,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public float GetDistanceFromRobot(Vector3 targetPosition)
 		{
-			Vector3 currentRobotPosition = this.currentRobot.transform.Find("odom/base_footprint").gameObject.transform.position;
+			Vector3 currentRobotPosition = this.currentRobot.transform.Find(this.basefootprintPath).gameObject.transform.position;
 			Vector2 robotPosition2D = new Vector2(currentRobotPosition.x, currentRobotPosition.z);
 			Vector2 targetPosition2D = new Vector2(targetPosition.x, targetPosition.z);
 
