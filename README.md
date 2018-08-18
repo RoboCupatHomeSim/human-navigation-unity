@@ -61,14 +61,14 @@ SIGVerse window will be opened.
 ### Set Up Configuration File for Human Navigation
 
 1. Open the [SIGVerseConfig]-[HumanNavi]-[sample] folder in this project folder.
-2. Copy "HumanNaviConfig.json" to the [SIGVerseConfig]-[HumanNavi] folder.
+2. Copy "HumanNaviConfig.json" to the [SIGVerseConfig]-[HumanNavi] folder.  
+(Note: If there is no configuration file in the HumanNavi folder, a configuration file will be automatically copied from the sample folder when the Unity project is opened.)
 
 ## How to Execute Human Navigation Program
 
 ### Execute On Unity Editor
 1. Double click "Assets/Competition/HumanNavi/HumanNavi(.unity)" in Project window.
 2. Click the Play button at the top of the Unity editor.  
-(Note: For now, please ignore errors of "ReflectionTypeLoadException" in NewtonVR)
 
 ### Execute the Executable file
 1. Copy the "SIGVerseConfig" folder into the "Build" folder.
