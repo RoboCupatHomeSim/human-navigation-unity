@@ -555,35 +555,48 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnReceiveRosMessage(RosBridge.human_navigation.HumanNaviMsg humanNaviMsg)
 		{
-			Debug.Log(humanNaviMsg.message);
+			if (!this.isDuringSession)
+			{
+				SIGVerseLogger.Warn("Illegal timing [session is not started]");
+				return;
+			}
+
 			if (this.receivedMessageMap.ContainsKey(humanNaviMsg.message))
 			{
+				if (humanNaviMsg.message == MsgIamReady)
+				{
+					if(this.step != Step.WaitForIamReady)
+					{
+						SIGVerseLogger.Warn("Illegal timing [message : " + humanNaviMsg.message + ", step:" + this.step + "]");
+						return;
+					}
+				}
 
-				this.receivedMessageMap[humanNaviMsg.message] = true;
+				if (humanNaviMsg.message == MsgGetAvatarStatus)
+				{
+					this.SendRosAvatarStatusMessage();
+				}
+
+				if (humanNaviMsg.message == MsgGetObjectStatus)
+				{
+					this.SendRosObjectStatusMessage();
+				}
+
+				if (humanNaviMsg.message == MsgConfirmSpeechState)
+				{
+					this.SendRosHumanNaviMessage(MsgSpeechState, this.sessionManager.GetSeechRunStateMsgString());
+				}
 
 				if (humanNaviMsg.message == MsgGiveUp)
 				{
 					this.OnGiveUp();
 				}
-				else if(humanNaviMsg.message == MsgGetAvatarStatus)
-				{
-					this.SendRosAvatarStatusMessage();
-				}
-				else if (humanNaviMsg.message == MsgGetObjectStatus)
-				{
-					this.SendRosObjectStatusMessage();
-				}
-				else if (humanNaviMsg.message == MsgConfirmSpeechState)
-				{
-					if (this.isDuringSession)
-					{
-						this.SendRosHumanNaviMessage(MsgSpeechState, this.sessionManager.GetSeechRunStateMsgString());
-					}
-				}
+
+				this.receivedMessageMap[humanNaviMsg.message] = true;
 			}
 			else
 			{
-				SIGVerseLogger.Warn("Received Illegal message : " + humanNaviMsg.message);
+				SIGVerseLogger.Warn("Received Illegal message [message: " + humanNaviMsg.message +"]");
 			}
 		}
 
