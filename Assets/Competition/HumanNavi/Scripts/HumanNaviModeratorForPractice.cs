@@ -192,7 +192,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringTrial)
 				{
-					if (!this.sessionManager.GetSeechRunState())
+					if (!this.sessionManager.GetTTSRuningState())
 					{
 						//this.SendRosHumanNaviMessage(MsgRequest, "");
 						RosBridge.human_navigation.HumanNaviGuidanceMsg guidaneMsg = new RosBridge.human_navigation.HumanNaviGuidanceMsg();

@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public class HumanNaviModerator : MonoBehaviour, ITimeIsUpHandler, IStartTrialHandler, IGoToNextTrialHandler, IReceiveHumanNaviMsgHandler//, IGiveUpHandler
+	public class HumanNaviModerator : MonoBehaviour, ITimeIsUpHandler, IStartTrialHandler, IGoToNextTrialHandler, IReceiveHumanNaviMsgHandler, ISendSpeechResultHandler
 	{
 		private const int SendingAreYouReadyInterval = 1000;
 
@@ -19,23 +19,23 @@ namespace SIGVerse.Competition.HumanNavigation
 		private const string MsgTaskSucceeded   = "Task_succeeded";
 		private const string MsgTaskFailed      = "Task_failed";
 		private const string MsgTaskFinished    = "Task_finished";
-		private const string MsgGoToNextSession   = "Go_to_next_session";
+		private const string MsgGoToNextSession = "Go_to_next_session";
 		private const string MsgMissionComplete = "Mission_complete";
 
 		private const string ReasonTimeIsUp = "Time_is_up";
-		private const string ReasonGiveUp = "Give_up";
+		private const string ReasonGiveUp   = "Give_up";
 
-		private const string MsgIamReady           = "I_am_ready";
+		private const string MsgIamReady        = "I_am_ready";
 		private const string MsgGetAvatarStatus = "Get_avatar_status";
 		private const string MsgGetObjectStatus = "Get_object_status";
-		private const string MsgConfirmSpeechState = "Confirm_speech_state";
-		private const string MsgGiveUp             = "Give_up";
+		private const string MsgGetSpeechState  = "Get_speech_state";
+		private const string MsgGiveUp          = "Give_up";
 
 		private const string MsgRequest     = "Guidance_request";
 		private const string MsgSpeechState = "Speech_state";
 
 		private const string TagNameOfGraspables = "Graspables";
-		private const string TagNameOfFurniture = "Furniture";
+		private const string TagNameOfFurniture  = "Furniture";
 
 		private enum Step
 		{
@@ -141,7 +141,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.receivedMessageMap.Add(MsgIamReady, false);
 				this.receivedMessageMap.Add(MsgGetAvatarStatus, false);
 				this.receivedMessageMap.Add(MsgGetObjectStatus, false);
-				this.receivedMessageMap.Add(MsgConfirmSpeechState, false);
+				this.receivedMessageMap.Add(MsgGetSpeechState, false);
 				this.receivedMessageMap.Add(MsgGiveUp, false);
 
 				// ROSBridge
@@ -193,7 +193,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringSession)
 				{
-					if (!this.sessionManager.GetSeechRunState())
+					if (!this.sessionManager.GetTTSRuningState())
 					{
 						this.SendRosHumanNaviMessage(MsgRequest, "");
 					}
@@ -582,7 +582,7 @@ namespace SIGVerse.Competition.HumanNavigation
 					this.SendRosObjectStatusMessage();
 				}
 
-				if (humanNaviMsg.message == MsgConfirmSpeechState)
+				if (humanNaviMsg.message == MsgGetSpeechState)
 				{
 					this.SendRosHumanNaviMessage(MsgSpeechState, this.sessionManager.GetSeechRunStateMsgString());
 				}
@@ -598,6 +598,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				SIGVerseLogger.Warn("Received Illegal message [message: " + humanNaviMsg.message +"]");
 			}
+		}
+
+		public void OnSendSpeechResult(string speechResult)
+		{
+			this.SendRosHumanNaviMessage("Speech_result", speechResult);
 		}
 
 		private Vector3 ConvertCoorinateSystemUnityToROS_Position(Vector3 unityPosition)

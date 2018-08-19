@@ -22,8 +22,17 @@ namespace SIGVerse.Competition.HumanNavigation
 		void OnStopSpeaking();
 	}
 
+	public interface ISendSpeechResultHandler : IEventSystemHandler
+	{
+		void OnSendSpeechResult(string speechResult);
+	}
+
 	public class SAPIVoiceSynthesisExternal : MonoBehaviour, IPlaybackGuidanceMessageHandler
 	{
+		private const string SpeechResultCancelled = "Cancelled";
+		private const string SpeechResultStarted   = "Started";
+		private const string SpeechResultFinished  = "Finished";
+
 		[HeaderAttribute("SAPI")]
 		public string path = "/../TTS/ConsoleSimpleTTS.exe";
 		public string language = "409";
@@ -74,11 +83,20 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				foreach (GameObject destination in this.notificationDestinations)
 				{
+					// For guidance message panel
 					ExecuteEvents.Execute<IStopSpeakingHandler>
 					(
 						target: destination,
 						eventData: null,
 						functor: (reciever, eventData) => reciever.OnStopSpeaking()
+					);
+
+					// For send speech result (ROS message)
+					ExecuteEvents.Execute<ISendSpeechResultHandler>
+					(
+						target: destination,
+						eventData: null,
+						functor: (reciever, eventData) => reciever.OnSendSpeechResult(SpeechResultFinished)
 					);
 				}
 
@@ -91,6 +109,18 @@ namespace SIGVerse.Competition.HumanNavigation
 			if (this.isSpeaking)
 			{
 				SIGVerseLogger.Info("Text-To-Speech: isSpeaking");
+
+				foreach (GameObject destination in this.notificationDestinations)
+				{
+					// For send speech result (ROS message)
+					ExecuteEvents.Execute<ISendSpeechResultHandler>
+					(
+						target: destination,
+						eventData: null,
+						functor: (reciever, eventData) => reciever.OnSendSpeechResult(SpeechResultCancelled)
+					);
+				}
+
 				return false;
 			}
 
@@ -110,16 +140,25 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.process.StartInfo.Arguments = "\"" + truncatedMessage + "\" \"" + settings + "\"";
 
 
-			// For recording
 			foreach (GameObject destination in this.notificationDestinations)
 			{
+				// For recording
 				ExecuteEvents.Execute<ISpeakGuidanceMessageHandler>
 				(
 					target: destination,
 					eventData: null,
 					functor: (reciever, eventData) => reciever.OnSpeakGuidanceMessage(new GuidanceMessageStatus(message, displayType))
 				);
+
+				// For send speech result (ROS message)
+				ExecuteEvents.Execute<ISendSpeechResultHandler>
+				(
+					target: destination,
+					eventData: null,
+					functor: (reciever, eventData) => reciever.OnSendSpeechResult(SpeechResultStarted)
+				);
 			}
+
 
 			this.process.Start();
 
@@ -174,6 +213,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		public void ResetNotificationDestinations()
 		{
 			this.notificationDestinations = new List<GameObject>();
+			this.notificationDestinations.Add(GameObject.FindObjectOfType<HumanNaviModerator>().gameObject);
 			this.notificationDestinations.Add(GameObject.FindObjectOfType<HumanNaviScoreManager>().gameObject);
 			this.notificationDestinations.Add(GameObject.FindObjectOfType<GuidanceMessagePanelController>().gameObject);
 			this.notificationDestinations.Add(GameObject.FindObjectOfType<HumanNaviPlaybackCommon>().gameObject);

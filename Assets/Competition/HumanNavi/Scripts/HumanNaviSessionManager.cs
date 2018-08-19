@@ -156,7 +156,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			else                       { return "Is_not_speaking"; }
 		}
 
-		public bool GetSeechRunState()
+		public bool GetTTSRuningState()
 		{
 			return this.tts.IsSpeaking();
 		}
