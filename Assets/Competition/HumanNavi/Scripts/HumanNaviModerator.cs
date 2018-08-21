@@ -534,7 +534,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			string strTimeup = "Time_is_up";
 			this.SendRosHumanNaviMessage(MsgTaskFailed, strTimeup);
 			this.SendPanelNotice(strTimeup, 100, PanelNoticeStatus.Red);
-			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strTimeup, 3.0f));
+			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Time is up!", 3.0f));
 
 			this.TaskFinished();
 		}
