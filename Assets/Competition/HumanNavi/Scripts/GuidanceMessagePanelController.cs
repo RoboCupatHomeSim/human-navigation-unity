@@ -9,21 +9,25 @@ namespace SIGVerse.Competition.HumanNavigation
 {
 	public class GuidanceMessagePanelController : MonoBehaviour, ISpeakGuidanceMessageHandler, IStopSpeakingHandler
 	{
+		[HeaderAttribute("Retrieval objects to find panelIdentifier script")]
+		public List<string> retrievalObjectNames;
+
 		private List<GuidanceMessagePanelIdentifier> panelIdentifiers;
 
 		void Awake()
 		{
 			this.panelIdentifiers = new List<GuidanceMessagePanelIdentifier>();
 
-			GuidanceMessagePanelIdentifier[] panelIdentifiersArray = Resources.FindObjectsOfTypeAll<GuidanceMessagePanelIdentifier>();
-
-			foreach (GuidanceMessagePanelIdentifier panelIdentifier in panelIdentifiersArray)
+			//GuidanceMessagePanelIdentifier[] panelIdentifiersArray = Resources.FindObjectsOfTypeAll<GuidanceMessagePanelIdentifier>();
+			//GuidanceMessagePanelIdentifier[] panelIdentifiersArray;
+			
+			foreach (string retrievalObjectName in this.retrievalObjectNames)
 			{
-				if (panelIdentifier.transform.root.gameObject.activeSelf)
+				GameObject retrievalObject = GameObject.Find(retrievalObjectName);
+
+				if (retrievalObject.activeSelf)
 				{
-					string path = UnityEditor.AssetDatabase.GetAssetOrScenePath(panelIdentifier.gameObject);
-					bool isScene = path.Contains(".unity");
-					if (!isScene) { continue; }
+					GuidanceMessagePanelIdentifier panelIdentifier = retrievalObject.GetComponentInChildren<GuidanceMessagePanelIdentifier>(true);
 
 					this.panelIdentifiers.Add(panelIdentifier);
 

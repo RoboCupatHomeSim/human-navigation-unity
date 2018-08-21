@@ -5,21 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Competition/HumanNaviForPreEvent/HumanNaviForPreEvent_Example.unity
-    guid: 2d525959785d8514aba61739329854dc
   - enabled: 1
-    path: Assets/Competition/HumanNavi/HumanNaviForPreEventCompetition.unity
-    guid: a6262269d09082349bcaed302bc581d0
-  - enabled: 0
-    path: Assets/Competition/HumanNavi/HumanNaviForPreEventRoomLayout.unity
-    guid: bea30ba4a7b10c741bd7919b43e14f2e
-  - enabled: 0
-    path: Assets/Competition/HumanNavi/HumanNaviForPractice_.unity
-    guid: 735a977d5fb632b438611bf9bbadd9d6
-  - enabled: 0
-    path: Assets/Competition/HumanNavi/HumanNaviForTestSubjectPractice.unity
-    guid: cff05c804c9a16d4890a4ea9e1db6cc0
-  - enabled: 0
-    path: Assets/Competition/HumanNaviForPreEvent/HumanNaviForPreEvent_ConnectionTest.unity
-    guid: 5f29e797aa4d491488a7e45e648e158e
+    path: Assets/Competition/HumanNavi/HumanNavi.unity
+    guid: 8a6863f5dfe5f1445acb5673b2d52421

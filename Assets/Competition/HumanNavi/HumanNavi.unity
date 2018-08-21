@@ -5297,6 +5297,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b51beec2fa1eb0e4592ca39de564fa34, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  retrievalObjectNames:
+  - MainMenu
+  - HSR-B
+  - Avatar
 --- !u!114 &721632486
 MonoBehaviour:
   m_ObjectHideFlags: 0
