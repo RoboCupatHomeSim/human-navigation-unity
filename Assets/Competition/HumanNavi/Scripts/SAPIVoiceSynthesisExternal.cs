@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -45,14 +46,14 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		bool isSpeaking;
 
-		private System.Diagnostics.Process process;
+		private System.Diagnostics.Process speechProcess;
 
 		// Use this for initialization
 		void Awake()
 		{
-			this.process = new System.Diagnostics.Process();
+			this.speechProcess = new System.Diagnostics.Process();
 
-			this.process.StartInfo.FileName = Application.dataPath + this.path;
+			this.speechProcess.StartInfo.FileName = Application.dataPath + this.path;
 
 			//this.process.EnableRaisingEvents = true;
 			//this.process.Exited += new System.EventHandler(ProcessExit);
@@ -63,10 +64,10 @@ namespace SIGVerse.Competition.HumanNavigation
 			//this.process.StartInfo.RedirectStandardError = true;
 			//this.process.ErrorDataReceived += new System.Diagnostics.DataReceivedEventHandler(ErrorOutputHanlder);
 
-			this.process.StartInfo.CreateNoWindow = true;
-			this.process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+			this.speechProcess.StartInfo.CreateNoWindow = true;
+			this.speechProcess.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
 
-			SIGVerseLogger.Info("Text-To-Speech: " + this.process.StartInfo.FileName);
+			SIGVerseLogger.Info("Text-To-Speech: " + this.speechProcess.StartInfo.FileName);
 
 			this.ResetNotificationDestinations();
 
@@ -79,7 +80,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		void Update()
 		{
-			if (this.isSpeaking && this.process.HasExited)
+			if (this.isSpeaking && this.speechProcess.HasExited)
 			{
 				foreach (GameObject destination in this.notificationDestinations)
 				{
@@ -110,18 +111,32 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				SIGVerseLogger.Info("Text-To-Speech: isSpeaking");
 
-				foreach (GameObject destination in this.notificationDestinations)
+				//foreach (GameObject destination in this.notificationDestinations)
+				//{
+				//	// For send speech result (ROS message)
+				//	ExecuteEvents.Execute<ISendSpeechResultHandler>
+				//	(
+				//		target: destination,
+				//		eventData: null,
+				//		functor: (reciever, eventData) => reciever.OnSendSpeechResult(SpeechResultCancelled)
+				//	);
+				//}
+
+				//return false;
+
+				try
 				{
-					// For send speech result (ROS message)
-					ExecuteEvents.Execute<ISendSpeechResultHandler>
-					(
-						target: destination,
-						eventData: null,
-						functor: (reciever, eventData) => reciever.OnSendSpeechResult(SpeechResultCancelled)
-					);
+					if (/*isTaskFinished &&*/ !this.speechProcess.HasExited)
+					{
+						this.speechProcess.Kill();
+					}
+				}
+				catch (Exception)
+				{
+					SIGVerseLogger.Warn("Do nothing even if an error occurs");
+					// Do nothing even if an error occurs
 				}
 
-				return false;
 			}
 
 			string truncatedMessage;
@@ -137,7 +152,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			// speak
 			string settings = "Language=" + this.language + "; Gender=" + this.gender;
-			this.process.StartInfo.Arguments = "\"" + truncatedMessage + "\" \"" + settings + "\"";
+			this.speechProcess.StartInfo.Arguments = "\"" + truncatedMessage + "\" \"" + settings + "\"";
 
 
 			foreach (GameObject destination in this.notificationDestinations)
@@ -160,7 +175,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 
 
-			this.process.Start();
+			this.speechProcess.Start();
 
 			this.isSpeaking = true;
 
