@@ -355,6 +355,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.ClearRosConnections();
 			this.sessionManager.ResetRobot();
+			this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
+			SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
 
 			this.currentTaskInfo = this.sessionManager.GetCurrentTaskInfo();
 
@@ -1068,6 +1070,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			foreach (IRosConnection rosConnection in this.rosConnections)
 			{
+				//Debug.Log(rosConnection.ToString());
 				rosConnection.Clear();
 			}
 
