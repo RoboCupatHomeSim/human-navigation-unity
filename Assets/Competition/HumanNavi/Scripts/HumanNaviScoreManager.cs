@@ -16,9 +16,11 @@ namespace SIGVerse.Competition.HumanNavigation
 		public enum ScoreType
 		{
 			CorrectObjectIsGrasped,
+			IncorrectObjectIsGrasped,
 			TargetObjectInDestination,
 			CompletionTime,
 			CollisionEnter,
+			OverSpeechCount,
 			DistancePenaltyForTargetObject,
 			DistancePenaltyForDestination,
 		}
@@ -34,11 +36,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			switch(scoreType)
 			{
 				case Score.ScoreType.CorrectObjectIsGrasped         : { return +20; }
-				//case Score.ScoreType.IncorrectObjectIsGrasped       : { return  -5; }
+				case Score.ScoreType.IncorrectObjectIsGrasped       : { return  -5; }
 				case Score.ScoreType.TargetObjectInDestination      : { return +20; }
 				case Score.ScoreType.CompletionTime                 : { return +30; }
 				case Score.ScoreType.CollisionEnter                 : { return -10; }
-				//case Score.ScoreType.OverSpeechCount                : { return  -3; }
+				case Score.ScoreType.OverSpeechCount                : { return  -3; }
 				case Score.ScoreType.DistancePenaltyForTargetObject : { return -20; }
 				case Score.ScoreType.DistancePenaltyForDestination  : { return -20; }
 			}
@@ -74,9 +76,14 @@ namespace SIGVerse.Competition.HumanNavigation
 		[HeaderAttribute("Distance from Target")]
 		public float limitDistanceFromTarget = 3.0f;
 
+		[HeaderAttribute("Max Count of Wrong Object Grasp")]
+		public int maxWrongObjectGraspCount = -1;
+
 		public List<GameObject> scoreNotificationDestinations;
 
 		public List<string> timeIsUpDestinationTags;
+
+		public List<string> reachMaxWrongObjectGraspCountDestinationTags;
 
 		//---------------------------------------------------
 
@@ -98,8 +105,12 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private int speechCount;
 
+		private List<GameObject> reachMaxWrongObjectGraspCountDestinations;
+
 		private bool isAlreadyGivenDistancePenaltyForTargetObject;
 		private bool isAlreadyGivenDistancePenaltyForDestination;
+
+		private int wrongObjectGraspCount;
 
 		void Awake()
 		{
@@ -119,6 +130,18 @@ namespace SIGVerse.Competition.HumanNavigation
 					this.timeIsUpDestinations.Add(timeIsUpDestination);
 				}
 			}
+
+			this.reachMaxWrongObjectGraspCountDestinations = new List<GameObject>();
+			foreach (string reachMaxWrongObjectGraspCountDestinationTag in this.reachMaxWrongObjectGraspCountDestinationTags)
+			{
+				GameObject[] reachMaxWrongObjectGraspCountDestinationArray = GameObject.FindGameObjectsWithTag(reachMaxWrongObjectGraspCountDestinationTag);
+
+				foreach (GameObject reachMaxWrongObjectGraspCountDestination in reachMaxWrongObjectGraspCountDestinationArray)
+				{
+					this.reachMaxWrongObjectGraspCountDestinations.Add(reachMaxWrongObjectGraspCountDestination);
+				}
+			}
+
 		}
 
 		// Use this for initialization
@@ -186,6 +209,26 @@ namespace SIGVerse.Competition.HumanNavigation
 				);
 			}
 
+			if(scoreType == Score.ScoreType.IncorrectObjectIsGrasped)
+			{
+				this.wrongObjectGraspCount++;
+			}
+
+			if (this.maxWrongObjectGraspCount > 0)
+			{
+				if (this.wrongObjectGraspCount >= this.maxWrongObjectGraspCount)
+				{
+					foreach (GameObject reachMaxWrongObjectGraspCountDestination in this.reachMaxWrongObjectGraspCountDestinations)
+					{
+						ExecuteEvents.Execute<IReachMaxWrongObjectGraspCountHandler>
+						(
+							target: reachMaxWrongObjectGraspCountDestination,
+							eventData: null,
+							functor: (reciever, eventData) => reciever.OnReachMaxWrongObjectGraspCount()
+						);
+					}
+				}
+			}
 		}
 
 		public void AddTimeScore(float elapsedTime, float timeLimit)
@@ -268,6 +311,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.score = 0;
 
+			this.wrongObjectGraspCount = 0;
+
 			this.UpdateScoreText(this.score);
 
 			this.isAlreadyGivenDistancePenaltyForTargetObject = false;
@@ -328,8 +373,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			if(this.speechCount > this.LimitOfSpeechCount)
 			{
-				//this.AddScore(Score.ScoreType.OverSpeechCount);
-				this.ImposeTimePenalty(Score.TimePnaltyType.OverSpeechCount);
+				this.AddScore(Score.ScoreType.OverSpeechCount);
+				//this.ImposeTimePenalty(Score.TimePnaltyType.OverSpeechCount);
 			}
 		}
 	}

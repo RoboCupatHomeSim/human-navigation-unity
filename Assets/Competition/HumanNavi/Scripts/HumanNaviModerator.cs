@@ -11,7 +11,13 @@ using System.Threading;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public class HumanNaviModerator : MonoBehaviour, ITimeIsUpHandler, IStartTrialHandler, IGoToNextTrialHandler, IReceiveHumanNaviMsgHandler, ISendSpeechResultHandler
+	public interface IReachMaxWrongObjectGraspCountHandler : IEventSystemHandler
+	{
+		void OnReachMaxWrongObjectGraspCount();
+	}
+
+
+	public class HumanNaviModerator : MonoBehaviour, ITimeIsUpHandler, IStartTrialHandler, IGoToNextTrialHandler, IReceiveHumanNaviMsgHandler, ISendSpeechResultHandler, IReachMaxWrongObjectGraspCountHandler
 	{
 		private const int SendingAreYouReadyInterval = 1000;
 
@@ -24,6 +30,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private const string ReasonTimeIsUp = "Time_is_up";
 		private const string ReasonGiveUp   = "Give_up";
+		private const string ReasonReachMaxWrongObjectGraspCount = "Reach_max_wrong_object_grasp_count";
 
 		private const string MsgIamReady        = "I_am_ready";
 		private const string MsgGetAvatarStatus = "Get_avatar_status";
@@ -112,6 +119,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private string objectIdInLeftHand;
 		private string objectIdInRightHand;
+
+		private List<string> alreadyGraspedObjects;
 
 		//-----------------------------
 
@@ -362,6 +371,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.objectIdInLeftHand  = "";
 			this.objectIdInRightHand = "";
+
+			this.alreadyGraspedObjects = new List<string>();
 
 			SIGVerseLogger.Info("End of PreProcess");
 		}
@@ -826,12 +837,22 @@ namespace SIGVerse.Competition.HumanNavigation
 					{
 						//if (!this.isTargetAlreadyGrasped)
 						{
-							SIGVerseLogger.Info("Wrong object is grasped");
+							if (!this.alreadyGraspedObjects.Contains(hand.CurrentlyInteracting.name))
+							{
+								SIGVerseLogger.Info("Wrong object is grasped [new]");
 
-							this.SendPanelNotice("Wrong object is grasped", 100, PanelNoticeStatus.Red);
+								this.SendPanelNotice("Wrong object is grasped", 100, PanelNoticeStatus.Red);
 
-							//this.scoreManager.AddScore(Score.ScoreType.IncorrectObjectIsGrasped);
-							this.scoreManager.ImposeTimePenalty(Score.TimePnaltyType.IncorrectObjectIsGrasped);
+								this.scoreManager.AddScore(Score.ScoreType.IncorrectObjectIsGrasped);
+								//this.scoreManager.ImposeTimePenalty(Score.TimePnaltyType.IncorrectObjectIsGrasped);
+
+								this.alreadyGraspedObjects.Add(hand.CurrentlyInteracting.name);
+							}
+							else
+							{
+								SIGVerseLogger.Info("Wrong object is grasped [already grasped]");
+							}
+
 						}
 					}
 				}
@@ -953,7 +974,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				string strGiveup = "Give_up";
 				this.SendRosHumanNaviMessage(MsgTaskFailed, strGiveup);
-				this.SendPanelNotice(strGiveup, 100, PanelNoticeStatus.Red);
+				this.SendPanelNotice("Give up", 100, PanelNoticeStatus.Red);
 				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strGiveup, 3.0f));
 
 				this.panelMainController.giveUpPanel.SetActive(false);
@@ -965,6 +986,18 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				SIGVerseLogger.Warn("It is a timing not allowed to give up.");
 			}
+		}
+
+		public void OnReachMaxWrongObjectGraspCount()
+		{
+			this.interruptedReason = HumanNaviModerator.ReasonReachMaxWrongObjectGraspCount;
+
+			string strReason = "Reach_max_wrong_object_grasp_count";
+			this.SendRosHumanNaviMessage(MsgTaskFailed, strReason);
+			this.SendPanelNotice("Reach max wrong object grasp count", 100, PanelNoticeStatus.Red);
+			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Reach max wrong object grasp count", 3.0f));
+
+			this.TaskFinished();
 		}
 
 		public void OnStartTrial()

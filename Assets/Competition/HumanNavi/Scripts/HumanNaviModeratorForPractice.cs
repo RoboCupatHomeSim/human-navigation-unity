@@ -717,8 +717,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 								this.SendPanelNotice("Wrong object is grasped", 100, PanelNoticeStatus.Red);
 
-								//this.scoreManager.AddScore(Score.ScoreType.IncorrectObjectIsGrasped);
-								this.scoreManager.ImposeTimePenalty(Score.TimePnaltyType.IncorrectObjectIsGrasped);
+								this.scoreManager.AddScore(Score.ScoreType.IncorrectObjectIsGrasped);
+								//this.scoreManager.ImposeTimePenalty(Score.TimePnaltyType.IncorrectObjectIsGrasped);
 							}
 						}
 					}
