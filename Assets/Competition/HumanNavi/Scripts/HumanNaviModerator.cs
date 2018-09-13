@@ -208,10 +208,10 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 				}
 
-				if (this.avatar.transform.position.y < heightThresholdForPoseReset)
-				{
-					this.ResetAvatarTransform();
-				}
+				//if (this.avatar.transform.position.y < heightThresholdForPoseReset)
+				//{
+				//	this.ResetAvatarTransform();
+				//}
 
 				switch (this.step)
 				{
