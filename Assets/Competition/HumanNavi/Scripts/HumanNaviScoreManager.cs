@@ -38,11 +38,11 @@ namespace SIGVerse.Competition.HumanNavigation
 				case Score.ScoreType.CorrectObjectIsGrasped         : { return +20; }
 				case Score.ScoreType.IncorrectObjectIsGrasped       : { return  -5; }
 				case Score.ScoreType.TargetObjectInDestination      : { return +20; }
-				case Score.ScoreType.CompletionTime                 : { return +30; }
+				case Score.ScoreType.CompletionTime                 : { return +60; }
 				case Score.ScoreType.CollisionEnter                 : { return -10; }
 				case Score.ScoreType.OverSpeechCount                : { return  -3; }
-				case Score.ScoreType.DistancePenaltyForTargetObject : { return -20; }
-				case Score.ScoreType.DistancePenaltyForDestination  : { return -20; }
+				case Score.ScoreType.DistancePenaltyForTargetObject : { return -40; }
+				case Score.ScoreType.DistancePenaltyForDestination  : { return -40; }
 			}
 
 			throw new Exception("Illegal score type. ScoreType = " + (int)scoreType + ", method name=(" + System.Reflection.MethodBase.GetCurrentMethod().Name + ")");
