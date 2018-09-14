@@ -704,7 +704,8 @@ namespace SIGVerse.Competition.HumanNavigation
 								this.SendPanelNotice("Target object is grasped", 100, PanelNoticeStatus.Green);
 
 								this.scoreManager.AddScore(Score.ScoreType.CorrectObjectIsGrasped);
-								this.scoreManager.AddTimeScoreOfGrasp();
+								//this.scoreManager.AddTimeScoreOfGrasp();
+								this.scoreManager.AddTimeScore();
 
 								this.isTargetAlreadyGrasped = true;
 							}
@@ -760,7 +761,8 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.RecordEventLog("Target is plasced on the destination.");
 
 			this.scoreManager.AddScore(Score.ScoreType.TargetObjectInDestination);
-			this.scoreManager.AddTimeScoreOfPlacement();
+			//this.scoreManager.AddTimeScoreOfPlacement();
+			this.scoreManager.AddTimeScore();
 
 			//this.SendRosHumanNaviMessage(MsgTaskSucceeded, "");
 			this.SendPanelNotice("Task succeeded", 100, PanelNoticeStatus.Green);

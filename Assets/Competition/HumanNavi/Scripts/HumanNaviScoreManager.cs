@@ -231,9 +231,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public void AddTimeScore(float elapsedTime, float timeLimit)
+		public void AddTimeScore()
 		{
-			int additionalScore = Mathf.FloorToInt(Score.GetScore(Score.ScoreType.CompletionTime) * ((timeLimit - elapsedTime) / timeLimit));
+			int additionalScore = Mathf.FloorToInt(Score.GetScore(Score.ScoreType.CompletionTime) * (this.timeLeft / this.timeLimit));
 
 			this.score = Mathf.Clamp(this.score + additionalScore, Score.MinScore, Score.MaxScore);
 			this.UpdateScoreText(this.score);
@@ -254,17 +254,40 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public void AddTimeScoreOfGrasp()
-		{
-			this.elapsedTimeForGrasp = this.timeLimit - this.timeLeft;
-			this.AddTimeScore(this.elapsedTimeForGrasp, this.timeLimitForGrasp);
-		}
+		//public void AddTimeScore(float elapsedTime, float timeLimit)
+		//{
+		//	int additionalScore = Mathf.FloorToInt(Score.GetScore(Score.ScoreType.CompletionTime) * ((timeLimit - elapsedTime) / timeLimit));
 
-		public void AddTimeScoreOfPlacement()
-		{
-			this.elapsedTimeForPlacement = (this.timeLimit - this.timeLeft) - this.elapsedTimeForGrasp;
-			this.AddTimeScore(this.elapsedTimeForPlacement, this.timeLimitForPlacement);
-		}
+		//	this.score = Mathf.Clamp(this.score + additionalScore, Score.MinScore, Score.MaxScore);
+		//	this.UpdateScoreText(this.score);
+
+		//	SIGVerseLogger.Info("Score (time) add [" + additionalScore + "], Challenge " + HumanNaviConfig.Instance.numberOfTrials + " Score=" + this.score);
+
+		//	// Send the Score Notification
+		//	ScoreStatus scoreStatus = new ScoreStatus(additionalScore, this.score, HumanNaviConfig.Instance.GetTotalScore());
+
+		//	foreach (GameObject scoreNotificationDestination in this.scoreNotificationDestinations)
+		//	{
+		//		ExecuteEvents.Execute<IScoreHandler>
+		//		(
+		//			target: scoreNotificationDestination,
+		//			eventData: null,
+		//			functor: (reciever, eventData) => reciever.OnScoreChange(scoreStatus)
+		//		);
+		//	}
+		//}
+
+		//public void AddTimeScoreOfGrasp()
+		//{
+		//	this.elapsedTimeForGrasp = this.timeLimit - this.timeLeft;
+		//	this.AddTimeScore(this.elapsedTimeForGrasp, this.timeLimitForGrasp);
+		//}
+
+		//public void AddTimeScoreOfPlacement()
+		//{
+		//	this.elapsedTimeForPlacement = (this.timeLimit - this.timeLeft) - this.elapsedTimeForGrasp;
+		//	this.AddTimeScore(this.elapsedTimeForPlacement, this.timeLimitForPlacement);
+		//}
 
 		public void ImposeTimePenalty(Score.TimePnaltyType penaltyType)
 		{
