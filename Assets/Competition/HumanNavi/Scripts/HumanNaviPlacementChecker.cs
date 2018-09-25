@@ -155,12 +155,14 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			if (!this.moderator.IsTargetAlreadyGrasped()){ return; }
 			if (this.name != this.moderator.GetDestinationName()){ return; }
-			if (other.gameObject.name != this.moderator.GetTargetObjectName()) { return; }
-			if (other.attachedRigidbody == null) { return; }
 
-			this.targetEnterd = true;
+			if (other.attachedRigidbody == null) { return; }
 			this.targetRigidbody = other.attachedRigidbody;
 
+			//if (other.gameObject.name != this.moderator.GetTargetObjectName()) { return; }
+			if (this.targetRigidbody.gameObject.name != this.moderator.GetTargetObjectName()) { return; }
+
+			this.targetEnterd = true;
 		}
 
 		private void OnTriggerExit(Collider other)
