@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4949242490757854}
   - component: {fileID: 54179423687402572}
   - component: {fileID: 114749117214428162}
+  - component: {fileID: 65372376818363694}
   m_Layer: 0
   m_Name: brush
   m_TagString: Graspables
@@ -196,13 +197,13 @@ Rigidbody:
   m_GameObject: {fileID: 1053939988510792}
   serializedVersion: 2
   m_Mass: 1
-  m_Drag: 0.1
-  m_AngularDrag: 1
+  m_Drag: 0.5
+  m_AngularDrag: 2
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!64 &64355725821920668
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -245,6 +246,18 @@ MeshCollider:
   m_CookingOptions: 14
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: 6bd8505f21df12e43a98265345e8cb6d, type: 2}
+--- !u!65 &65372376818363694
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1053939988510792}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &114749117214428162
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -256,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa4a39dec1a23a043a14d554ccce8fe0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Rigidbody: {fileID: 54895614629590702, guid: 92f026d9975875d48be2fe38789804c1, type: 2}
+  Rigidbody: {fileID: 0}
   CanAttach: 1
   AllowTwoHanded: 0
   DisableKinematicOnAttach: 1

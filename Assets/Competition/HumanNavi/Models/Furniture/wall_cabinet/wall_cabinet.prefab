@@ -508,7 +508,7 @@ GameObject:
   - component: {fileID: 4459737670892224}
   m_Layer: 15
   m_Name: wall_cabinet
-  m_TagString: Untagged
+  m_TagString: Furniture
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2399,7 +2399,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!54 &54153198665157298
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -2414,7 +2414,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!54 &54439586960966680
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -2429,7 +2429,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!54 &54462752757325376
 Rigidbody:
   m_ObjectHideFlags: 1
@@ -2444,7 +2444,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!59 &59187255904672214
 HingeJoint:
   m_ObjectHideFlags: 1
@@ -2455,7 +2455,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 1.205998, y: 0.27399993, z: 0.24033573}
+  m_ConnectedAnchor: {x: -3.656998, y: 1.675, z: 7.722664}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2489,7 +2489,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.5999971, y: 0.27399993, z: 0.24033621}
+  m_ConnectedAnchor: {x: -3.050997, y: 1.675, z: 7.7226634}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2523,7 +2523,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.006003827, y: 0.27399993, z: 0.24033716}
+  m_ConnectedAnchor: {x: -2.444996, y: 1.675, z: 7.7226624}
   m_UseSpring: 0
   m_Spring:
     spring: 0
@@ -2557,7 +2557,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 0, y: 1, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.61200184, y: 0.27399993, z: 0.24033573}
+  m_ConnectedAnchor: {x: -1.8389981, y: 1.675, z: 7.722664}
   m_UseSpring: 0
   m_Spring:
     spring: 0
