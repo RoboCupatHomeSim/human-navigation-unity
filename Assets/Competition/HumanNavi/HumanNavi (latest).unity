@@ -10044,9 +10044,9 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.15
-  m_Height: 0.6
+  m_Height: 0.3
   m_Direction: 1
-  m_Center: {x: 0, y: 0.3, z: 0}
+  m_Center: {x: 0, y: 0.15, z: 0}
 --- !u!1001 &939169975
 Prefab:
   m_ObjectHideFlags: 0
@@ -11332,122 +11332,9 @@ Prefab:
       propertyPath: m_RootOrder
       value: 20
       objectReference: {fileID: 0}
-    - target: {fileID: 59213711514188772, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.x
-      value: 1.477907
-      objectReference: {fileID: 0}
-    - target: {fileID: 59213711514188772, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.z
-      value: 7.5479765
-      objectReference: {fileID: 0}
-    - target: {fileID: 59728469841431222, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.x
-      value: 2.2420342
-      objectReference: {fileID: 0}
-    - target: {fileID: 59728469841431222, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.z
-      value: 7.5479765
-      objectReference: {fileID: 0}
-    - target: {fileID: 59502022637363970, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.x
-      value: 2.2475843
-      objectReference: {fileID: 0}
-    - target: {fileID: 59502022637363970, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.z
-      value: 7.5479765
-      objectReference: {fileID: 0}
-    - target: {fileID: 59941162856069566, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.x
-      value: 3.0117116
-      objectReference: {fileID: 0}
-    - target: {fileID: 59941162856069566, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.z
-      value: 7.5479765
-      objectReference: {fileID: 0}
-    - target: {fileID: 153912702177657852, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.x
-      value: 2.4422
-      objectReference: {fileID: 0}
-    - target: {fileID: 153912702177657852, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.z
-      value: 7.5359592
-      objectReference: {fileID: 0}
-    - target: {fileID: 153546410350314386, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.x
-      value: 2.8044
-      objectReference: {fileID: 0}
-    - target: {fileID: 153546410350314386, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.z
-      value: 7.5359592
-      objectReference: {fileID: 0}
-    - target: {fileID: 4568389469038024, guid: 915ba6aaa2200b6458ed4cb613114659, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 59502022637363970, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.y
-      value: 1.8694391
-      objectReference: {fileID: 0}
-    - target: {fileID: 153912702177657852, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.y
-      value: 0.606
-      objectReference: {fileID: 0}
-    - target: {fileID: 153546410350314386, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.y
-      value: 0.606
-      objectReference: {fileID: 0}
-    - target: {fileID: 59213711514188772, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.y
-      value: 1.8694391
-      objectReference: {fileID: 0}
-    - target: {fileID: 59728469841431222, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.y
-      value: 1.8694391
-      objectReference: {fileID: 0}
-    - target: {fileID: 59941162856069566, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_ConnectedAnchor.y
-      value: 1.8694391
-      objectReference: {fileID: 0}
     - target: {fileID: 1755117692898192, guid: 915ba6aaa2200b6458ed4cb613114659, type: 2}
       propertyPath: m_Name
       value: cupboard_C_c02#01
-      objectReference: {fileID: 0}
-    - target: {fileID: 1755117692898192, guid: 915ba6aaa2200b6458ed4cb613114659, type: 2}
-      propertyPath: m_TagString
-      value: Furniture
-      objectReference: {fileID: 0}
-    - target: {fileID: 64130941004593552, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 64669934183764614, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 64788580728294588, guid: 915ba6aaa2200b6458ed4cb613114659,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 915ba6aaa2200b6458ed4cb613114659, type: 2}
