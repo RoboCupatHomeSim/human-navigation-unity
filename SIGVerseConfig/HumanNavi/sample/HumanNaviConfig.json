@@ -1,4 +1,5 @@
 {
+	"teamName":"XXXXXXX",
 	"sessionTimeLimit":"180",
 	"recoverUsingScoreFile": false,
 	"maxNumberOfTrials": 2,

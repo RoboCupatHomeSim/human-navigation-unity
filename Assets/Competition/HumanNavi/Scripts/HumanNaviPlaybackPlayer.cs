@@ -88,7 +88,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			//this.transformController   = new PlaybackTransformEventController  (common);  // Transform
 			this.videoPlayerController = new PlaybackVideoPlayerEventController(common);  // Video Player
 
-			this.taskInfoController = new PlaybackTaskInfoEventController(this.trialNumberText, this.timeLeftValText, this.taskMessageText);
+			this.taskInfoController = new PlaybackTaskInfoEventController(this.teamNameText, this.trialNumberText, this.timeLeftValText, this.taskMessageText);
 			this.scoreController = new PlaybackScoreEventController(this.scoreText, this.totalText); // Score
 			this.panelNoticeController = new PlaybackPanelNoticeEventController(this, this.mainMenu);      // Notice of a Panel
 			this.collisionController = new PlaybackCollisionEventController(this.collisionEffect);       // Collision

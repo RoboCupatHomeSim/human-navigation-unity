@@ -174,6 +174,8 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			this.step = Step.Initialize;
 
+			this.panelMainController.SetTeamNameText("Team: " + HumanNaviConfig.Instance.configInfo.teamName);
+
 			this.ShowStartTaskPanel();
 
 			this.interruptedReason = string.Empty;
@@ -341,6 +343,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			this.ResetFlags();
 
+			this.panelMainController.SetTeamNameText("Team: " + HumanNaviConfig.Instance.configInfo.teamName);
 			HumanNaviConfig.Instance.InclementNumberOfTrials(HumanNaviConfig.Instance.configInfo.playbackType);
 
 			this.panelMainController.SetTrialNumberText(HumanNaviConfig.Instance.numberOfTrials);

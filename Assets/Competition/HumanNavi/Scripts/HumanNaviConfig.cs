@@ -19,6 +19,7 @@ namespace SIGVerse.Competition.HumanNavigation
 	[System.Serializable]
 	public class HumanNaviConfigInfo
 	{
+		public string teamName;
 		public int sessionTimeLimit;
 		public int  maxNumberOfTrials;
 		public bool recoverUsingScoreFile;
@@ -76,6 +77,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				SIGVerseLogger.Warn("HumanNavi config file does not exists.");
 
+				this.configInfo.teamName = "XXXX";
 				this.configInfo.sessionTimeLimit = 300;
 				this.configInfo.maxNumberOfTrials = 1;
 				this.configInfo.recoverUsingScoreFile = false;
