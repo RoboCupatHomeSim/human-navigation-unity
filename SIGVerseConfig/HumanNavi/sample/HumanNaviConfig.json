@@ -2,10 +2,16 @@
 	"teamName":"XXXXXXX",
 	"sessionTimeLimit":"180",
 	"recoverUsingScoreFile": false,
-	"maxNumberOfTrials": 2,
+	"maxNumberOfTrials": 8,
 	"playbackType": 0,
 	"taskInfoList":[
-		{"environment":"ExampleLayoutHN01#01","target":"apple#01","destination":"destination_01"},
-		{"environment":"ExampleLayoutHN01#01","target":"cannedjuice_350ml#01","destination":"destination_01"}
+		{"environment":"ExampleLayoutHN01#01","target":"apple#01","destination":"destination#01"},
+		{"environment":"ExampleLayoutHN01#01","target":"cannedjuice_350ml#01","destination":"destination#01"},
+		{"environment":"ExampleLayoutHN02#01","target":"cup_c02#01","destination":"destination#01"},
+		{"environment":"ExampleLayoutHN02#02","target":"petbottle_500ml_empty_c01#01","destination":"destination#01"},
+		{"environment":"ExampleLayoutHN03#01","target":"cannedjuice_350ml#04","destination":"destination#02"},
+		{"environment":"ExampleLayoutHN02#01","target":"cup_c02#02","destination":"destination#02"},
+		{"environment":"ExampleLayoutHN02#02","target":"fryingpan#01","destination":"destination#02"},
+		{"environment":"ExampleLayoutHN03#01","target":"tumiki_car#05","destination":"destination#01"}
 	]
 }
