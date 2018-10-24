@@ -145,6 +145,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			return taskInfoList[HumanNaviConfig.Instance.numberOfTrials - 1];
 		}
 
+		public TaskInfo GetCurrentTaskInfo(int numberOfSession)
+		{
+			return taskInfoList[numberOfSession - 1];
+		}
+
 		public GameObject GetCurrentEnvironment()
 		{
 			return this.currentEnvironment;

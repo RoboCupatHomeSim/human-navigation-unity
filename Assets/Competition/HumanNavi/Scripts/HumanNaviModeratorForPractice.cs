@@ -842,7 +842,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private void RecordEventLog(string log)
 		{
 			// For recording
-			ExecuteEvents.Execute<IPlaybackRosMessageHandler>
+			ExecuteEvents.Execute<IRecordEventHandler>
 			(
 				target: this.playbackManager,
 				eventData: null,

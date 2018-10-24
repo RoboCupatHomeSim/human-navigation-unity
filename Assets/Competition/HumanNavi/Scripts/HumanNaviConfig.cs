@@ -20,6 +20,7 @@ namespace SIGVerse.Competition.HumanNavigation
 	public class HumanNaviConfigInfo
 	{
 		public string teamName;
+		public string group;
 		public int sessionTimeLimit;
 		public int  maxNumberOfTrials;
 		public bool recoverUsingScoreFile;
@@ -78,6 +79,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				SIGVerseLogger.Warn("HumanNavi config file does not exists.");
 
 				this.configInfo.teamName = "XXXX";
+				this.configInfo.group = "A";
 				this.configInfo.sessionTimeLimit = 300;
 				this.configInfo.maxNumberOfTrials = 1;
 				this.configInfo.recoverUsingScoreFile = false;
@@ -116,10 +118,13 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				this.numberOfTrials = this.scores.Count;
 
-				if (this.numberOfTrials >= this.configInfo.maxNumberOfTrials)
+				if(this.configInfo.playbackType != WorldPlaybackCommon.PlaybackTypePlay)
 				{
-					SIGVerseLogger.Error("this.numberOfTrials >= this.configFileInfo.maxNumberOfTrials");
-					Application.Quit();
+					if (this.numberOfTrials >= this.configInfo.maxNumberOfTrials)
+					{
+						SIGVerseLogger.Error("this.numberOfTrials >= this.configFileInfo.maxNumberOfTrials");
+						Application.Quit();
+					}
 				}
 			}
 			else

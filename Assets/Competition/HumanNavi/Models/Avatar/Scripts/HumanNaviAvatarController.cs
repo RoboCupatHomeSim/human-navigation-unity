@@ -14,25 +14,27 @@ public class HumanNaviAvatarController : MonoBehaviour
 	public GameObject bodyWithIK;
 	public GameObject bodyWithAnimation;
 
-#if HUMAN_NAVI_USING_FINAL_IK
+#if ENABLE_VRIK
 	private RootMotion.FinalIK.VRIK vrik;
 #endif
 
 	private Vector3 targetPos;
 
+	private bool isInitializing = false;
+
 	// Use this for initialization
-	void Start ()
+	void Start()
 	{
 		this.targetPos = this.transform.localPosition;
 
-#if HUMAN_NAVI_USING_FINAL_IK
+#if ENABLE_VRIK
 		this.vrik = this.bodyWithIK.GetComponent<RootMotion.FinalIK.VRIK>();
 #endif
 
 	}
 
 	// Update is called once per frame
-	void Update ()
+	void Update()
 	{
 		Vector2 l_thumb_stick;
 		l_thumb_stick.x = CrossPlatformInputManager.GetAxis("Horizontal");
@@ -40,9 +42,12 @@ public class HumanNaviAvatarController : MonoBehaviour
 
 		if (Vector2.SqrMagnitude(l_thumb_stick) > 0.01)
 		{
-#if HUMAN_NAVI_USING_FINAL_IK
-			this.vrik.solver.leftLeg.positionWeight = 1.0f;
-			this.vrik.solver.rightLeg.positionWeight = 1.0f;
+#if ENABLE_VRIK
+			if (this.vrik != null)
+			{
+				this.vrik.solver.leftLeg.positionWeight = 1.0f;
+				this.vrik.solver.rightLeg.positionWeight = 1.0f;
+			}
 #endif
 			Vector3 virtical = Vector3.Scale(eyeAnchor.forward * l_thumb_stick.y, new Vector3(1, 0, 1));
 			Vector3 horizontal = Vector3.Scale(eyeAnchor.right * l_thumb_stick.x, new Vector3(1, 0, 1));
@@ -53,11 +58,32 @@ public class HumanNaviAvatarController : MonoBehaviour
 		}
 		else
 		{
-#if HUMAN_NAVI_USING_FINAL_IK
-			this.vrik.solver.leftLeg.positionWeight = 0.0f;
-			this.vrik.solver.rightLeg.positionWeight = 0.0f;
+#if ENABLE_VRIK
+			if (this.vrik != null && !this.isInitializing)
+			{
+				this.vrik.solver.leftLeg.positionWeight = 0.0f;
+				this.vrik.solver.rightLeg.positionWeight = 0.0f;
+			}
 #endif
 		}
 
+	}
+
+	public void StartInitializing()
+	{
+		base.StartCoroutine(this.OnInitializing());
+	}
+
+	private IEnumerator OnInitializing(float waitTime = 1.0f)
+	{
+		this.isInitializing = true;
+#if ENABLE_VRIK
+		this.vrik.solver.leftLeg.positionWeight = 1.0f;
+		this.vrik.solver.rightLeg.positionWeight = 1.0f;
+#endif
+
+		yield return new WaitForSeconds(waitTime);
+
+		this.isInitializing = false;
 	}
 }

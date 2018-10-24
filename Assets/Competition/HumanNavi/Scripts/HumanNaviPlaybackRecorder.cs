@@ -23,13 +23,17 @@ namespace SIGVerse.Competition.HumanNavigation
 	{
 		void OnSendRosMessage(SIGVerse.RosBridge.human_navigation.HumanNaviMsg message);
 		void OnReceiveRosMessage(SIGVerse.RosBridge.human_navigation.HumanNaviMsg message);
+	}
+
+	public interface IRecordEventHandler : IEventSystemHandler
+	{
 		void OnRecordEvent(string log);
 	}
 
 	[RequireComponent(typeof (HumanNaviPlaybackCommon))]
-	public class HumanNaviPlaybackRecorder : TrialPlaybackRecorder, ISpeakGuidanceMessageHandler/*, IPlaybackRosMessageHandler, IReceiveHumanNaviMsgHandler, IRosTaskInfoSendHandler, IRosAvatarStatusSendHandler*/
+	public class HumanNaviPlaybackRecorder : TrialPlaybackRecorder, ISpeakGuidanceMessageHandler, IRecordEventHandler, IPlaybackRosMessageHandler/*, IReceiveHumanNaviMsgHandler, IRosTaskInfoSendHandler, IRosAvatarStatusSendHandler*/
 	{
-		public List<string> KeywordsOfAvatarPartsPathToIgnore;
+		//public List<string> KeywordsOfAvatarPartsPathToIgnore;
 
 		protected override void Awake()
 		{
@@ -143,8 +147,13 @@ namespace SIGVerse.Competition.HumanNavigation
 		public void OnRecordEvent(string log)
 		{
 			string dataLine = elapsedTime + "," + HumanNaviPlaybackCommon.DataTypeHumanNaviEvent;
-			dataLine += log;
+			dataLine += "\t" + log;
 			this.dataLines.Add(dataLine);
+		}
+
+		public float GetElapsedTime()
+		{
+			return this.elapsedTime;
 		}
 
 		//public void OnObjectGrasped(string objectName, string whichHandUsed)

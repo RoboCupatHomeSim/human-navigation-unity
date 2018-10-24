@@ -18,6 +18,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private PlaybackGuidanceMessageEventController guidanceMessageController;
 
+		private bool hasVRIK = false;
+
 		protected override void Awake()
 		{
 			this.isPlay = HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypePlay;
@@ -38,35 +40,65 @@ namespace SIGVerse.Competition.HumanNavigation
 				moderator.GetComponent<HumanNaviSubMessage>().enabled = false;
 				moderator.GetComponent<HumanNaviPubTaskInfo>().enabled = false;
 				moderator.GetComponent<HumanNaviPubAvatarStatus>().enabled = false;
+				moderator.GetComponent<HumanNaviPubObjectStatus>().enabled = false;
 
 				robot.GetComponentInChildren<HumanNaviSubGuidanceMessage>().enabled = false;
 
 				this.scoreManager.enabled = false;
 
 				// Avatar
-#if HUMAN_NAVI_PLAYBACK_AVATAR_WITH_FINAL_IK
+				Transform avatar = GameObject.FindGameObjectWithTag("Avatar").transform;
+				avatar.GetComponentInChildren<NewtonVR.NVRPlayer>().enabled = false;
+
+#if ENABLE_VRIK
 				// Avatar (Final IK)
-				Transform avatar = GameObject.FindGameObjectWithTag("Avatar").transform;
-				avatar.transform.Find("ThirdPersonEthanWithAnimation").gameObject.SetActive(false);
-				avatar.GetComponentInChildren<RootMotion.FinalIK.VRIK>().enabled = false;
+				if (avatar.GetComponentInChildren<RootMotion.FinalIK.VRIK>())
+				{
+					this.hasVRIK = true;
+				}
 
-				avatar.GetComponentInChildren<NewtonVR.NVRPlayer>().enabled = false;
-
-#else
-				// Avatar(Simple Oculus Ethan )
-				Transform avatar = GameObject.FindGameObjectWithTag("Avatar").transform;
-				avatar.GetComponentInChildren<NewtonVR.NVRPlayer>().enabled = false;
-				avatar.GetComponentInChildren<OVRManager>().enabled = false;
-				avatar.GetComponentInChildren<OVRCameraRig>().enabled = false;
-
-				avatar.GetComponentInChildren<Animator>().enabled = false;
-				avatar.GetComponentInChildren<SIGVerse.Human.VR.SimpleHumanVRController>().enabled = false;
-				avatar.GetComponentInChildren<SIGVerse.Human.IK.SimpleIK>().enabled = false;
-
-				avatar.GetComponentInChildren<Animator>().enabled = false;
-				avatar.GetComponentInChildren<SIGVerse.Human.VR.SimpleHumanVRController>().enabled = false;
-				avatar.GetComponentInChildren<SIGVerse.Human.IK.SimpleIK>().enabled = false;
+				if (this.hasVRIK)
+				{
+					avatar.transform.Find("ThirdPersonEthanWithAnimation").gameObject.SetActive(false);
+					avatar.GetComponentInChildren<RootMotion.FinalIK.VRIK>().enabled = false;
+				}
 #endif
+
+				if (!this.hasVRIK)
+				{
+					avatar.GetComponentInChildren<OVRManager>().enabled = false;
+					avatar.GetComponentInChildren<OVRCameraRig>().enabled = false;
+
+					avatar.GetComponentInChildren<Animator>().enabled = false;
+					avatar.GetComponentInChildren<SIGVerse.Human.VR.SimpleHumanVRController>().enabled = false;
+					avatar.GetComponentInChildren<SIGVerse.Human.IK.SimpleIK>().enabled = false;
+
+					avatar.GetComponentInChildren<Animator>().enabled = false;
+					avatar.GetComponentInChildren<SIGVerse.Human.VR.SimpleHumanVRController>().enabled = false;
+					avatar.GetComponentInChildren<SIGVerse.Human.IK.SimpleIK>().enabled = false;
+				}
+
+//#if HUMAN_NAVI_PLAYBACK_AVATAR_WITH_FINAL_IK
+//				// Avatar (Final IK)
+//				avatar.transform.Find("ThirdPersonEthanWithAnimation").gameObject.SetActive(false);
+//				avatar.GetComponentInChildren<RootMotion.FinalIK.VRIK>().enabled = false;
+
+//				//avatar.GetComponentInChildren<NewtonVR.NVRPlayer>().enabled = false;
+
+//#else
+//				//// Avatar(Simple Oculus Ethan )
+//				////avatar.GetComponentInChildren<NewtonVR.NVRPlayer>().enabled = false;
+//				//avatar.GetComponentInChildren<OVRManager>().enabled = false;
+//				//avatar.GetComponentInChildren<OVRCameraRig>().enabled = false;
+
+//				//avatar.GetComponentInChildren<Animator>().enabled = false;
+//				//avatar.GetComponentInChildren<SIGVerse.Human.VR.SimpleHumanVRController>().enabled = false;
+//				//avatar.GetComponentInChildren<SIGVerse.Human.IK.SimpleIK>().enabled = false;
+
+//				//avatar.GetComponentInChildren<Animator>().enabled = false;
+//				//avatar.GetComponentInChildren<SIGVerse.Human.VR.SimpleHumanVRController>().enabled = false;
+//				//avatar.GetComponentInChildren<SIGVerse.Human.IK.SimpleIK>().enabled = false;
+//#endif
 
 				//UnityEngine.XR.XRSettings.enabled = false;
 

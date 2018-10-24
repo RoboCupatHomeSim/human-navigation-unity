@@ -400,5 +400,10 @@ namespace SIGVerse.Competition.HumanNavigation
 				//this.ImposeTimePenalty(Score.TimePnaltyType.OverSpeechCount);
 			}
 		}
+
+		public float GetElapsedTime()
+		{
+			return this.timeLimit - this.timeLeft;
+		}
 	}
 }
