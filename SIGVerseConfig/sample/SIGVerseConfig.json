@@ -1,7 +1,8 @@
 {
-    "rosbridgeIP": "192.168.1.101",
+    "rosbridgeIP": "192.168.0.2",
     "rosbridgePort": 9090,
     "sigverseBridgePort": 50001,
+    "logFileName": "SIGVerse.log",
     "useSigverseMenu": true,
     "isAutoStartWithMenu": true,
     "setUpRosTimestamp": true
