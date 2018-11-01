@@ -29,6 +29,26 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void Awake()
 		{
+			// For demo mode
+			if (HumanNaviConfig.Instance.configInfo.executionMode == (int)ExecutionMode.Demo)
+			{
+				this.GetComponent<HumanNaviPubTaskInfo>().enabled = false;
+				this.GetComponent<HumanNaviPubMessage>().enabled = false;
+				this.GetComponent<HumanNaviSubMessage>().enabled = false;
+				this.GetComponent<HumanNaviPubAvatarStatus>().enabled = false;
+				this.GetComponent<HumanNaviPubObjectStatus>().enabled = false;
+
+				GameObject robot = GameObject.Find("HSR-B"); // TODO
+				robot.transform.Find("RosBridgeScripts").gameObject.SetActive(false); // TODO
+				robot.GetComponentInChildren<HumanNaviSubGuidanceMessage>().enabled = false;
+
+				foreach (Camera camera in robot.transform.GetComponentsInChildren<Camera>())
+				{
+					camera.gameObject.SetActive(false);
+				}
+			}
+
+
 			this.currentEnvironment = null;
 
 			this.ClearExistingEnvironments();    // Environments
@@ -166,6 +186,16 @@ namespace SIGVerse.Competition.HumanNavigation
 			return this.tts.IsSpeaking();
 		}
 
+		public void SpeakGuidanceMessage(string msg, string displeyType = "All")
+		{
+			this.tts.language = HumanNaviConfig.Instance.language_id;
+
+			RosBridge.human_navigation.HumanNaviGuidanceMsg guidanceMsg = new RosBridge.human_navigation.HumanNaviGuidanceMsg();
+			guidanceMsg.message = msg;
+			guidanceMsg.display_type = "All";
+			this.tts.OnReceiveROSHumanNaviGuidanceMessage(guidanceMsg);
+		}
+
 		public float GetDistanceFromRobot(Vector3 targetPosition)
 		{
 			Vector3 currentRobotPosition = this.currentRobot.transform.Find(this.basefootprintPath).gameObject.transform.position;
@@ -173,6 +203,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			Vector2 targetPosition2D = new Vector2(targetPosition.x, targetPosition.z);
 
 			return (robotPosition2D - targetPosition2D).magnitude;
+		}
+
+		public void ResetNotificationDestinationsOfTTS()
+		{
+			this.tts.ResetNotificationDestinations();
 		}
 	}
 }

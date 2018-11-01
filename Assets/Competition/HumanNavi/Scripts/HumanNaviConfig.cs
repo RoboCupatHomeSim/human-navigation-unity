@@ -29,15 +29,21 @@ namespace SIGVerse.Competition.HumanNavigation
 		public int playbackTrialNum;
 		public int executionMode;
 		public string language;
-		public List<string> guideMessagesJapanese; // for demo
-		public List<string> guideMessagesEnglish;  // for demo
+		public string guidanceMessageForDemo;
 	}
 
-	//public enum ExecutionMode
-	//{
-	//	WithoutVRDevice,
-	//	UseOculus,
-	//}
+	public enum ExecutionMode
+	{
+		Competition = 1,
+		Demo = 2,
+		Practice = 3,
+	}
+
+	public class Language
+	{
+		public const string English = "409";
+		public const string Japanese = "411";
+	}
 
 	public class HumanNaviConfig : Singleton<HumanNaviConfig>
 	{
@@ -56,7 +62,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public List<int> scores;
 
-		public int language_id;
+		public string language_id;
 
 		void Awake()
 		{
@@ -83,12 +89,13 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.configInfo.sessionTimeLimit = 300;
 				this.configInfo.maxNumberOfTrials = 1;
 				this.configInfo.recoverUsingScoreFile = false;
-				this.configInfo.executionMode = 1;
+				this.configInfo.executionMode = (int)ExecutionMode.Competition;
 				this.configInfo.playbackType = WorldPlaybackCommon.PlaybackTypeNone;
 				this.configInfo.language = "English";
 				List<TaskInfo> taskInfoList = new List<TaskInfo>();
 				taskInfoList.Add(new TaskInfo() { environment = "Default_Environment", target = "petbottle_500ml_empty_01", destination = "trashbox_01" });
 				this.configInfo.taskInfoList = taskInfoList;
+				this.configInfo.guidanceMessageForDemo = "";
 
 				this.SaveConfig();
 			}
@@ -139,9 +146,9 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			switch (this.configInfo.language)
 			{
-				case "Japanese": { this.language_id = 6; break; }
-				case "English": { this.language_id = 8; break; }
-				default: { this.language_id = 8; break; }
+				case "Japanese": { this.language_id = Language.Japanese; break; }
+				case "English": { this.language_id = Language.English; break; }
+				default: { this.language_id = Language.English; break; }
 			}
 		}
 

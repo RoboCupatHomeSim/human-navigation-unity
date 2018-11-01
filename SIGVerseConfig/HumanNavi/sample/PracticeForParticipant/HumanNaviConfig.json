@@ -1,9 +1,12 @@
 {
-	"sessionTimeLimit":"99999",
+	"teamName":"Hum@n Navigation",
+	"sessionTimeLimit":"180",
 	"recoverUsingScoreFile": false,
-	"maxNumberOfTrials": 12,
+	"maxNumberOfTrials": 999,
 	"playbackType": 0,
+	"executionMode": 2,
 	"taskInfoList":[
-		{"environment":"ExampleLayout_01","target":"canned_juice_01","destination":"trashcan_01"}
-	]
+		{"environment":"ExampleLayoutHN01#01","target":"cup_c02#01","destination":"destination#01"}
+	],
+	"guidanceMessageForDemo":"Please take a pink cup on your right, and put it on the round table in front of you."
 }

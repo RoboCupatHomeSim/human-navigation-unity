@@ -75,11 +75,21 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnSpeakGuidanceMessage(GuidanceMessageStatus guidanceMessageStatus)
 		{
+			if (HumanNaviConfig.Instance.configInfo.playbackType != HumanNaviPlaybackCommon.PlaybackTypeRecord) // for demo mode
+			{
+				return;
+			}
+
 			this.dataLines.Add(PlaybackGuidanceMessageEventController.GetDataLine(this.GetHeaderElapsedTime(), guidanceMessageStatus));
 		}
 
 		public void OnSendRosMessage(SIGVerse.RosBridge.human_navigation.HumanNaviMsg message)
 		{
+			if (HumanNaviConfig.Instance.configInfo.playbackType != WorldPlaybackCommon.PlaybackTypeRecord) // for demo mode
+			{
+				return;
+			}
+
 			this.dataLines.Add(GetDataLine(this.GetHeaderElapsedTime(), message, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageSent));
 		}
 		public void OnSendRosAvatarStatusMessage(SIGVerse.RosBridge.human_navigation.HumanNaviAvatarStatus avatarStatus)
@@ -146,6 +156,11 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnRecordEvent(string log)
 		{
+			if (HumanNaviConfig.Instance.configInfo.playbackType != WorldPlaybackCommon.PlaybackTypeRecord) // for demo mode
+			{
+				return;
+			}
+
 			string dataLine = elapsedTime + "," + HumanNaviPlaybackCommon.DataTypeHumanNaviEvent;
 			dataLine += "\t" + log;
 			this.dataLines.Add(dataLine);

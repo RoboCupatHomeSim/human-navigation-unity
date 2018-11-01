@@ -47,6 +47,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private enum Step
 		{
 			Initialize,
+			WaitForInitilization, // tentative
 			InitializePlayback,
 			WaitForStart,
 			SessionStart,
@@ -133,11 +134,21 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private IRosConnection[] rosConnections;
 
+		//-----------------------------
+
+		private bool isDemoMode = false;
+		private bool isFirstInstructionFinished = false;
 
 		void Awake()
 		{
 			try
 			{
+				// Demo mode
+				if (HumanNaviConfig.Instance.configInfo.executionMode == (int)ExecutionMode.Demo)
+				{
+					this.isDemoMode = true;
+				}
+
 				// Playback system
 				this.playbackRecorder = this.playbackManager.GetComponent<HumanNaviPlaybackRecorder>();
 
@@ -162,8 +173,16 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				// ROSBridge
 				// (Should be read after the robot is instantiated (after Awake process of SessionManager))
-				this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
-				SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
+				if (!this.isDemoMode) // TODO: should unify as a function
+				{
+					this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
+					SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
+				}
+				else
+				{
+					this.rosConnections = new IRosConnection[] { };
+					SIGVerseLogger.Info("No ROS connection (demo mode)");
+				}
 
 				// Timer
 				this.stepTimer = new StepTimer();
@@ -198,7 +217,8 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			try
 			{
-				if (this.isAllTaskFinished){ 
+				if (this.isAllTaskFinished)
+				{ 
 					return;
 				}
 
@@ -209,11 +229,28 @@ namespace SIGVerse.Competition.HumanNavigation
 					this.TimeIsUp();
 				}
 
+				// Giveup for demo mode
+				if ( this.isDemoMode &&
+					(OVRInput.Get(OVRInput.RawButton.LThumbstick) && OVRInput.Get(OVRInput.RawButton.X) && OVRInput.Get(OVRInput.RawButton.Y)) ||
+					(OVRInput.Get(OVRInput.RawButton.RThumbstick) && OVRInput.Get(OVRInput.RawButton.A) && OVRInput.Get(OVRInput.RawButton.B)) ||
+					(Input.GetKeyDown(KeyCode.Escape)))
+				{
+					this.OnGiveUp();
+				}
+
+
 				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringSession)
 				{
-					if (!this.sessionManager.GetTTSRuningState())
+					if (this.isDemoMode)
 					{
-						this.SendRosHumanNaviMessage(MsgRequest, "");
+						this.sessionManager.SpeakGuidanceMessage(HumanNaviConfig.Instance.configInfo.guidanceMessageForDemo);
+					}
+					else
+					{
+						//if (!this.sessionManager.GetTTSRuningState())
+						{
+							this.SendRosHumanNaviMessage(MsgRequest, "");
+						}
 					}
 				}
 
@@ -232,6 +269,14 @@ namespace SIGVerse.Competition.HumanNavigation
 							this.step++;
 						}
 
+						break;
+					}
+					case Step.WaitForInitilization: // TODO: This is tentative procedure to prevet error at the end of recording
+					{
+						if (this.stepTimer.IsTimePassed((int)this.step, 1000))
+						{
+							this.step++;
+						}
 						break;
 					}
 					case Step.InitializePlayback: // Need to wait for an update to finish instantiating objects to record
@@ -272,6 +317,15 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.WaitForIamReady:
 					{
+						// For Demo
+						if (this.isDemoMode)
+						{
+							this.sessionManager.ResetNotificationDestinationsOfTTS();
+
+							this.step++;
+							break;
+						}
+
 						if (this.receivedMessageMap[MsgIamReady])
 						{
 							//this.StartPlaybackRecord();
@@ -285,7 +339,15 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.SendTaskInfo:
 					{
-						this.SendRosTaskInfoMessage(this.taskInfoForRobot);
+						if (!this.isDemoMode)
+						{
+							this.SendRosTaskInfoMessage(this.taskInfoForRobot);
+						}
+
+						if (this.isDemoMode) // first instruction for demo mode (TODO: this code should be in more appropriate position)
+						{
+							this.sessionManager.SpeakGuidanceMessage(HumanNaviConfig.Instance.configInfo.guidanceMessageForDemo);
+						}
 
 						SIGVerseLogger.Info("Waiting for end of session");
 
@@ -319,7 +381,7 @@ namespace SIGVerse.Competition.HumanNavigation
 						if(this.goNextSession)
 						{
 							SIGVerseLogger.Info("Go to next session");
-							this.RecordEventLog("Go_to_next_session");
+							//this.RecordEventLog("Go_to_next_session");
 
 							this.SendRosHumanNaviMessage(MsgGoToNextSession, "");
 
@@ -356,8 +418,18 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.ResetFlags();
 
 			this.panelMainController.SetTeamNameText("Team: " + HumanNaviConfig.Instance.configInfo.teamName);
-			HumanNaviConfig.Instance.InclementNumberOfTrials(HumanNaviConfig.Instance.configInfo.playbackType);
 
+			if (this.isDemoMode)
+			{
+				HumanNaviConfig.Instance.numberOfTrials = 1;
+			}
+			else
+			{
+				HumanNaviConfig.Instance.InclementNumberOfTrials(HumanNaviConfig.Instance.configInfo.playbackType);
+			}
+
+
+			// TODO: should be modified the following function
 			int countOfSessions = HumanNaviConfig.Instance.numberOfTrials;
 			if (HumanNaviConfig.Instance.configInfo.group == "B")
 			{
@@ -388,10 +460,20 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.sessionManager.ResetEnvironment(this.numberOfSession);
 			this.ResetAvatarTransform();
 
-			this.ClearRosConnections();
+			if (!this.isDemoMode)
+			{
+				this.ClearRosConnections();
+			}
 			this.sessionManager.ResetRobot();
-			this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
-			SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
+			if (!this.isDemoMode)
+			{
+				this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
+				SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
+			}
+			else
+			{
+				SIGVerseLogger.Info("No ROS connection (Demo mode)");
+			}
 
 			//this.currentTaskInfo = this.sessionManager.GetCurrentTaskInfo();
 			this.currentTaskInfo = this.sessionManager.GetCurrentTaskInfo(this.numberOfSession);
@@ -1028,7 +1110,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				string strGiveup = "Give_up";
 				this.SendRosHumanNaviMessage(MsgTaskFailed, strGiveup);
 				this.SendPanelNotice("Give up", 100, PanelNoticeStatus.Red);
-				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(strGiveup, 3.0f));
+				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Give up", 3.0f));
 
 				this.panelMainController.giveUpPanel.SetActive(false);
 
@@ -1065,12 +1147,21 @@ namespace SIGVerse.Competition.HumanNavigation
 		public void OnGoToNextTrial()
 		{
 			this.goToNextTrialPanel.SetActive(false);
+
+			this.isCompetitionStarted = true; // for demo mode
 			this.goNextSession = true;
 		}
 
 		public void ShowStartTaskPanel()
 		{
-			this.startTrialPanel.SetActive(true);
+			if (this.isDemoMode)
+			{
+				this.goToNextTrialPanel.SetActive(true);
+			}
+			else
+			{
+				this.startTrialPanel.SetActive(true);
+			}
 		}
 
 		private void SendPanelNotice(string message, int fontSize, Color color)
