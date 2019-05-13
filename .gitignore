@@ -3,6 +3,7 @@
 /[Oo]bj/
 /[Bb]uild/
 /[Bb]uilds/
+/[Ll]ogs/
 /Assets/AssetStoreTools*
 
 # Visual Studio cache directory
@@ -56,6 +57,7 @@ SIGVerse.log
 
 
 /Assets/OVR*
+/Assets/Oculus*
 /Assets/Plugins*
 /Assets/SIGVerse*
 /Assets/Competition/Common*

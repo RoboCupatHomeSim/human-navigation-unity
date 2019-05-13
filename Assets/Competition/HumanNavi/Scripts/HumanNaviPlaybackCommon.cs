@@ -37,17 +37,17 @@ namespace SIGVerse.Competition.HumanNavigation
 			Transform robot = GameObject.FindGameObjectWithTag("Robot").transform;
 
 			this.targetTransforms.Add(robot);
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.BaseFootPrintName));
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.ArmLiftLinkName));
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.ArmFlexLinkName));
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.ArmRollLinkName));
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.WristFlexLinkName));
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.WristRollLinkName));
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.HeadPanLinkName));
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.HeadTiltLinkName));
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.TorsoLiftLinkName));
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.HandLProximalLinkName));
-			this.targetTransforms.Add(SIGVerse.Common.SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.HandRProximalLinkName));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.base_footprint      .ToString()));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.arm_lift_link       .ToString()));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.arm_flex_link       .ToString()));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.arm_roll_link       .ToString()));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.wrist_flex_link     .ToString()));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.wrist_roll_link     .ToString()));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.head_pan_link       .ToString()));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.head_tilt_link      .ToString()));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.torso_lift_link     .ToString()));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.hand_l_proximal_link.ToString()));
+			this.targetTransforms.Add(SIGVerseUtils.FindTransformFromChild(robot, HSRCommon.Link.hand_r_proximal_link.ToString()));
 
 			// Avatar
 			Transform avatar = GameObject.FindGameObjectWithTag("Avatar").transform;

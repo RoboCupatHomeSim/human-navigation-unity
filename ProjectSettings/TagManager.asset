@@ -25,6 +25,7 @@ TagManager:
   - GuidanceMessagePanelForAvatar
   - GuidanceMessagePanelForAudience
   - Furniture
+  - NonDeductionCollider
   layers:
   - Default
   - TransparentFX

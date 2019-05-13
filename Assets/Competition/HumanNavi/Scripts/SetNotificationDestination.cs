@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using SIGVerse.ToyotaHSR;
+using SIGVerse.Common;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
@@ -12,12 +12,12 @@ namespace SIGVerse.Competition.HumanNavigation
 		void Start()
 		{
 			///// TODO: should be modified /////
-			HSRCollisionDetector hsrCollisionDetector = this.GetComponent<HSRCollisionDetector>();
-			hsrCollisionDetector.collisionNotificationDestinations.Clear();
+			CollisionDetector collisionDetector = this.GetComponent<CollisionDetector>();
+			collisionDetector.collisionNotificationDestinations.Clear();
 
 			foreach(string destinationName in this.destinationNames)
 			{
-				hsrCollisionDetector.collisionNotificationDestinations.Add(GameObject.Find(destinationName));
+				collisionDetector.collisionNotificationDestinations.Add(GameObject.Find(destinationName));
 			}
 		}
 	}

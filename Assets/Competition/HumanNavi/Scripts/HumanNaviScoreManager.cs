@@ -60,7 +60,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		}
 	}
 
-	public class HumanNaviScoreManager : MonoBehaviour, IHSRCollisionHandler, ISpeakGuidanceMessageHandler
+	public class HumanNaviScoreManager : MonoBehaviour, IRobotCollisionHandler, ISpeakGuidanceMessageHandler
 	{
 		private const string TimeFormat = "#####0";
 		private const float DefaultTimeScale = 1.0f;
@@ -385,7 +385,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		//---------------------------------------------------
 
-		public void OnHsrCollisionEnter(Collision collision, float collisionVelocity, float effectScale)
+		public void OnRobotCollisionEnter(Collision collision, float collisionVelocity, float effectScale)
 		{
 			this.AddScore(Score.ScoreType.CollisionEnter);
 		}
