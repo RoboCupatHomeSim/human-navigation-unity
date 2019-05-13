@@ -4,16 +4,16 @@ This is a Unity project for the competition of Human Navigation task of the Part
 
 Please prepare a common unitypackage and a dll file for text-to-speech (TTS) in advance, and import them to this project.  
 
-For details of using the common unitypackage, please see an instruction in the following repository:
+For details of using the common unitypackage, please see an instruction in the following repository:  
 https://github.com/PartnerRobotChallengeVirtual/common-unity.git
 
-For details of creating the dll for TTS, please see the following repository:
+For details of creating the dll for TTS, please see the following repository:  
 https://github.com/PartnerRobotChallengeVirtual/console-simple-tts
 
 ## Prerequisites
 
 - OS: Windows 10
-- Unity version: 2017.3.1
+- Unity version: 2018.4.0f1
 
 ## How to Build
 
@@ -27,8 +27,8 @@ https://github.com/PartnerRobotChallengeVirtual/console-simple-tts
 
 ### Import Oculus Utilities for Unity
 
-1. Download Oculus Utilities for Unity ver.1.24.0 from the following link.  
-https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.24.0/
+1. Download Oculus Utilities for Unity ver.1.28.0 from the following link.  
+https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.28.0/
 2. Unzip the downloaded file.
 3. Open this project with Unity.
 4. Click [Assets]-[Import Package]-[Custom Package...].
