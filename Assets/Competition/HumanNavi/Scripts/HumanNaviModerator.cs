@@ -137,7 +137,6 @@ namespace SIGVerse.Competition.HumanNavigation
 		//-----------------------------
 
 		private bool isDemoMode = false;
-		private bool isFirstInstructionFinished = false;
 
 		void Awake()
 		{

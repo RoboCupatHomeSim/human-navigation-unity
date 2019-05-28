@@ -80,7 +80,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				return;
 			}
 
-			this.dataLines.Add(PlaybackGuidanceMessageEventController.GetDataLine(this.GetHeaderElapsedTime(), guidanceMessageStatus));
+			base.AddDataLine(PlaybackGuidanceMessageEventController.GetDataLine(this.GetHeaderElapsedTime(), guidanceMessageStatus));
 		}
 
 		public void OnSendRosMessage(SIGVerse.RosBridge.human_navigation.HumanNaviMsg message)
@@ -89,21 +89,25 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				return;
 			}
+			if (this.step != Step.Recording)
+			{
+				return;
+			}
 
-			this.dataLines.Add(GetDataLine(this.GetHeaderElapsedTime(), message, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageSent));
+			base.AddDataLine(GetDataLine(this.GetHeaderElapsedTime(), message, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageSent));
 		}
 		public void OnSendRosAvatarStatusMessage(SIGVerse.RosBridge.human_navigation.HumanNaviAvatarStatus avatarStatus)
 		{
-			this.dataLines.Add(GetDataLine(this.GetHeaderElapsedTime(), avatarStatus, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageSent));
+			base.AddDataLine(GetDataLine(this.GetHeaderElapsedTime(), avatarStatus, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageSent));
 		}
 		public void OnSendRosTaskInfoMessage(SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo taskInfo)
 		{
-			this.dataLines.Add(GetDataLine(this.GetHeaderElapsedTime(), taskInfo, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageSent));
+			base.AddDataLine(GetDataLine(this.GetHeaderElapsedTime(), taskInfo, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageSent));
 		}
 
 		public void OnReceiveRosMessage(SIGVerse.RosBridge.human_navigation.HumanNaviMsg humanNaviMsg)
 		{
-			this.dataLines.Add(GetDataLine(this.GetHeaderElapsedTime(), humanNaviMsg, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageReceived));
+			base.AddDataLine(GetDataLine(this.GetHeaderElapsedTime(), humanNaviMsg, HumanNaviPlaybackCommon.DataTypeHumanNaviROSMessageReceived));
 		}
 
 
@@ -163,7 +167,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			string dataLine = elapsedTime + "," + HumanNaviPlaybackCommon.DataTypeHumanNaviEvent;
 			dataLine += "\t" + log;
-			this.dataLines.Add(dataLine);
+			base.AddDataLine(dataLine);
 		}
 
 		public float GetElapsedTime()
