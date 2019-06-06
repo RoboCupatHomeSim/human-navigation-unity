@@ -1,7 +1,9 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets_1_1_2.CrossPlatformInput;
+
+#pragma warning disable CS0414
 
 public class HumanNaviAvatarController : MonoBehaviour
 {

@@ -5,6 +5,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using SIGVerse.Common;
+#if ENABLE_TRANSLATION
+using Google.Cloud.Translation.V2;
+#endif
 
 namespace SIGVerse.Competition.HumanNavigation
 {
@@ -40,13 +43,18 @@ namespace SIGVerse.Competition.HumanNavigation
 		public string gender = "Female";
 
 		[HeaderAttribute("Guidance message param")]
-		public int maxCharcters = 400;
+		public int maxCharactersForSourceLang = 1000;
+		public int maxCharactersForTargetLang = 400;
 
 		private List<GameObject> notificationDestinations;
 
 		bool isSpeaking;
 
 		private System.Diagnostics.Process speechProcess;
+
+#if ENABLE_TRANSLATION
+			TranslationClient translationClient;
+#endif
 
 		// Use this for initialization
 		void Awake()
@@ -72,6 +80,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.ResetNotificationDestinations();
 
 			this.isSpeaking = false;
+#if ENABLE_TRANSLATION
+			this.translationClient = TranslationClient.Create();
+#endif
 		}
 
 		//public void Start()
@@ -105,7 +116,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public bool SpeakMessage(string message, string displayType)
+		public bool SpeakMessage(string message, string displayType, string sourceLanguage, string targetLanguage)
 		{
 			if (this.isSpeaking)
 			{
@@ -139,11 +150,32 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			}
 
-			string truncatedMessage;
-			if (message.Length > maxCharcters)
+			// Translation
+#if ENABLE_TRANSLATION
+			if ((sourceLanguage == string.Empty && targetLanguage != string.Empty) || (sourceLanguage != string.Empty && targetLanguage == string.Empty))
 			{
-				truncatedMessage = message.Substring(0, maxCharcters);
-				SIGVerseLogger.Info("Length of guidance message is over " + this.maxCharcters.ToString() + " charcters.");
+				SIGVerseLogger.Error("Invalid language type. Source Language=" + sourceLanguage + ", Target Language="+ targetLanguage);
+				return false;
+			}
+			
+			if (sourceLanguage != string.Empty && targetLanguage != string.Empty)
+			{
+				if (message.Length > maxCharactersForSourceLang)
+				{
+					message.Substring(0, maxCharactersForSourceLang);
+					SIGVerseLogger.Info("Length of guidance message(source lang) is over " + this.maxCharactersForSourceLang.ToString() + " charcters.");
+				}
+
+				message = this.translationClient.TranslateText(message, targetLanguage, sourceLanguage).TranslatedText;
+			}
+#endif
+
+			string truncatedMessage;
+
+			if (message.Length > maxCharactersForTargetLang)
+			{
+				truncatedMessage = message.Substring(0, maxCharactersForTargetLang);
+				SIGVerseLogger.Info("Length of guidance message(target lang) is over " + this.maxCharactersForTargetLang.ToString() + " charcters.");
 			}
 			else
 			{
@@ -162,7 +194,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				(
 					target: destination,
 					eventData: null,
-					functor: (reciever, eventData) => reciever.OnSpeakGuidanceMessage(new GuidanceMessageStatus(message, displayType))
+					functor: (reciever, eventData) => reciever.OnSpeakGuidanceMessage(new GuidanceMessageStatus(message, displayType, sourceLanguage, targetLanguage))
 				);
 
 				// For send speech result (ROS message)
@@ -189,12 +221,12 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnReceiveROSHumanNaviGuidanceMessage(SIGVerse.RosBridge.human_navigation.HumanNaviGuidanceMsg guidanceMsg)
 		{
-			this.SpeakMessage(guidanceMsg.message, guidanceMsg.display_type);
+			this.SpeakMessage(guidanceMsg.message, guidanceMsg.display_type, guidanceMsg.source_language, guidanceMsg.target_language);
 		}
 
 		public void OnPlaybackGuidanceMessage(GuidanceMessageStatus guidanceMessageStatus)
 		{
-			this.SpeakMessage(guidanceMessageStatus.Message, guidanceMessageStatus.DisplayType);
+			this.SpeakMessage(guidanceMessageStatus.Message, guidanceMessageStatus.DisplayType, guidanceMessageStatus.SourceLanguage, guidanceMessageStatus.TargetLanguage);
 		}
 
 		//private void ProcessExit(object sender, System.EventArgs e)

@@ -430,9 +430,11 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			// TODO: should be modified the following function
 			int countOfSessions = HumanNaviConfig.Instance.numberOfTrials;
+
 			if (HumanNaviConfig.Instance.configInfo.group == "B")
 			{
 				int halfOfMaxNumberOfSessions = (int)(HumanNaviConfig.Instance.configInfo.maxNumberOfTrials / 2);
+
 				if (countOfSessions > halfOfMaxNumberOfSessions)
 				{
 					this.numberOfSession = countOfSessions - halfOfMaxNumberOfSessions;
@@ -832,17 +834,17 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			RosBridge.human_navigation.HumanNaviAvatarStatus avatarStatus = new RosBridge.human_navigation.HumanNaviAvatarStatus();
 
-			avatarStatus.head.position = ConvertCoorinateSystemUnityToROS_Position(this.head.transform.position);
-			avatarStatus.head.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.head.transform.rotation);
-			avatarStatus.body.position = ConvertCoorinateSystemUnityToROS_Position(this.body.transform.position);
-			avatarStatus.body.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.body.transform.rotation);
-			avatarStatus.left_hand.position = ConvertCoorinateSystemUnityToROS_Position(this.LeftHand.transform.position);
-			avatarStatus.left_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.LeftHand.transform.rotation);
-			avatarStatus.right_hand.position = ConvertCoorinateSystemUnityToROS_Position(this.rightHand.transform.position);
+			avatarStatus.head.position          = ConvertCoorinateSystemUnityToROS_Position(this.head.transform.position);
+			avatarStatus.head.orientation       = ConvertCoorinateSystemUnityToROS_Rotation(this.head.transform.rotation);
+			avatarStatus.body.position          = ConvertCoorinateSystemUnityToROS_Position(this.body.transform.position);
+			avatarStatus.body.orientation       = ConvertCoorinateSystemUnityToROS_Rotation(this.body.transform.rotation);
+			avatarStatus.left_hand.position     = ConvertCoorinateSystemUnityToROS_Position(this.LeftHand.transform.position);
+			avatarStatus.left_hand.orientation  = ConvertCoorinateSystemUnityToROS_Rotation(this.LeftHand.transform.rotation);
+			avatarStatus.right_hand.position    = ConvertCoorinateSystemUnityToROS_Position(this.rightHand.transform.position);
 			avatarStatus.right_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.rightHand.transform.rotation);
-			avatarStatus.object_in_left_hand = this.objectIdInLeftHand == "" ? "" : this.objectIdInLeftHand.Substring(0, this.objectIdInLeftHand.Length - 3);
-			avatarStatus.object_in_right_hand = this.objectIdInRightHand == "" ? "" : this.objectIdInRightHand.Substring(0, this.objectIdInRightHand.Length - 3);
-			avatarStatus.is_target_object_in_left_hand = this.IsTargetObject(this.objectIdInLeftHand);
+			avatarStatus.object_in_left_hand    = this.objectIdInLeftHand  == "" ? "" : this.objectIdInLeftHand .Substring(0, this.objectIdInLeftHand .Length - 3);
+			avatarStatus.object_in_right_hand   = this.objectIdInRightHand == "" ? "" : this.objectIdInRightHand.Substring(0, this.objectIdInRightHand.Length - 3);
+			avatarStatus.is_target_object_in_left_hand  = this.IsTargetObject(this.objectIdInLeftHand);
 			avatarStatus.is_target_object_in_right_hand = this.IsTargetObject(this.objectIdInRightHand);
 
 			ExecuteEvents.Execute<IRosAvatarStatusSendHandler>

@@ -66,7 +66,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void SubscribeHumanNaviGuidanceMessageCallback(RosBridge.human_navigation.HumanNaviGuidanceMsg guidaneMsg)
 		{
-			SIGVerseLogger.Info("Received guide message : " + guidaneMsg.message + ", display type: " + guidaneMsg.display_type);
+			SIGVerseLogger.Info("Received guide message: " + guidaneMsg.message + ", display type: " + guidaneMsg.display_type + ", source lang: " + guidaneMsg.source_language + ", target lang: " + guidaneMsg.target_language);
 
 			this.tts.OnReceiveROSHumanNaviGuidanceMessage(guidaneMsg);
 		}

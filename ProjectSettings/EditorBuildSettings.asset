@@ -4,4 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Competition/HumanNavi/HumanNavi.unity
+    guid: aaac8cc45e5a50f4d9862ce68139ddee
+  m_configObjects: {}

@@ -11,17 +11,23 @@ namespace SIGVerse.Competition.HumanNavigation
 	{
 		public string Message { get; set; }
 		public string DisplayType { get; set; }
+		public string SourceLanguage { get; set; }
+		public string TargetLanguage { get; set; }
 
-		public GuidanceMessageStatus(string message, string displayType)
+		public GuidanceMessageStatus(string message, string displayType, string sourceLanguage, string targetLanguage)
 		{
-			this.Message = message;
-			this.DisplayType = displayType;
+			this.Message        = message;
+			this.DisplayType    = displayType;
+			this.SourceLanguage = sourceLanguage;
+			this.TargetLanguage = targetLanguage;
 		}
 
 		public GuidanceMessageStatus(GuidanceMessageStatus guidanceMessageStatus)
 		{
-			this.Message = guidanceMessageStatus.Message;
-			this.DisplayType = guidanceMessageStatus.DisplayType;
+			this.Message        = guidanceMessageStatus.Message;
+			this.DisplayType    = guidanceMessageStatus.DisplayType;
+			this.SourceLanguage = guidanceMessageStatus.SourceLanguage;
+			this.TargetLanguage = guidanceMessageStatus.TargetLanguage;
 		}
 	}
 
@@ -93,10 +99,12 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				string[] dataArray = dataStr.Split('\t');
 
-				string message     = Regex.Unescape(dataArray[0]);
-				string displayType = Regex.Unescape(dataArray[1]);
+				string message        = Regex.Unescape(dataArray[0]);
+				string displayType    = Regex.Unescape(dataArray[1]);
+				string sourceLanguage = Regex.Unescape(dataArray[2]);
+				string targetLanguage = Regex.Unescape(dataArray[3]);
 
-				GuidanceMessageStatus guidanceMessageStatus = new GuidanceMessageStatus(message, displayType);
+				GuidanceMessageStatus guidanceMessageStatus = new GuidanceMessageStatus(message, displayType, sourceLanguage, targetLanguage);
 
 				guidanceMessageEvent.GuidanceMessageStatus = guidanceMessageStatus;
 				guidanceMessageEvent.Destination           = this.destination;
@@ -119,7 +127,9 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			dataLine += "\t" +
 				Regex.Escape(guidanceMessageStatus.Message) + "\t" +
-				Regex.Escape(guidanceMessageStatus.DisplayType);
+				Regex.Escape(guidanceMessageStatus.DisplayType) + "\t" +
+				Regex.Escape(guidanceMessageStatus.SourceLanguage) + "\t" +
+				Regex.Escape(guidanceMessageStatus.TargetLanguage);
 
 			return dataLine;
 		}

@@ -14,7 +14,6 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		[HeaderAttribute("Robot")]
 		public GameObject robot;
-		public string robotName;
 		public string basefootprintPath = "odom/base_footprint_pos_noise/base_footprint_rigidbody/base_footprint_rot_noise/base_footprint";
 
 		[HeaderAttribute("Camera Controller")]
@@ -86,7 +85,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 
 			this.currentRobot = MonoBehaviour.Instantiate(this.robot);
-			this.currentRobot.name = this.robotName;
+			this.currentRobot.name = this.robot.name;
 			this.currentRobot.SetActive(true);
 
 			this.tts = this.currentRobot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesisExternal>();
