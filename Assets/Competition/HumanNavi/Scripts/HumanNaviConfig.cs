@@ -28,14 +28,13 @@ namespace SIGVerse.Competition.HumanNavigation
 		public int playbackTrialNum;
 		public int executionMode;
 		public string language;
-		public string guidanceMessageForDemo;
+		public string guidanceMessageForPractice;
 	}
 
 	public enum ExecutionMode
 	{
 		Competition = 1,
-		Demo = 2,
-		Practice = 3,
+		Practice,
 	}
 
 	public class Language
@@ -93,7 +92,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				List<TaskInfo> taskInfoList = new List<TaskInfo>();
 				taskInfoList.Add(new TaskInfo() { environment = "Default_Environment", target = "petbottle_500ml_empty_01", destination = "trashbox_01" });
 				this.configInfo.taskInfoList = taskInfoList;
-				this.configInfo.guidanceMessageForDemo = "";
+				this.configInfo.guidanceMessageForPractice = "";
 
 				this.SaveConfig();
 			}

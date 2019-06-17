@@ -511,13 +511,14 @@ PlayerSettings:
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
   scriptingDefineSymbols:
-    1: SIGVERSE_USING_OCULUS_RIFT;NVR_Oculus;ENABLE_TRANSLATION
+    1: SIGVERSE_USING_OCULUS_RIFT;NVR_Oculus
     4: 
     7: 
     13: 
     19: 
   platformArchitecture: {}
-  scriptingBackend: {}
+  scriptingBackend:
+    Standalone: 0
   il2cppCompilerConfiguration: {}
   managedStrippingLevel: {}
   incrementalIl2cppBuild: {}

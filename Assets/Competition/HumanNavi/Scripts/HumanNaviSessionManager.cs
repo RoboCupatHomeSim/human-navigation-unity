@@ -28,8 +28,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void Awake()
 		{
-			// For demo mode
-			if (HumanNaviConfig.Instance.configInfo.executionMode == (int)ExecutionMode.Demo)
+			// For practice mode
+			if (HumanNaviConfig.Instance.configInfo.executionMode == (int)ExecutionMode.Practice)
 			{
 				this.GetComponent<HumanNaviPubTaskInfo>().enabled = false;
 				this.GetComponent<HumanNaviPubMessage>().enabled = false;
@@ -185,11 +185,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			return this.tts.IsSpeaking();
 		}
 
-		public void SpeakGuidanceMessage(string msg, string displeyType = "All")
+		public void SpeakGuidanceMessageForPractice(string msg, string displeyType = "All")
 		{
 			RosBridge.human_navigation.HumanNaviGuidanceMsg guidanceMsg = new RosBridge.human_navigation.HumanNaviGuidanceMsg();
 			guidanceMsg.message = msg;
-			guidanceMsg.display_type = "All";
+			guidanceMsg.display_type = displeyType;
 			this.tts.OnReceiveROSHumanNaviGuidanceMessage(guidanceMsg);
 		}
 

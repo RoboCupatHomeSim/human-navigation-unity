@@ -117,7 +117,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public bool SpeakMessage(string message, string displayType, string sourceLanguage, string targetLanguage)
+		private bool SpeakMessage(string message, string displayType, string sourceLanguage, string targetLanguage)
 		{
 			if (this.isSpeaking)
 			{

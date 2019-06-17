@@ -136,16 +136,16 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		//-----------------------------
 
-		private bool isDemoMode = false;
+		private bool isPracticeMode = false;
 
 		void Awake()
 		{
 			try
 			{
-				// Demo mode
-				if (HumanNaviConfig.Instance.configInfo.executionMode == (int)ExecutionMode.Demo)
+				// Practice mode
+				if (HumanNaviConfig.Instance.configInfo.executionMode == (int)ExecutionMode.Practice)
 				{
-					this.isDemoMode = true;
+					this.isPracticeMode = true;
 				}
 
 				// Playback system
@@ -172,7 +172,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				// ROSBridge
 				// (Should be read after the robot is instantiated (after Awake process of SessionManager))
-				if (!this.isDemoMode) // TODO: should unify as a function
+				if (!this.isPracticeMode) // TODO: should unify as a function
 				{
 					this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
 					SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
@@ -180,7 +180,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				else
 				{
 					this.rosConnections = new IRosConnection[] { };
-					SIGVerseLogger.Info("No ROS connection (demo mode)");
+					SIGVerseLogger.Info("No ROS connection (practice mode)");
 				}
 
 				// Timer
@@ -228,8 +228,8 @@ namespace SIGVerse.Competition.HumanNavigation
 					this.TimeIsUp();
 				}
 
-				// Giveup for demo mode
-				if ( this.isDemoMode &&
+				// Giveup for practice mode
+				if ( this.isPracticeMode &&
 					(OVRInput.Get(OVRInput.RawButton.LThumbstick) && OVRInput.Get(OVRInput.RawButton.X) && OVRInput.Get(OVRInput.RawButton.Y)) ||
 					(OVRInput.Get(OVRInput.RawButton.RThumbstick) && OVRInput.Get(OVRInput.RawButton.A) && OVRInput.Get(OVRInput.RawButton.B)) ||
 					(Input.GetKeyDown(KeyCode.Escape)))
@@ -240,9 +240,9 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringSession)
 				{
-					if (this.isDemoMode)
+					if (this.isPracticeMode)
 					{
-						this.sessionManager.SpeakGuidanceMessage(HumanNaviConfig.Instance.configInfo.guidanceMessageForDemo);
+						this.sessionManager.SpeakGuidanceMessageForPractice(HumanNaviConfig.Instance.configInfo.guidanceMessageForPractice);
 					}
 					else
 					{
@@ -316,8 +316,8 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.WaitForIamReady:
 					{
-						// For Demo
-						if (this.isDemoMode)
+						// For Practice
+						if (this.isPracticeMode)
 						{
 							this.sessionManager.ResetNotificationDestinationsOfTTS();
 
@@ -338,14 +338,14 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.SendTaskInfo:
 					{
-						if (!this.isDemoMode)
+						if (!this.isPracticeMode)
 						{
 							this.SendRosTaskInfoMessage(this.taskInfoForRobot);
 						}
 
-						if (this.isDemoMode) // first instruction for demo mode (TODO: this code should be in more appropriate position)
+						if (this.isPracticeMode) // first instruction for practice mode (TODO: this code should be in more appropriate position)
 						{
-							this.sessionManager.SpeakGuidanceMessage(HumanNaviConfig.Instance.configInfo.guidanceMessageForDemo);
+							this.sessionManager.SpeakGuidanceMessageForPractice(HumanNaviConfig.Instance.configInfo.guidanceMessageForPractice);
 						}
 
 						SIGVerseLogger.Info("Waiting for end of session");
@@ -418,7 +418,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.panelMainController.SetTeamNameText("Team: " + HumanNaviConfig.Instance.configInfo.teamName);
 
-			if (this.isDemoMode)
+			if (this.isPracticeMode)
 			{
 				HumanNaviConfig.Instance.numberOfTrials = 1;
 			}
@@ -442,19 +442,19 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.sessionManager.ResetEnvironment(this.numberOfSession);
 			this.ResetAvatarTransform();
 
-			if (!this.isDemoMode)
+			if (!this.isPracticeMode)
 			{
 				this.ClearRosConnections();
 			}
 			this.sessionManager.ResetRobot();
-			if (!this.isDemoMode)
+			if (!this.isPracticeMode)
 			{
 				this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
 				SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
 			}
 			else
 			{
-				SIGVerseLogger.Info("No ROS connection (Demo mode)");
+				SIGVerseLogger.Info("No ROS connection (Practice mode)");
 			}
 
 			//this.currentTaskInfo = this.sessionManager.GetCurrentTaskInfo();
@@ -1130,13 +1130,13 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			this.goToNextTrialPanel.SetActive(false);
 
-			this.isCompetitionStarted = true; // for demo mode
+			this.isCompetitionStarted = true; // for practice mode
 			this.goNextSession = true;
 		}
 
 		public void ShowStartTaskPanel()
 		{
-			if (this.isDemoMode)
+			if (this.isPracticeMode)
 			{
 				this.goToNextTrialPanel.SetActive(true);
 			}
