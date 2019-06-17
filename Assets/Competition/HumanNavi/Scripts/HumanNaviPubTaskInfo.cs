@@ -37,11 +37,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			SIGVerseLogger.Info("Destination : " + message.destination.position + " " + message.destination.orientation + " " + message.destination.size);
 			foreach (RosBridge.human_navigation.HumanNaviObjectInfo objInfo in message.non_target_objects)
 			{
-				SIGVerseLogger.Info("Non-target object : " + objInfo.name + " " + objInfo.position + " " + objInfo.orientation);
+//				SIGVerseLogger.Info("Non-target object : " + objInfo.name + " " + objInfo.position + " " + objInfo.orientation);
 			}
 			foreach (RosBridge.human_navigation.HumanNaviObjectInfo objInfo in message.furniture)
 			{
-				SIGVerseLogger.Info("Furniture : " + objInfo.name + " " + objInfo.position + " " + objInfo.orientation);
+//				SIGVerseLogger.Info("Furniture : " + objInfo.name + " " + objInfo.position + " " + objInfo.orientation);
 			}
 
 			RosBridge.human_navigation.HumanNaviTaskInfo rosMessage = new RosBridge.human_navigation.HumanNaviTaskInfo(

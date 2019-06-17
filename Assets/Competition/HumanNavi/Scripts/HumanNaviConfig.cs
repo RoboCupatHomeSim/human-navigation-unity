@@ -20,7 +20,6 @@ namespace SIGVerse.Competition.HumanNavigation
 	public class HumanNaviConfigInfo
 	{
 		public string teamName;
-		public string group;
 		public int sessionTimeLimit;
 		public int  maxNumberOfTrials;
 		public bool recoverUsingScoreFile;
@@ -62,7 +61,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public List<int> scores;
 
-		public string language_id;
+		public string ttsLanguageId;
 
 		void Awake()
 		{
@@ -85,7 +84,6 @@ namespace SIGVerse.Competition.HumanNavigation
 				SIGVerseLogger.Warn("HumanNavi config file does not exists.");
 
 				this.configInfo.teamName = "XXXX";
-				this.configInfo.group = "A";
 				this.configInfo.sessionTimeLimit = 300;
 				this.configInfo.maxNumberOfTrials = 1;
 				this.configInfo.recoverUsingScoreFile = false;
@@ -146,9 +144,9 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			switch (this.configInfo.language)
 			{
-				case "Japanese": { this.language_id = Language.Japanese; break; }
-				case "English": { this.language_id = Language.English; break; }
-				default: { this.language_id = Language.English; break; }
+				case "English":  { this.ttsLanguageId = Language.English;  break; }
+				case "Japanese": { this.ttsLanguageId = Language.Japanese; break; }
+				default:         { this.ttsLanguageId = Language.English; break; }
 			}
 		}
 

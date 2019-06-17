@@ -428,26 +428,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 
 
-			// TODO: should be modified the following function
-			int countOfSessions = HumanNaviConfig.Instance.numberOfTrials;
-
-			if (HumanNaviConfig.Instance.configInfo.group == "B")
-			{
-				int halfOfMaxNumberOfSessions = (int)(HumanNaviConfig.Instance.configInfo.maxNumberOfTrials / 2);
-
-				if (countOfSessions > halfOfMaxNumberOfSessions)
-				{
-					this.numberOfSession = countOfSessions - halfOfMaxNumberOfSessions;
-				}
-				else
-				{
-					this.numberOfSession = countOfSessions + halfOfMaxNumberOfSessions;
-				}
-			}
-			else
-			{
-				this.numberOfSession = HumanNaviConfig.Instance.numberOfTrials;
-			}
+			this.numberOfSession = HumanNaviConfig.Instance.numberOfTrials;
 
 			//this.panelMainController.SetTrialNumberText(HumanNaviConfig.Instance.numberOfTrials);
 			this.panelMainController.SetTrialNumberText(this.numberOfSession);
@@ -595,7 +576,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 					taskInfoForRobot.non_target_objects.Add(objInfo);
 
-					SIGVerseLogger.Info("Non-target object : " + objInfo.name + " " + objInfo.position + " " + objInfo.orientation);
+//					SIGVerseLogger.Info("Non-target object : " + objInfo.name + " " + objInfo.position + " " + objInfo.orientation);
 				}
 			}
 			SIGVerseLogger.Info("Target object : " + taskInfoForRobot.target_object.name + " " + taskInfoForRobot.target_object.position + " " + taskInfoForRobot.target_object.orientation);
@@ -630,7 +611,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				taskInfoForRobot.furniture.Add(objInfo);
 
-				SIGVerseLogger.Info("Furniture : " + objInfo.name + " " + objInfo.position + " " + objInfo.orientation);
+//				SIGVerseLogger.Info("Furniture : " + objInfo.name + " " + objInfo.position + " " + objInfo.orientation);
 			}
 
 		}

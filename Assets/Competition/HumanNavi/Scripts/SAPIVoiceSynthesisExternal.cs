@@ -5,9 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using SIGVerse.Common;
-#if ENABLE_TRANSLATION
 using Google.Cloud.Translation.V2;
-#endif
 
 namespace SIGVerse.Competition.HumanNavigation
 {
@@ -39,7 +37,6 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		[HeaderAttribute("SAPI")]
 		public string path = "/../TTS/ConsoleSimpleTTS.exe";
-		public string language = "409";
 		public string gender = "Female";
 
 		[HeaderAttribute("Guidance message param")]
@@ -52,9 +49,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private System.Diagnostics.Process speechProcess;
 
-#if ENABLE_TRANSLATION
-			TranslationClient translationClient;
-#endif
+		TranslationClient translationClient;
 
 		// Use this for initialization
 		void Awake()
@@ -80,9 +75,15 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.ResetNotificationDestinations();
 
 			this.isSpeaking = false;
-#if ENABLE_TRANSLATION
-			this.translationClient = TranslationClient.Create();
-#endif
+
+			try
+			{
+				this.translationClient = TranslationClient.Create();
+			}
+			catch (Exception)
+			{
+				this.translationClient = null;
+			}
 		}
 
 		//public void Start()
@@ -151,7 +152,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 
 			// Translation
-#if ENABLE_TRANSLATION
 			if ((sourceLanguage == string.Empty && targetLanguage != string.Empty) || (sourceLanguage != string.Empty && targetLanguage == string.Empty))
 			{
 				SIGVerseLogger.Error("Invalid language type. Source Language=" + sourceLanguage + ", Target Language="+ targetLanguage);
@@ -166,9 +166,15 @@ namespace SIGVerse.Competition.HumanNavigation
 					SIGVerseLogger.Info("Length of guidance message(source lang) is over " + this.maxCharactersForSourceLang.ToString() + " charcters.");
 				}
 
-				message = this.translationClient.TranslateText(message, targetLanguage, sourceLanguage).TranslatedText;
+				if(this.translationClient!=null)
+				{
+					message = this.translationClient.TranslateText(message, targetLanguage, sourceLanguage).TranslatedText;
+				}
+				else
+				{
+					SIGVerseLogger.Warn("There is no environment for translation.");
+				}
 			}
-#endif
 
 			string truncatedMessage;
 
@@ -183,9 +189,10 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 
 			// speak
-			string settings = "Language=" + this.language + "; Gender=" + this.gender;
+			string settings = "Language=" + HumanNaviConfig.Instance.ttsLanguageId + "; Gender=" + this.gender;
 			this.speechProcess.StartInfo.Arguments = "\"" + truncatedMessage + "\" \"" + settings + "\"";
 
+			SIGVerseLogger.Warn("Speech Message="+ this.speechProcess.StartInfo.Arguments);
 
 			foreach (GameObject destination in this.notificationDestinations)
 			{

@@ -187,8 +187,6 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void SpeakGuidanceMessage(string msg, string displeyType = "All")
 		{
-			this.tts.language = HumanNaviConfig.Instance.language_id;
-
 			RosBridge.human_navigation.HumanNaviGuidanceMsg guidanceMsg = new RosBridge.human_navigation.HumanNaviGuidanceMsg();
 			guidanceMsg.message = msg;
 			guidanceMsg.display_type = "All";

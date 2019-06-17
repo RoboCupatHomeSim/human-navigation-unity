@@ -511,7 +511,7 @@ PlayerSettings:
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
   scriptingDefineSymbols:
-    1: SING_OCULUS_RIFT;NVR_Oculus
+    1: SIGVERSE_USING_OCULUS_RIFT;NVR_Oculus;ENABLE_TRANSLATION
     4: 
     7: 
     13: 
