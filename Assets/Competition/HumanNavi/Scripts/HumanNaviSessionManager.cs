@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using SIGVerse.Common;
+using System;
+using System.Threading;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
@@ -28,35 +30,48 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void Awake()
 		{
-			// For practice mode
-			if (HumanNaviConfig.Instance.configInfo.executionMode == (int)ExecutionMode.Practice)
+			try
 			{
-				this.GetComponent<HumanNaviPubTaskInfo>().enabled = false;
-				this.GetComponent<HumanNaviPubMessage>().enabled = false;
-				this.GetComponent<HumanNaviSubMessage>().enabled = false;
-				this.GetComponent<HumanNaviPubAvatarStatus>().enabled = false;
-				this.GetComponent<HumanNaviPubObjectStatus>().enabled = false;
-
-				GameObject robot = GameObject.Find("HSR-B"); // TODO
-				robot.transform.Find("RosBridgeScripts").gameObject.SetActive(false); // TODO
-				robot.GetComponentInChildren<HumanNaviSubGuidanceMessage>().enabled = false;
-
-				foreach (Camera camera in robot.transform.GetComponentsInChildren<Camera>())
+				// For practice mode
+				if (HumanNaviConfig.Instance.configInfo.executionMode == (int)ExecutionMode.Practice)
 				{
-					camera.gameObject.SetActive(false);
+					this.GetComponent<HumanNaviPubTaskInfo>().enabled = false;
+					this.GetComponent<HumanNaviPubMessage>().enabled = false;
+					this.GetComponent<HumanNaviSubMessage>().enabled = false;
+					this.GetComponent<HumanNaviPubAvatarStatus>().enabled = false;
+					this.GetComponent<HumanNaviPubObjectStatus>().enabled = false;
+
+					GameObject robot = GameObject.Find("HSR-B"); // TODO
+					robot.transform.Find("RosBridgeScripts").gameObject.SetActive(false); // TODO
+					robot.GetComponentInChildren<HumanNaviSubGuidanceMessage>().enabled = false;
+
+					foreach (Camera camera in robot.transform.GetComponentsInChildren<Camera>())
+					{
+						camera.gameObject.SetActive(false);
+					}
 				}
+
+				this.currentEnvironment = null;
+
+				this.ClearExistingEnvironments();    // Environments
+				this.ClearExistingRobots();          // Robot
+
+				this.SetDefaultEnvironment();
+				this.ResetRobot();
+
+				this.InitializeTaskInfo();
 			}
+			catch (Exception e)
+			{
+				SIGVerseLogger.Error(e.Message);
+				this.ApplicationQuitAfter1sec();
+			}
+		}
 
-
-			this.currentEnvironment = null;
-
-			this.ClearExistingEnvironments();    // Environments
-			this.ClearExistingRobots();          // Robot
-
-			this.SetDefaultEnvironment();
-			this.ResetRobot();
-
-			this.InitializeTaskInfo();
+		private void ApplicationQuitAfter1sec()
+		{
+			Thread.Sleep(1000);
+			Application.Quit();
 		}
 
 		public void ClearExistingEnvironments()
@@ -97,37 +112,30 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			this.taskInfoList = new List<SIGVerse.Competition.HumanNavigation.TaskInfo>();
 
-			foreach (TaskInfo info in HumanNaviConfig.Instance.configInfo.taskInfoList)
+			foreach (TaskInfo taskInfo in HumanNaviConfig.Instance.configInfo.taskInfoList)
 			{
-				taskInfoList.Add(info);
-				SIGVerseLogger.Info("Environment_ID: " + info.environment + ", Target_object_name: " + info.target + ", Destination: " + info.destination);
+				taskInfoList.Add(taskInfo);
+				SIGVerseLogger.Info("Environment_ID: " + taskInfo.environment + ", Target_object_name: " + taskInfo.target + ", Destination: " + taskInfo.destination);
 
-				GameObject environment = this.environments.Where(obj => obj.name == info.environment).SingleOrDefault();
+				GameObject environment = this.environments.Where(obj => obj.name == taskInfo.environment).SingleOrDefault();
+
 				if (environment == null)
 				{
-					SIGVerseLogger.Error("Environment not found.");
+					throw new Exception("Environment does not exist or multiple exist.");
 				}
 
-				//// TODO: should be modified (sometimes error is occured)
-				//Transform[] transformInChildren = environment.GetComponentsInChildren<Transform>();
-				//if (transformInChildren.Where(obj => obj.gameObject.name == info.target).SingleOrDefault() == null)
-				//{
-				//	SIGVerseLogger.Error("Target object not found.");
-				//}
+				Transform[] transformInChildren = environment.GetComponentsInChildren<Transform>();
 
-				//if (transformInChildren.Where(obj => obj.gameObject.name == info.destination).SingleOrDefault() == null)
-				//{
-				//	SIGVerseLogger.Error("Destination not found.");
-				//}
+				if (transformInChildren.Where(obj => obj.gameObject.name == taskInfo.target).SingleOrDefault() == null)
+				{
+					throw new Exception("Target object does not exist or multiple exist.");
+				}
 
-
-				/////
-				// TODO: check duplication of object_id in a environment
-				//Debug.Log(this.environmentPrefabs.Where(obj => obj.name == info.environment).SingleOrDefault());
-				/////
+				if (transformInChildren.Where(obj => obj.gameObject.name == taskInfo.destination).SingleOrDefault() == null)
+				{
+					throw new Exception("Destination does not exist or multiple exist.");
+				}
 			}
-
-
 		}
 
 		public void SetDefaultEnvironment()

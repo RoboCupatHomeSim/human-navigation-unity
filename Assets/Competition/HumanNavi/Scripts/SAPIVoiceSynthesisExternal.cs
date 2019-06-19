@@ -123,19 +123,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				SIGVerseLogger.Info("Text-To-Speech: isSpeaking");
 
-				//foreach (GameObject destination in this.notificationDestinations)
-				//{
-				//	// For send speech result (ROS message)
-				//	ExecuteEvents.Execute<ISendSpeechResultHandler>
-				//	(
-				//		target: destination,
-				//		eventData: null,
-				//		functor: (reciever, eventData) => reciever.OnSendSpeechResult(SpeechResultCancelled)
-				//	);
-				//}
-
-				//return false;
-
 				try
 				{
 					if (/*isTaskFinished &&*/ !this.speechProcess.HasExited)
@@ -145,7 +132,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				}
 				catch (Exception)
 				{
-					SIGVerseLogger.Warn("Do nothing even if an error occurs");
+					SIGVerseLogger.Warn("Couldn't terminate the speech process, but do nothing.");
 					// Do nothing even if an error occurs
 				}
 
@@ -190,6 +177,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			// speak
 			string settings = "Language=" + HumanNaviConfig.Instance.ttsLanguageId + "; Gender=" + this.gender;
+
 			this.speechProcess.StartInfo.Arguments = "\"" + truncatedMessage + "\" \"" + settings + "\"";
 
 			SIGVerseLogger.Warn("Speech Message="+ this.speechProcess.StartInfo.Arguments);
@@ -212,7 +200,6 @@ namespace SIGVerse.Competition.HumanNavigation
 					functor: (reciever, eventData) => reciever.OnSendSpeechResult(SpeechResultStarted)
 				);
 			}
-
 
 			this.speechProcess.Start();
 
