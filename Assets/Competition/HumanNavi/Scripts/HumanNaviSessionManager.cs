@@ -85,6 +85,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		public void ClearExistingRobots()
 		{
 			List<GameObject> existingRobots = GameObject.FindGameObjectsWithTag("Robot").ToList<GameObject>();
+
 			foreach (GameObject existingRobot in existingRobots)
 			{
 				existingRobot.SetActive(false);
@@ -110,6 +111,15 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void InitializeTaskInfo()
 		{
+			//Check for duplicates
+			List<string> duplicateNames = this.environments.GroupBy(obj => obj.name).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+
+			if(duplicateNames.Count > 0)
+			{
+				throw new Exception("There are multiple environments with the same name. e.g. " + duplicateNames[0]); 
+			}
+
+
 			this.taskInfoList = new List<SIGVerse.Competition.HumanNavigation.TaskInfo>();
 
 			foreach (TaskInfo taskInfo in HumanNaviConfig.Instance.configInfo.taskInfoList)
@@ -121,19 +131,33 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				if (environment == null)
 				{
-					throw new Exception("Environment does not exist or multiple exist.");
+					throw new Exception("Environment does not exist.");
 				}
 
 				Transform[] transformInChildren = environment.GetComponentsInChildren<Transform>();
 
-				if (transformInChildren.Where(obj => obj.gameObject.name == taskInfo.target).SingleOrDefault() == null)
+				try
 				{
-					throw new Exception("Target object does not exist or multiple exist.");
+					if(transformInChildren.Where(obj => obj.gameObject.name == taskInfo.target).SingleOrDefault()==null)
+					{
+						throw new Exception("Target object does not exist.");
+					}
+				}
+				catch(InvalidOperationException)
+				{
+					throw new Exception("There are multiple target objects.");
 				}
 
-				if (transformInChildren.Where(obj => obj.gameObject.name == taskInfo.destination).SingleOrDefault() == null)
+				try
 				{
-					throw new Exception("Destination does not exist or multiple exist.");
+					if (transformInChildren.Where(obj => obj.gameObject.name == taskInfo.destination).SingleOrDefault() == null)
+					{
+						throw new Exception("Destination does not exist.");
+					}
+				}
+				catch (InvalidOperationException)
+				{
+					throw new Exception("There are multiple destinations.");
 				}
 			}
 		}
@@ -165,6 +189,21 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.currentEnvironment = MonoBehaviour.Instantiate(this.environments.Where(obj => obj.name == this.taskInfoList[numberOfSession - 1].environment).SingleOrDefault());
 			this.currentEnvironment.name = this.taskInfoList[numberOfSession - 1].environment;
 			this.currentEnvironment.SetActive(true);
+
+			//Check for duplicates
+			List<string> duplicateGraspableNames = GameObject.FindGameObjectsWithTag("Graspables").ToList().GroupBy(obj => obj.name).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+
+			if (duplicateGraspableNames.Count > 0)
+			{
+				throw new Exception("There are multiple graspables with the same name. e.g. " + duplicateGraspableNames[0]);
+			}
+
+			List<string> duplicateDestinationNames = GameObject.FindGameObjectsWithTag("Destination").ToList().GroupBy(obj => obj.name).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+
+			if (duplicateDestinationNames.Count > 0)
+			{
+				throw new Exception("There are multiple destination with the same name. e.g. " + duplicateDestinationNames[0]);
+			}
 		}
 
 		public TaskInfo GetCurrentTaskInfo()
