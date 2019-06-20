@@ -364,8 +364,8 @@ namespace SIGVerse.Competition.HumanNavigation
 						this.CheckGraspingStatus(this.rightHand);
 
 						// for avatar status
-						this.objectIdInLeftHandPreviousFrame = this.objectIdInLeftHand; // Tentative Code
-						this.objectIdInRightHandPreviousFrame = this.objectIdInRightHand; // Tentative Code
+						this.objectIdInLeftHandPreviousFrame = this.objectIdInLeftHand;
+						this.objectIdInRightHandPreviousFrame = this.objectIdInRightHand;
 						this.objectIdInLeftHand  = this.GetGraspingObjectId(this.LeftHand);
 						this.objectIdInRightHand = this.GetGraspingObjectId(this.rightHand);
 

@@ -8,5 +8,5 @@
 	"taskInfoList":[
 		{"environment":"ExampleLayoutHN01#01","target":"cup_c02#01","destination":"destination#01"}
 	],
-	"guidanceMessageForDemo":"Please take a pink cup on your right, and put it on the round table in front of you."
+	"guidanceMessageForPractice":"Please take a pink cup on your right, and put it on the round table in front of you."
 }
