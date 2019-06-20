@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using SIGVerse.Common;
 using Google.Cloud.Translation.V2;
+
+#pragma warning disable 1701
 
 namespace SIGVerse.Competition.HumanNavigation
 {

@@ -14,7 +14,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private bool targetStabled = false;
 		private bool targetPlaced = false;
 
-		private float EndOfWaitingTime;
+		private float endOfWaitingTime;
 
 		private HumanNaviModerator moderator; // TODO: should be modified
 
@@ -28,7 +28,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void Update()
 		{
-			if(this.targetPlaced){ return; }
+			if (this.targetPlaced){ return; }
 			if (!this.targetEnterd){ return; }
 			if (this.targetRigidbody.gameObject.name != this.moderator.GetTargetObjectName()) { return; }
 
@@ -37,26 +37,25 @@ namespace SIGVerse.Competition.HumanNavigation
 				if (!this.targetStabled)
 				{
 					this.targetStabled = true;
-					this.EndOfWaitingTime = Time.time + WaitingTime;
+					this.endOfWaitingTime = Time.time + WaitingTime;
 				}
 				else
 				{
-					if(Time.time > this.EndOfWaitingTime)
+					if(Time.time > this.endOfWaitingTime)
 					{
 						this.targetPlaced = true;
 						this.moderator.TargetPlacedOnDestination();
 					}
 				}
 			}
-
 		}
 
 		public void ResetFlags()
 		{
 			this.targetRigidbody = null;
-			this.targetEnterd = false;
+			this.targetEnterd  = false;
 			this.targetStabled = false;
-			this.targetPlaced = false;
+			this.targetPlaced  = false;
 		}
 
 		private void OnTriggerEnter(Collider other)
@@ -81,7 +80,6 @@ namespace SIGVerse.Competition.HumanNavigation
 					this.ResetFlags();
 				}
 			}
-
 		}
 	}
 }
