@@ -508,6 +508,13 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.isDuringSession = false;
 			this.interruptedReason = string.Empty;
 
+			// Clear parameters of PlacementChecker
+			List<GameObject> destinations = GameObject.FindGameObjectsWithTag("Destination").ToList<GameObject>();
+			foreach(GameObject destination in destinations)
+			{
+				destination.GetComponentInChildren<HumanNaviPlacementChecker>().ResetFlags();
+			}
+
 			this.step = Step.WaitForNextSession;
 		}
 
