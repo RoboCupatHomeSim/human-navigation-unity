@@ -20,6 +20,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private Rigidbody targetRigidbody;
 
+		private int enteredColliderCount = 0;
+
 		void Start ()
 		{
 			// TODO: should be modified
@@ -56,6 +58,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.targetEnterd  = false;
 			this.targetStabled = false;
 			this.targetPlaced  = false;
+			this.enteredColliderCount = 0;
 		}
 
 		private void OnTriggerEnter(Collider other)
@@ -71,6 +74,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.targetRigidbody = other.attachedRigidbody;
 			this.targetEnterd = true;
+			this.enteredColliderCount++;
 		}
 
 		private void OnTriggerExit(Collider other)
@@ -81,7 +85,12 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				if (other.attachedRigidbody.gameObject.name == this.moderator.GetTargetObjectName())
 				{
-					this.ResetFlags();
+					this.enteredColliderCount--;
+
+					if(this.enteredColliderCount<=0)
+					{
+						this.ResetFlags();
+					}
 				}
 			}
 		}
