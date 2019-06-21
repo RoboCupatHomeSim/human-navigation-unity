@@ -8,7 +8,17 @@ namespace SIGVerse.Competition.HumanNavigation
 {
 	public class HumanNaviPlacementChecker : MonoBehaviour
 	{
+		public enum JudgeType
+		{
+			On, In,
+		}
+
+		public JudgeType judgeType = JudgeType.On;
+
 		private const float WaitingTime = 1.0f;
+
+		// The velocity to judge if it has entered a box(e.g. trash can).
+		private const float ThresholdVelocity = 0.5f;
 
 		private bool targetEnterd = false;
 		private bool targetStabled = false;
@@ -34,20 +44,42 @@ namespace SIGVerse.Competition.HumanNavigation
 			if (!this.targetEnterd){ return; }
 			if (this.targetRigidbody.gameObject.name != this.moderator.GetTargetObjectName()) { return; }
 
-			if (this.targetRigidbody.IsSleeping())
+			switch (this.judgeType)
 			{
-				if (!this.targetStabled)
+				case JudgeType.On:
 				{
-					this.targetStabled = true;
-					this.endOfWaitingTime = Time.time + WaitingTime;
+					if (this.targetRigidbody.IsSleeping())
+					{
+						if (!this.targetStabled)
+						{
+							this.targetStabled = true;
+							this.endOfWaitingTime = Time.time + WaitingTime;
+						}
+						else
+						{
+							if (Time.time > this.endOfWaitingTime)
+							{
+								this.targetPlaced = true;
+								this.moderator.TargetPlacedOnDestination();
+								return;
+							}
+						}
+					}
+					break;
 				}
-				else
+				case JudgeType.In:
 				{
-					if(Time.time > this.endOfWaitingTime)
+					if (targetRigidbody.velocity.magnitude < ThresholdVelocity && !this.moderator.IsTargetGrasped())
 					{
 						this.targetPlaced = true;
 						this.moderator.TargetPlacedOnDestination();
+						return;
 					}
+					break;
+				}
+				default:
+				{
+					throw new Exception("Illegal JudgeType class=" + this.GetType().Name);
 				}
 			}
 		}

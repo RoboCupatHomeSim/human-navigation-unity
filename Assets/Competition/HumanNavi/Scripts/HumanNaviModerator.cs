@@ -1085,6 +1085,15 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.TaskFinished();
 		}
 
+		public bool IsTargetGrasped()
+		{
+			bool isGraspedByLeftHand  = this.LeftHand .IsInteracting && this.IsTargetObject(this.LeftHand .CurrentlyInteracting.name);
+			bool isGraspedByRightHand = this.rightHand.IsInteracting && this.IsTargetObject(this.rightHand.CurrentlyInteracting.name);
+
+			return isGraspedByLeftHand || isGraspedByRightHand;
+		}
+
+
 		public void OnTimeIsUp()
 		{
 			this.interruptedReason = HumanNaviModerator.ReasonTimeIsUp;
