@@ -65,6 +65,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			if (other.attachedRigidbody == null) { return; }
 
+//			Debug.LogWarning("Enter :" + other.attachedRigidbody.gameObject.name);
+
 			if (other.attachedRigidbody.gameObject.name != this.moderator.GetTargetObjectName()) { return; }
 
 			this.targetRigidbody = other.attachedRigidbody;
@@ -75,7 +77,9 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			if (this.targetEnterd)
 			{
-				if (other.gameObject.name == this.moderator.GetTargetObjectName())
+//				Debug.LogWarning("Exit :" + other.attachedRigidbody.gameObject.name);
+
+				if (other.attachedRigidbody.gameObject.name == this.moderator.GetTargetObjectName())
 				{
 					this.ResetFlags();
 				}
