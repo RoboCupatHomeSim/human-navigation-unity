@@ -6,20 +6,23 @@ namespace SIGVerse.Competition.HumanNavigation
 {
 	public class HumanNaviBirdsEyeViewCameraController : MonoBehaviour
 	{
-		[HeaderAttribute("Tracking Target")]
-		public GameObject target;
-
 		[HeaderAttribute("Limit for Flip")]
 		public float limitAngleFromFront = 180.0f;
 
-		private float cameraPosY;
-		private float cameraRotY;
-		private Vector3 relativePosition;
-		private float initialTargetRotY;
-		private bool isFliped;
+		protected GameObject target;
+
+		protected float cameraPosY;
+		protected float cameraRotY;
+		protected Vector3 relativePosition;
+		protected float initialTargetRotY;
+		protected bool isFliped;
+
+		protected virtual void Awake()
+		{
+		}
 
 		// Use this for initialization
-		void Start()
+		protected virtual void Start()
 		{
 			this.cameraPosY = this.transform.position.y;
 			this.cameraRotY = this.transform.eulerAngles.y;
@@ -29,7 +32,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.isFliped = false;
 		}
 
-		private void LateUpdate()
+		protected virtual void LateUpdate()
 		{
 			Vector3 newCameraPosition = new Vector3();
 			Vector3 newCameraRotation = new Vector3();
@@ -64,7 +67,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.transform.eulerAngles = newCameraRotation;
 		}
 
-		public void SetTarget(GameObject target)
+		public virtual void SetTarget(GameObject target)
 		{
 			this.target = target;
 		}

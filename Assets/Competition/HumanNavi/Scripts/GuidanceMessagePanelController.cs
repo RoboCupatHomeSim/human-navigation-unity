@@ -25,7 +25,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				GameObject retrievalObject = GameObject.Find(retrievalObjectName);
 
-				if (retrievalObject.activeSelf)
+				if (retrievalObject!=null && retrievalObject.activeSelf)
 				{
 					GuidanceMessagePanelIdentifier panelIdentifier = retrievalObject.GetComponentInChildren<GuidanceMessagePanelIdentifier>(true);
 

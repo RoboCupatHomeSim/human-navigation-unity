@@ -65,19 +65,26 @@ namespace SIGVerse.Competition.HumanNavigation
 		[HeaderAttribute("Session Manager")]
 		public HumanNaviSessionManager sessionManager;
 
-		[HeaderAttribute("Avatar")]
-		public GameObject avatar;
-		public GameObject head;
-		public GameObject body;
-		public NewtonVR.NVRHand LeftHand;
-		public NewtonVR.NVRHand rightHand;
-		//public GameObject cameraRig;
-		//public GameObject Ethan;
-		public float heightThresholdForPoseReset = -0.5f;
+//		[HeaderAttribute("Avatar")]
+//		public float heightThresholdForPoseReset = -0.5f;
 
-		[HeaderAttribute("Panels for avatar")]
-		public GameObject noticePanelForAvatar;
-		public UnityEngine.UI.Text noticeTextForAvatar;
+		[HeaderAttribute("Avatar for SimpleIK")]
+		public GameObject avatarForSimpleIK;
+		public GameObject headForSimpleIK;
+		public GameObject bodyForSimpleIK;
+		public NewtonVR.NVRHand LeftHandForSimpleIK;
+		public NewtonVR.NVRHand rightHandForSimpleIK;
+		public GameObject noticePanelForSimpleIKAvatar;
+		public UnityEngine.UI.Text noticeTextForSimpleIKAvatar;
+
+		[HeaderAttribute("Avatar for FinalIK")]
+		public GameObject avatarForFinalIK;
+		public GameObject headForFinalIK;
+		public GameObject bodyForFinalIK;
+		public NewtonVR.NVRHand LeftHandForFinalIK;
+		public NewtonVR.NVRHand rightHandForFinalIK;
+		public GameObject noticePanelForFinalIKAvatar;
+		public UnityEngine.UI.Text noticeTextForFinalIKAvatar;
 
 		[HeaderAttribute("Menu")]
 		public Camera birdviewCamera;
@@ -88,6 +95,14 @@ namespace SIGVerse.Competition.HumanNavigation
 		public GameObject playbackManager;
 
 		//-----------------------------
+
+		private GameObject avatar;
+		private GameObject head;
+		private GameObject body;
+		private NewtonVR.NVRHand LeftHand;
+		private NewtonVR.NVRHand rightHand;
+		private GameObject noticePanelForAvatar;
+		private UnityEngine.UI.Text noticeTextForAvatar;
 
 		private Vector3 initialAvatarPosition;
 		private Vector3 initialAvatarRotation;
@@ -142,6 +157,23 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			try
 			{
+#if ENABLE_VRIK
+				this.avatar    = this.avatarForFinalIK;
+				this.head      = this.headForFinalIK;
+				this.body      = this.bodyForFinalIK;
+				this.LeftHand  = this.LeftHandForFinalIK;
+				this.rightHand = this.rightHandForFinalIK;
+				this.noticePanelForAvatar = this.noticePanelForFinalIKAvatar;
+				this.noticeTextForAvatar  = this.noticeTextForFinalIKAvatar;
+#else
+				this.avatar    = this.avatarForSimpleIK;
+				this.head      = this.headForSimpleIK;
+				this.body      = this.bodyForSimpleIK;
+				this.LeftHand  = this.LeftHandForSimpleIK;
+				this.rightHand = this.rightHandForSimpleIK;
+				this.noticePanelForAvatar = this.noticePanelForSimpleIKAvatar;
+				this.noticeTextForAvatar  = this.noticeTextForSimpleIKAvatar;
+#endif
 				// Practice mode
 				if (HumanNaviConfig.Instance.configInfo.executionMode == (int)ExecutionMode.Practice)
 				{
@@ -541,10 +573,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.avatar.transform.Find("OVRCameraRig").localRotation = Quaternion.identity;
 			this.avatar.transform.Find("Ethan").localPosition = Vector3.zero;
 			this.avatar.transform.Find("Ethan").localRotation = Quaternion.identity;
-			//this.cameraRig.transform.localPosition = Vector3.zero;
-			//this.cameraRig.transform.localRotation = Quaternion.identity;
-			//this.Ethan.transform.localPosition = Vector3.zero;
-			//this.Ethan.transform.localRotation = Quaternion.identity;
 #endif
 		}
 
