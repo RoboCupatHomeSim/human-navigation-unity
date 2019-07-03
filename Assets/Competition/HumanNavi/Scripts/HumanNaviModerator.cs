@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using SIGVerse.Common;
 using SIGVerse.RosBridge;
 using System.Threading;
+using UnityEngine.SceneManagement;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
@@ -38,17 +39,17 @@ namespace SIGVerse.Competition.HumanNavigation
 		private const string MsgGetSpeechState  = "Get_speech_state";
 		private const string MsgGiveUp          = "Give_up";
 
-		private const string MsgRequest     = "Guidance_request";
-		private const string MsgSpeechState = "Speech_state";
+		private const string MsgRequest      = "Guidance_request";
+		private const string MsgSpeechState  = "Speech_state";
+		private const string MsgSpeechResult = "Speech_result";
 
-		private const string TagNameOfGraspables = "Graspables";
-		private const string TagNameOfFurniture  = "Furniture";
+		private const string TagNameOfGraspables  = "Graspables";
+		private const string TagNameOfFurniture   = "Furniture";
+		private const string TagNameOfDestination = "Destination";
 
 		private enum Step
 		{
 			Initialize,
-			WaitForInitilization, // tentative
-			InitializePlayback,
 			WaitForStart,
 			SessionStart,
 			WaitForIamReady,
@@ -111,7 +112,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private PanelMainController panelMainController;
 
 		private SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo taskInfoForRobot;
-		private SIGVerse.Competition.HumanNavigation.TaskInfo currentTaskInfo;
+		private HumanNavigation.TaskInfo currentTaskInfo;
 
 		private Step step;
 
@@ -147,7 +148,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		//-----------------------------
 
-		private IRosConnection[] rosConnections;
+		private IRosConnection[] rosConnections = new IRosConnection[] { };
 
 		//-----------------------------
 
@@ -202,18 +203,18 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.receivedMessageMap.Add(MsgGetSpeechState, false);
 				this.receivedMessageMap.Add(MsgGiveUp, false);
 
-				// ROSBridge
-				// (Should be read after the robot is instantiated (after Awake process of SessionManager))
-				if (!this.isPracticeMode) // TODO: should unify as a function
-				{
-					this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
-					SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
-				}
-				else
-				{
-					this.rosConnections = new IRosConnection[] { };
-					SIGVerseLogger.Info("No ROS connection (practice mode)");
-				}
+				//// ROSBridge
+				//// (Should be read after the robot is instantiated (after Awake process of SessionManager))
+				//if (!this.isPracticeMode) // TODO: should unify as a function
+				//{
+				//	this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
+				//	SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
+				//}
+				//else
+				//{
+				//	this.rosConnections = new IRosConnection[] { };
+				//	SIGVerseLogger.Info("No ROS connection (practice mode)");
+				//}
 
 				// Timer
 				this.stepTimer = new StepTimer();
@@ -262,13 +263,12 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				// Giveup for practice mode
 				if ( this.isPracticeMode &&
-					(OVRInput.Get(OVRInput.RawButton.LThumbstick) && OVRInput.Get(OVRInput.RawButton.X) && OVRInput.Get(OVRInput.RawButton.Y)) ||
+					((OVRInput.Get(OVRInput.RawButton.LThumbstick) && OVRInput.Get(OVRInput.RawButton.X) && OVRInput.Get(OVRInput.RawButton.Y)) ||
 					(OVRInput.Get(OVRInput.RawButton.RThumbstick) && OVRInput.Get(OVRInput.RawButton.A) && OVRInput.Get(OVRInput.RawButton.B)) ||
 					(Input.GetKeyDown(KeyCode.Escape)))
-				{
+				){
 					this.OnGiveUp();
 				}
-
 
 				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringSession)
 				{
@@ -300,20 +300,6 @@ namespace SIGVerse.Competition.HumanNavigation
 							this.step++;
 						}
 
-						break;
-					}
-					case Step.WaitForInitilization: // TODO: This is tentative procedure to prevet error at the end of recording
-					{
-						if (this.stepTimer.IsTimePassed((int)this.step, 1000))
-						{
-							this.step++;
-						}
-						break;
-					}
-					case Step.InitializePlayback: // Need to wait for an update to finish instantiating objects to record
-					{
-						this.InitializePlayback();
-						this.step++;
 						break;
 					}
 					case Step.WaitForStart:
@@ -409,14 +395,12 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.WaitForNextSession:
 					{
-						if(this.goNextSession)
+						if(this.goNextSession && this.stepTimer.IsTimePassed((int)this.step, 3000))
 						{
-							SIGVerseLogger.Info("Go to next session");
-							//this.RecordEventLog("Go_to_next_session");
+							//this.step = Step.Initialize;
+							if (!this.IsPlaybackFinished()) { break; }
 
-							this.SendRosHumanNaviMessage(MsgGoToNextSession, "");
-
-							this.step = Step.Initialize;
+							SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 						}
 
 						break;
@@ -470,15 +454,11 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.scoreManager.ResetTimeLeftText();
 
-			//this.sessionManager.ResetEnvironment();
-			this.sessionManager.ResetEnvironment(this.numberOfSession);
+			this.sessionManager.ChangeEnvironment(this.numberOfSession);
 			this.ResetAvatarTransform();
 
-			if (!this.isPracticeMode)
-			{
-				this.ClearRosConnections();
-			}
-			this.sessionManager.ResetRobot();
+			this.sessionManager.ActivateRobot();
+
 			if (!this.isPracticeMode)
 			{
 				this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
@@ -490,11 +470,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 
 			//this.currentTaskInfo = this.sessionManager.GetCurrentTaskInfo();
-			this.currentTaskInfo = this.sessionManager.GetCurrentTaskInfo(this.numberOfSession);
+			this.currentTaskInfo = this.sessionManager.GetTaskInfo(this.numberOfSession);
 
 			this.taskInfoForRobot = new SIGVerse.RosBridge.human_navigation.HumanNaviTaskInfo();
-			string currentEnvironmentName = this.sessionManager.GetCurrentEnvironment().name;
-			this.taskInfoForRobot.environment_id = currentEnvironmentName.Substring(0, currentEnvironmentName.Length - 3);
+			string environmentName = this.sessionManager.GetEnvironment().name;
+			this.taskInfoForRobot.environment_id = environmentName.Substring(0, environmentName.Length - 3);
 			this.SetObjectListToHumanNaviTaskInfo();
 			this.SetFurnitureToHumanNaviTaskInfo();
 			this.SetDestinationToHumanNaviTaskInfo();
@@ -510,9 +490,11 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.alreadyGraspedObjects = new List<string>();
 
+			this.InitializePlayback();
+
 			//this.countWrongObjectsGrasp = 0;
 
-			SIGVerseLogger.Info("End of PreProcess");
+//			SIGVerseLogger.Info("End of PreProcess");
 		}
 
 		private void PostProcess()
@@ -520,8 +502,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			if (HumanNaviConfig.Instance.numberOfTrials == HumanNaviConfig.Instance.configInfo.maxNumberOfTrials)
 			{
 				this.SendRosHumanNaviMessage(MsgMissionComplete, "");
-				this.SendPanelNotice("Mission complete", 100, PanelNoticeStatus.Green);
-				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Mission complete", 5.0f));
+				string endMessage = "All sessions have ended";
+				this.SendPanelNotice(endMessage, 100, PanelNoticeStatus.Green);
+				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(endMessage, 5.0f));
 
 				this.CloseRosConnections();
 
@@ -533,6 +516,13 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				SIGVerseLogger.Info("Waiting for next task");
 				base.StartCoroutine(this.ShowGotoNextPanel(3.0f));
+
+				SIGVerseLogger.Info("Go to next session");
+				//this.RecordEventLog("Go_to_next_session");
+
+				this.SendRosHumanNaviMessage(MsgGoToNextSession, "");
+
+				StartCoroutine(this.ClearRosConnections(1.5f));
 			}
 
 			this.StopPlaybackRecord();
@@ -541,11 +531,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.interruptedReason = string.Empty;
 
 			// Clear parameters of PlacementChecker
-			List<GameObject> destinations = GameObject.FindGameObjectsWithTag("Destination").ToList<GameObject>();
-			foreach(GameObject destination in destinations)
-			{
-				destination.GetComponentInChildren<HumanNaviPlacementChecker>().ResetFlags();
-			}
+			//List<GameObject> destinations = GameObject.FindGameObjectsWithTag(TagNameOfDestination).ToList<GameObject>();
+			//foreach(GameObject destination in destinations)
+			//{
+			//	destination.GetComponentInChildren<HumanNaviPlacementChecker>().ResetFlags();
+			//}
 
 			this.step = Step.WaitForNextSession;
 		}
@@ -588,8 +578,8 @@ namespace SIGVerse.Competition.HumanNavigation
 			foreach (GameObject graspableObject in graspableObjects)
 			{
 				// transtrate the coordinate system of GameObject (left-handed, Z-axis:front, Y-axis:up) to ROS coodinate system (right-handed, X-axis:front, Z-axis:up)
-				Vector3 positionInROS = this.ConvertCoorinateSystemUnityToROS_Position(graspableObject.transform.position);
-				Quaternion orientationInROS = this.ConvertCoorinateSystemUnityToROS_Rotation(graspableObject.transform.rotation);
+				Vector3    positionInROS    = this.ConvertCoordinateSystemUnityToROS_Position(graspableObject.transform.position);
+				Quaternion orientationInROS = this.ConvertCoordinateSystemUnityToROS_Rotation(graspableObject.transform.rotation);
 
 				if (graspableObject.name == currentTaskInfo.target)
 				{
@@ -634,8 +624,8 @@ namespace SIGVerse.Competition.HumanNavigation
 			foreach (GameObject furnitureObject in furnitureObjects)
 			{
 				// transtrate the coordinate system of GameObject (left-handed, Z-axis:front, Y-axis:up) to ROS coodinate system (right-handed, X-axis:front, Z-axis:up)
-				Vector3 positionInROS = this.ConvertCoorinateSystemUnityToROS_Position(furnitureObject.transform.position);
-				Quaternion orientationInROS = this.ConvertCoorinateSystemUnityToROS_Rotation(furnitureObject.transform.rotation);
+				Vector3    positionInROS    = this.ConvertCoordinateSystemUnityToROS_Position(furnitureObject.transform.position);
+				Quaternion orientationInROS = this.ConvertCoordinateSystemUnityToROS_Rotation(furnitureObject.transform.rotation);
 
 				SIGVerse.RosBridge.human_navigation.HumanNaviObjectInfo objInfo = new SIGVerse.RosBridge.human_navigation.HumanNaviObjectInfo
 				{
@@ -648,12 +638,11 @@ namespace SIGVerse.Competition.HumanNavigation
 
 //				SIGVerseLogger.Info("Furniture : " + objInfo.name + " " + objInfo.position + " " + objInfo.orientation);
 			}
-
 		}
 
 		private void SetDestinationToHumanNaviTaskInfo()
 		{
-			List<GameObject> destinations = GameObject.FindGameObjectsWithTag("Destination").ToList<GameObject>();
+			List<GameObject> destinations = GameObject.FindGameObjectsWithTag(TagNameOfDestination).ToList<GameObject>();
 			if (destinations.Count == 0)
 			{
 				throw new Exception("Destination candidate is not found.");
@@ -666,16 +655,15 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			GameObject destination = destinations.Where(obj => obj.name == this.currentTaskInfo.destination).SingleOrDefault();
 
-			taskInfoForRobot.destination.position = this.ConvertCoorinateSystemUnityToROS_Position(destination.transform.position);
-			taskInfoForRobot.destination.orientation = this.ConvertCoorinateSystemUnityToROS_Rotation(destination.transform.rotation);
-			taskInfoForRobot.destination.size = this.ConvertCoorinateSystemUnityToROS_Position(destination.GetComponent<BoxCollider>().size);
+			taskInfoForRobot.destination.position    = this.ConvertCoordinateSystemUnityToROS_Position(destination.transform.position);
+			taskInfoForRobot.destination.orientation = this.ConvertCoordinateSystemUnityToROS_Rotation(destination.transform.rotation);
+			taskInfoForRobot.destination.size        = this.ConvertCoordinateSystemUnityToROS_Position(destination.GetComponent<BoxCollider>().size);
 			// TODO: size parameter depends on the scale of parent object (for now, scale of all parent objects should be scale = (1,1,1))
 
 			// for penalty
 			this.initialDestinationPosition = destination.transform.position;
 
 			SIGVerseLogger.Info("Destination : " + taskInfoForRobot.destination);
-
 		}
 
 		private void SendMessageAtIntervals(string message, string detail, int interval_ms = 1000)
@@ -684,14 +672,14 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			if (this.waitingTime > interval_ms * 0.001)
 			{
-				this.SendRosHumanNaviMessage(MsgAreYouReady, "");
+				this.SendRosHumanNaviMessage(message, detail);
 				this.waitingTime = 0.0f;
 			}
 		}
 
 		public void TimeIsUp()
 		{
-			this.SendRosHumanNaviMessage(MsgTaskFailed, "Time_is_up");
+			this.SendRosHumanNaviMessage(MsgTaskFailed, ReasonTimeIsUp);
 			this.SendPanelNotice("Time is up", 100, PanelNoticeStatus.Red);
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Time is up", 3.0f));
 
@@ -701,6 +689,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private IEnumerator ShowGotoNextPanel(float waitTime = 1.0f)
 		{
 			yield return new WaitForSeconds(waitTime);
+
 			this.goToNextTrialPanel.SetActive(true);
 			this.ShowNoticeMessagePanelForAvatar("Waiting for the next session to start");
 			//base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Waiting for the next session to start", 10.0f));
@@ -761,14 +750,14 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public void OnSendSpeechResult(string speechResult)
 		{
-			this.SendRosHumanNaviMessage("Speech_result", speechResult);
+			this.SendRosHumanNaviMessage(MsgSpeechResult, speechResult);
 		}
 
-		private Vector3 ConvertCoorinateSystemUnityToROS_Position(Vector3 unityPosition)
+		private Vector3 ConvertCoordinateSystemUnityToROS_Position(Vector3 unityPosition)
 		{
 			return new Vector3(unityPosition.z, -unityPosition.x, unityPosition.y);
 		}
-		private Quaternion ConvertCoorinateSystemUnityToROS_Rotation(Quaternion unityQuaternion)
+		private Quaternion ConvertCoordinateSystemUnityToROS_Rotation(Quaternion unityQuaternion)
 		{
 			return new Quaternion(-unityQuaternion.z, unityQuaternion.x, -unityQuaternion.y, unityQuaternion.w);
 		}
@@ -789,6 +778,21 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				if (!this.playbackRecorder.IsInitialized()) { return false; }
 			}
+
+			return true;
+		}
+
+		private bool IsPlaybackFinished()
+		{
+			if (HumanNaviConfig.Instance.configInfo.playbackType == HumanNaviPlaybackCommon.PlaybackTypeRecord)
+			{
+				if (!this.playbackRecorder.IsFinished()) { return false; }
+			}
+
+			//if (HumanNaviConfig.Instance.configInfo.playbackType == HumanNaviPlaybackCommon.PlaybackTypePlay)
+			//{
+			//	if (!this.playbackPlayer.IsFinished()) { return false; }
+			//}
 
 			return true;
 		}
@@ -850,14 +854,14 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			RosBridge.human_navigation.HumanNaviAvatarStatus avatarStatus = new RosBridge.human_navigation.HumanNaviAvatarStatus();
 
-			avatarStatus.head.position          = ConvertCoorinateSystemUnityToROS_Position(this.head.transform.position);
-			avatarStatus.head.orientation       = ConvertCoorinateSystemUnityToROS_Rotation(this.head.transform.rotation);
-			avatarStatus.body.position          = ConvertCoorinateSystemUnityToROS_Position(this.body.transform.position);
-			avatarStatus.body.orientation       = ConvertCoorinateSystemUnityToROS_Rotation(this.body.transform.rotation);
-			avatarStatus.left_hand.position     = ConvertCoorinateSystemUnityToROS_Position(this.LeftHand.transform.position);
-			avatarStatus.left_hand.orientation  = ConvertCoorinateSystemUnityToROS_Rotation(this.LeftHand.transform.rotation);
-			avatarStatus.right_hand.position    = ConvertCoorinateSystemUnityToROS_Position(this.rightHand.transform.position);
-			avatarStatus.right_hand.orientation = ConvertCoorinateSystemUnityToROS_Rotation(this.rightHand.transform.rotation);
+			avatarStatus.head.position          = ConvertCoordinateSystemUnityToROS_Position(this.head.transform.position);
+			avatarStatus.head.orientation       = ConvertCoordinateSystemUnityToROS_Rotation(this.head.transform.rotation);
+			avatarStatus.body.position          = ConvertCoordinateSystemUnityToROS_Position(this.body.transform.position);
+			avatarStatus.body.orientation       = ConvertCoordinateSystemUnityToROS_Rotation(this.body.transform.rotation);
+			avatarStatus.left_hand.position     = ConvertCoordinateSystemUnityToROS_Position(this.LeftHand.transform.position);
+			avatarStatus.left_hand.orientation  = ConvertCoordinateSystemUnityToROS_Rotation(this.LeftHand.transform.rotation);
+			avatarStatus.right_hand.position    = ConvertCoordinateSystemUnityToROS_Position(this.rightHand.transform.position);
+			avatarStatus.right_hand.orientation = ConvertCoordinateSystemUnityToROS_Rotation(this.rightHand.transform.rotation);
 			avatarStatus.object_in_left_hand    = this.objectIdInLeftHand  == "" ? "" : this.objectIdInLeftHand .Substring(0, this.objectIdInLeftHand .Length - 3);
 			avatarStatus.object_in_right_hand   = this.objectIdInRightHand == "" ? "" : this.objectIdInRightHand.Substring(0, this.objectIdInRightHand.Length - 3);
 			avatarStatus.is_target_object_in_left_hand  = this.IsTargetObject(this.objectIdInLeftHand);
@@ -886,8 +890,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			foreach (GameObject graspableObject in graspableObjects)
 			{
-				Vector3 positionInROS = this.ConvertCoorinateSystemUnityToROS_Position(graspableObject.transform.position);
-				Quaternion orientationInROS = this.ConvertCoorinateSystemUnityToROS_Rotation(graspableObject.transform.rotation);
+				Vector3    positionInROS    = this.ConvertCoordinateSystemUnityToROS_Position(graspableObject.transform.position);
+				Quaternion orientationInROS = this.ConvertCoordinateSystemUnityToROS_Rotation(graspableObject.transform.rotation);
 
 				if (graspableObject.name == currentTaskInfo.target)
 				{
@@ -1133,13 +1137,11 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				this.interruptedReason = HumanNaviModerator.ReasonGiveUp;
 
-				string strGiveup = "Give_up";
-				this.SendRosHumanNaviMessage(MsgTaskFailed, strGiveup);
+				this.SendRosHumanNaviMessage(MsgTaskFailed, ReasonGiveUp);
 				this.SendPanelNotice("Give up", 100, PanelNoticeStatus.Red);
 				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Give up", 3.0f));
 
 				this.panelMainController.giveUpPanel.SetActive(false);
-
 
 				this.TaskFinished();
 			}
@@ -1234,7 +1236,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public bool IsConnectedToRos()
+		private bool IsConnectedToRos()
 		{
 			foreach (IRosConnection rosConnection in this.rosConnections)
 			{
@@ -1246,8 +1248,10 @@ namespace SIGVerse.Competition.HumanNavigation
 			return true;
 		}
 
-		public void ClearRosConnections()
+		private IEnumerator ClearRosConnections(float waitTime)
 		{
+			yield return new WaitForSecondsRealtime(waitTime);
+
 			foreach (IRosConnection rosConnection in this.rosConnections)
 			{
 				//Debug.Log(rosConnection.ToString());
@@ -1257,7 +1261,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			SIGVerseLogger.Info("Clear ROS connections");
 		}
 
-		public void CloseRosConnections()
+		private void CloseRosConnections()
 		{
 			foreach (IRosConnection rosConnection in this.rosConnections)
 			{
@@ -1266,12 +1270,5 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			SIGVerseLogger.Info("Close ROS connections");
 		}
-
-		//private string UpdateTaskMessage()
-		//{
-		//	string taskMsg = String.Format("Wrong Objects: [{0:00}]          Number of Instruction: [{1:00}]          Collision: [{2:00}]\n", this.countWrongObjectsGrasp, ;
-
-		//	return taskMsg;
-		//}
 	}
 }

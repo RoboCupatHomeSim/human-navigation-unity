@@ -8,23 +8,20 @@ using System.Threading;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-
 	public class HumanNaviSessionManager : MonoBehaviour
 	{
-		[HeaderAttribute("Environment")]
-		public List<GameObject> environments;
-
 		[HeaderAttribute("Robot")]
 		public GameObject robot;
-		public string basefootprintPath = "odom/base_footprint_pos_noise/base_footprint_rigidbody/base_footprint_rot_noise/base_footprint";
 
-		[HeaderAttribute("Camera Controller")]
-		public HumanNaviBirdsEyeViewCameraController birdsEyeViewCameraControllerForRobot;
+		[HeaderAttribute("Environment")]
+		public GameObject defaultEnvironment;
+		public List<GameObject> environments;
+
+		private Transform robotBaseFootprint;
+
+		private GameObject targetEnvironment;
 
 		private List<SIGVerse.Competition.HumanNavigation.TaskInfo> taskInfoList;
-
-		private GameObject currentEnvironment;
-		private GameObject currentRobot;
 
 		private SAPIVoiceSynthesisExternal tts;
 
@@ -41,8 +38,7 @@ namespace SIGVerse.Competition.HumanNavigation
 					this.GetComponent<HumanNaviPubAvatarStatus>().enabled = false;
 					this.GetComponent<HumanNaviPubObjectStatus>().enabled = false;
 
-					GameObject robot = GameObject.Find("HSR-B"); // TODO
-					robot.transform.Find("RosBridgeScripts").gameObject.SetActive(false); // TODO
+					robot.transform.Find("RosBridgeScripts").gameObject.SetActive(false);
 					robot.GetComponentInChildren<HumanNaviSubGuidanceMessage>().enabled = false;
 
 					foreach (Camera camera in robot.transform.GetComponentsInChildren<Camera>())
@@ -51,13 +47,12 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 				}
 
-				this.currentEnvironment = null;
+				this.robot.SetActive(false);
+				this.robotBaseFootprint = SIGVerseUtils.FindTransformFromChild(this.robot.transform, "base_footprint");
 
-				this.ClearExistingEnvironments();    // Environments
-				this.ClearExistingRobots();          // Robot
+				this.InitializeEnvironments();
 
-				this.SetDefaultEnvironment();
-				this.ResetRobot();
+				this.tts = this.robot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesisExternal>();
 
 				this.InitializeTaskInfo();
 			}
@@ -74,39 +69,19 @@ namespace SIGVerse.Competition.HumanNavigation
 			Application.Quit();
 		}
 
-		public void ClearExistingEnvironments()
+		public void InitializeEnvironments()
 		{
-			foreach (GameObject existingEnvironment in GameObject.FindGameObjectsWithTag("Environment"))
+			this.defaultEnvironment.SetActive(true);
+
+			foreach (GameObject environment in this.environments)
 			{
-				existingEnvironment.SetActive(false);
+				environment.SetActive(false);
 			}
 		}
 
-		public void ClearExistingRobots()
+		public void ActivateRobot()
 		{
-			List<GameObject> existingRobots = GameObject.FindGameObjectsWithTag("Robot").ToList<GameObject>();
-
-			foreach (GameObject existingRobot in existingRobots)
-			{
-				existingRobot.SetActive(false);
-			}
-		}
-
-		public void ResetRobot()
-		{
-			if (this.currentRobot != null)
-			{
-				this.currentRobot.SetActive(false); // For guidance message panel controller
-				Destroy(this.currentRobot);
-			}
-
-			this.currentRobot = MonoBehaviour.Instantiate(this.robot);
-			this.currentRobot.name = this.robot.name;
-			this.currentRobot.SetActive(true);
-
-			this.tts = this.currentRobot.transform.Find("CompetitionScripts").GetComponent<SAPIVoiceSynthesisExternal>();
-
-			this.birdsEyeViewCameraControllerForRobot.SetTarget(this.currentRobot.transform.Find(this.basefootprintPath).gameObject);
+			this.robot.SetActive(true);
 		}
 
 		public void InitializeTaskInfo()
@@ -125,6 +100,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			foreach (TaskInfo taskInfo in HumanNaviConfig.Instance.configInfo.taskInfoList)
 			{
 				taskInfoList.Add(taskInfo);
+
 				SIGVerseLogger.Info("Environment_ID: " + taskInfo.environment + ", Target_object_name: " + taskInfo.target + ", Destination: " + taskInfo.destination);
 
 				GameObject environment = this.environments.Where(obj => obj.name == taskInfo.environment).SingleOrDefault();
@@ -162,33 +138,12 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public void SetDefaultEnvironment()
+		public void ChangeEnvironment(int numberOfSession)
 		{
-			if (this.currentEnvironment != null)
-			{
-				this.currentEnvironment.SetActive(false);
-				MonoBehaviour.Destroy(this.currentEnvironment);
-			}
-			this.currentEnvironment = MonoBehaviour.Instantiate(this.environments.Where(obj => obj.name == "Default_Environment").SingleOrDefault());
-			this.currentEnvironment.name = "Default_Environment";
-			this.currentEnvironment.SetActive(true);
-		}
+			this.defaultEnvironment.SetActive(false);
 
-		public void ResetEnvironment()
-		{
-			this.ResetEnvironment(HumanNaviConfig.Instance.numberOfTrials);
-		}
-
-		public void ResetEnvironment(int numberOfSession)
-		{
-			if (this.currentEnvironment != null)
-			{
-				this.currentEnvironment.SetActive(false);
-				MonoBehaviour.Destroy(this.currentEnvironment);
-			}
-			this.currentEnvironment = MonoBehaviour.Instantiate(this.environments.Where(obj => obj.name == this.taskInfoList[numberOfSession - 1].environment).SingleOrDefault());
-			this.currentEnvironment.name = this.taskInfoList[numberOfSession - 1].environment;
-			this.currentEnvironment.SetActive(true);
+			this.targetEnvironment = this.environments.Where(obj => obj.name == this.taskInfoList[numberOfSession - 1].environment).SingleOrDefault();
+			this.targetEnvironment.SetActive(true);
 
 			//Check for duplicates
 			List<string> duplicateGraspableNames = GameObject.FindGameObjectsWithTag("Graspables").ToList().GroupBy(obj => obj.name).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
@@ -206,19 +161,14 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public TaskInfo GetCurrentTaskInfo()
-		{
-			return taskInfoList[HumanNaviConfig.Instance.numberOfTrials - 1];
-		}
-
-		public TaskInfo GetCurrentTaskInfo(int numberOfSession)
+		public TaskInfo GetTaskInfo(int numberOfSession)
 		{
 			return taskInfoList[numberOfSession - 1];
 		}
 
-		public GameObject GetCurrentEnvironment()
+		public GameObject GetEnvironment()
 		{
-			return this.currentEnvironment;
+			return this.targetEnvironment;
 		}
 
 		public string GetSeechRunStateMsgString()
@@ -242,8 +192,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public float GetDistanceFromRobot(Vector3 targetPosition)
 		{
-			Vector3 currentRobotPosition = this.currentRobot.transform.Find(this.basefootprintPath).gameObject.transform.position;
-			Vector2 robotPosition2D = new Vector2(currentRobotPosition.x, currentRobotPosition.z);
+			Vector2 robotPosition2D = new Vector2(this.robotBaseFootprint.position.x, this.robotBaseFootprint.position.z);
 			Vector2 targetPosition2D = new Vector2(targetPosition.x, targetPosition.z);
 
 			return (robotPosition2D - targetPosition2D).magnitude;

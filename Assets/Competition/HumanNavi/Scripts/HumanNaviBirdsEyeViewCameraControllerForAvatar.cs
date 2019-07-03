@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
-	public class HumanNaviBirdsEyeViewCameraControllerForAvatar : HumanNaviBirdsEyeViewCameraController
+	public class HumanNaviBirdsEyeViewCameraControllerForAvatar : HumanNaviBaseBirdsEyeViewCameraController
 	{
 		[HeaderAttribute("Tracking Target")]
 		public GameObject targetForSimpleIK;
@@ -13,9 +13,9 @@ namespace SIGVerse.Competition.HumanNavigation
 		protected override void Awake()
 		{
 #if ENABLE_VRIK
-			this.SetTarget(targetForFinalIK);
+			this.SetTrackingTarget(targetForFinalIK);
 #else
-			this.SetTarget(targetForSimpleIK);
+			this.SetTrackingTarget(targetForSimpleIK);
 #endif
 		}
 	}

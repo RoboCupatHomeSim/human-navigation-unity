@@ -14,7 +14,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		[HeaderAttribute("Session Manager")]
 		public HumanNaviSessionManager sessionManager;
 
-		private GameObject sapi;
+		public SAPIVoiceSynthesisExternal sapiVoiceSynthesisExternal;
 
 		private PlaybackGuidanceMessageEventController guidanceMessageController;
 
@@ -26,9 +26,11 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			base.Awake();
 
+			HumanNaviPlaybackCommon common = this.GetComponent<HumanNaviPlaybackCommon>();
+
 			if (this.isPlay)
 			{
-				Transform robot = GameObject.FindGameObjectWithTag("Robot").transform;
+				Transform robot = common.robot.transform;
 
 				//robot.Find("CompetitionScripts").gameObject.SetActive(false);
 				robot.Find("RosBridgeScripts")  .gameObject.SetActive(false);
@@ -78,34 +80,7 @@ namespace SIGVerse.Competition.HumanNavigation
 					avatar.GetComponentInChildren<SIGVerse.Human.IK.SimpleIK>().enabled = false;
 				}
 
-//#if HUMAN_NAVI_PLAYBACK_AVATAR_WITH_FINAL_IK
-//				// Avatar (Final IK)
-//				avatar.transform.Find("ThirdPersonEthanWithAnimation").gameObject.SetActive(false);
-//				avatar.GetComponentInChildren<RootMotion.FinalIK.VRIK>().enabled = false;
-
-//				//avatar.GetComponentInChildren<NewtonVR.NVRPlayer>().enabled = false;
-
-//#else
-//				//// Avatar(Simple Oculus Ethan )
-//				////avatar.GetComponentInChildren<NewtonVR.NVRPlayer>().enabled = false;
-//				//avatar.GetComponentInChildren<OVRManager>().enabled = false;
-//				//avatar.GetComponentInChildren<OVRCameraRig>().enabled = false;
-
-//				//avatar.GetComponentInChildren<Animator>().enabled = false;
-//				//avatar.GetComponentInChildren<SIGVerse.Human.VR.SimpleHumanVRController>().enabled = false;
-//				//avatar.GetComponentInChildren<SIGVerse.Human.IK.SimpleIK>().enabled = false;
-
-//				//avatar.GetComponentInChildren<Animator>().enabled = false;
-//				//avatar.GetComponentInChildren<SIGVerse.Human.VR.SimpleHumanVRController>().enabled = false;
-//				//avatar.GetComponentInChildren<SIGVerse.Human.IK.SimpleIK>().enabled = false;
-//#endif
-
 				//UnityEngine.XR.XRSettings.enabled = false;
-
-				//foreach(GameObject graspingCandidatePosition in GameObject.FindGameObjectsWithTag("GraspingCandidatesPosition"))
-				//{
-				//	graspingCandidatePosition.SetActive(false);
-				//}
 
 				this.timeLimit = HumanNaviConfig.Instance.configInfo.sessionTimeLimit;
 			}
@@ -174,15 +149,13 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			string filePath = string.Format(Application.dataPath + HumanNaviPlaybackCommon.FilePathFormat, this.trialNo);
 
-			this.sessionManager.ResetEnvironment(this.trialNo);
+			this.sessionManager.ChangeEnvironment(this.trialNo);
 
 			HumanNaviPlaybackCommon common = this.GetComponent<HumanNaviPlaybackCommon>();
 
 			common.SetPlaybackTargets();
 
-			this.sapi = GameObject.FindGameObjectWithTag("Robot").GetComponentInChildren<SAPIVoiceSynthesisExternal>().gameObject;
-
-			this.guidanceMessageController = new PlaybackGuidanceMessageEventController(this.sapi); // Guidance message
+			this.guidanceMessageController = new PlaybackGuidanceMessageEventController(this.sapiVoiceSynthesisExternal.gameObject); // Guidance message
 			this.transformController = new PlaybackTransformEventController(common);  // Transform
 
 			this.Initialize(filePath);

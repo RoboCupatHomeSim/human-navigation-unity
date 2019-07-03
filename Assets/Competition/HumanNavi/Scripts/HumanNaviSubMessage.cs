@@ -19,6 +19,10 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public override void Clear()
 		{
+			if (this.webSocketConnection != null)
+			{
+				this.webSocketConnection.Unsubscribe(this.subscriber);
+			}
 		}
 
 		public override void Close()

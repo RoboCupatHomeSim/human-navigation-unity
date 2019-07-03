@@ -84,7 +84,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public void ResetFlags()
+		private void ResetFlags()
 		{
 			this.targetRigidbody = null;
 			this.targetEnterd  = false;
