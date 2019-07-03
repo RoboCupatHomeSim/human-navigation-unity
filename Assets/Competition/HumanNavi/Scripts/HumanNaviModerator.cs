@@ -224,6 +224,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.ShowStartTaskPanel();
 
+			this.InitializeMainPanel();
+
 			this.interruptedReason = string.Empty;
 		}
 
@@ -416,7 +418,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		//-----------------------------
 
-		private void PreProcess()
+		private void InitializeMainPanel()
 		{
 			this.panelMainController.SetTeamNameText("Team: " + HumanNaviConfig.Instance.configInfo.teamName);
 
@@ -429,7 +431,6 @@ namespace SIGVerse.Competition.HumanNavigation
 				HumanNaviConfig.Instance.InclementNumberOfTrials(HumanNaviConfig.Instance.configInfo.playbackType);
 			}
 
-
 			this.numberOfSession = HumanNaviConfig.Instance.numberOfTrials;
 
 			//this.panelMainController.SetTrialNumberText(HumanNaviConfig.Instance.numberOfTrials);
@@ -439,7 +440,10 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.panelMainController.SetTaskMessageText("");
 
 			this.scoreManager.ResetTimeLeftText();
+		}
 
+		private void PreProcess()
+		{
 			this.sessionManager.ChangeEnvironment(this.numberOfSession);
 			this.ResetAvatarTransform();
 
