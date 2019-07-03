@@ -122,8 +122,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		private bool isDuringSession = false;
 
 		private Dictionary<string, bool> receivedMessageMap;
-		private bool isTargetAlreadyGrasped;
-		private bool goNextSession = false;
+		private bool isTargetAlreadyGrasped = false;
 		private bool isAllTaskFinished = false;
 		private string interruptedReason;
 
@@ -143,6 +142,8 @@ namespace SIGVerse.Competition.HumanNavigation
 		private List<string> alreadyGraspedObjects;
 
 		private int numberOfSession;
+
+		private List<GameObject> graspableObjects;
 
 		//private int countWrongObjectsGrasp;
 
@@ -202,19 +203,6 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.receivedMessageMap.Add(MsgGetObjectStatus, false);
 				this.receivedMessageMap.Add(MsgGetSpeechState, false);
 				this.receivedMessageMap.Add(MsgGiveUp, false);
-
-				//// ROSBridge
-				//// (Should be read after the robot is instantiated (after Awake process of SessionManager))
-				//if (!this.isPracticeMode) // TODO: should unify as a function
-				//{
-				//	this.rosConnections = SIGVerseUtils.FindObjectsOfInterface<IRosConnection>();
-				//	SIGVerseLogger.Info("ROS connection : count=" + this.rosConnections.Length);
-				//}
-				//else
-				//{
-				//	this.rosConnections = new IRosConnection[] { };
-				//	SIGVerseLogger.Info("No ROS connection (practice mode)");
-				//}
 
 				// Timer
 				this.stepTimer = new StepTimer();
@@ -395,7 +383,7 @@ namespace SIGVerse.Competition.HumanNavigation
 					}
 					case Step.WaitForNextSession:
 					{
-						if(this.goNextSession && this.stepTimer.IsTimePassed((int)this.step, 3000))
+						if(this.stepTimer.IsTimePassed((int)this.step, 5000))
 						{
 							//this.step = Step.Initialize;
 							if (!this.IsPlaybackFinished()) { break; }
@@ -430,8 +418,6 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void PreProcess()
 		{
-			this.ResetFlags();
-
 			this.panelMainController.SetTeamNameText("Team: " + HumanNaviConfig.Instance.configInfo.teamName);
 
 			if (this.isPracticeMode)
@@ -514,9 +500,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			{
 				this.SendRosHumanNaviMessage(MsgTaskFinished, "");
 
-				SIGVerseLogger.Info("Waiting for next task");
-				base.StartCoroutine(this.ShowGotoNextPanel(3.0f));
-
 				SIGVerseLogger.Info("Go to next session");
 				//this.RecordEventLog("Go_to_next_session");
 
@@ -530,21 +513,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.isDuringSession = false;
 			this.interruptedReason = string.Empty;
 
-			// Clear parameters of PlacementChecker
-			//List<GameObject> destinations = GameObject.FindGameObjectsWithTag(TagNameOfDestination).ToList<GameObject>();
-			//foreach(GameObject destination in destinations)
-			//{
-			//	destination.GetComponentInChildren<HumanNaviPlacementChecker>().ResetFlags();
-			//}
-
 			this.step = Step.WaitForNextSession;
-		}
-
-		private void ResetFlags()
-		{
-			this.receivedMessageMap[MsgIamReady] = false;
-			this.isTargetAlreadyGrasped = false;
-			this.goNextSession = false;
 		}
 
 		private void ResetAvatarTransform()
@@ -569,13 +538,13 @@ namespace SIGVerse.Competition.HumanNavigation
 		private void SetObjectListToHumanNaviTaskInfo()
 		{
 			// Get graspable objects
-			List<GameObject> graspableObjects = GameObject.FindGameObjectsWithTag(TagNameOfGraspables).ToList<GameObject>();
-			if (graspableObjects.Count == 0)
+			this.graspableObjects = GameObject.FindGameObjectsWithTag(TagNameOfGraspables).ToList<GameObject>();
+			if (this.graspableObjects.Count == 0)
 			{
 				throw new Exception("Graspable object is not found.");
 			}
 
-			foreach (GameObject graspableObject in graspableObjects)
+			foreach (GameObject graspableObject in this.graspableObjects)
 			{
 				// transtrate the coordinate system of GameObject (left-handed, Z-axis:front, Y-axis:up) to ROS coodinate system (right-handed, X-axis:front, Z-axis:up)
 				Vector3    positionInROS    = this.ConvertCoordinateSystemUnityToROS_Position(graspableObject.transform.position);
@@ -677,22 +646,13 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public void TimeIsUp()
+		private void TimeIsUp()
 		{
 			this.SendRosHumanNaviMessage(MsgTaskFailed, ReasonTimeIsUp);
 			this.SendPanelNotice("Time is up", 100, PanelNoticeStatus.Red);
 			base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Time is up", 3.0f));
 
 			this.TaskFinished();
-		}
-
-		private IEnumerator ShowGotoNextPanel(float waitTime = 1.0f)
-		{
-			yield return new WaitForSeconds(waitTime);
-
-			this.goToNextTrialPanel.SetActive(true);
-			this.ShowNoticeMessagePanelForAvatar("Waiting for the next session to start");
-			//base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar("Waiting for the next session to start", 10.0f));
 		}
 
 		private void TaskFinished()
@@ -797,7 +757,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			return true;
 		}
 
-		public void StartPlaybackRecord()
+		private void StartPlaybackRecord()
 		{
 			if (HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypeRecord)
 			{
@@ -807,7 +767,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		public void StopPlaybackRecord()
+		private void StopPlaybackRecord()
 		{
 			if (HumanNaviConfig.Instance.configInfo.playbackType == WorldPlaybackCommon.PlaybackTypeRecord)
 			{
@@ -825,12 +785,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			yield return new WaitForSeconds(waitTime);
 
 			this.noticePanelForAvatar.SetActive(false);
-		}
-
-		private void ShowNoticeMessagePanelForAvatar(string text)
-		{
-			this.noticeTextForAvatar.text = text;
-			this.noticePanelForAvatar.SetActive(true);
 		}
 
 		private void SendRosHumanNaviMessage(string message, string detail)
@@ -886,9 +840,7 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			RosBridge.human_navigation.HumanNaviObjectStatus objectStatus = new RosBridge.human_navigation.HumanNaviObjectStatus();
 
-			List<GameObject> graspableObjects = GameObject.FindGameObjectsWithTag(TagNameOfGraspables).ToList<GameObject>();
-
-			foreach (GameObject graspableObject in graspableObjects)
+			foreach (GameObject graspableObject in this.graspableObjects)
 			{
 				Vector3    positionInROS    = this.ConvertCoordinateSystemUnityToROS_Position(graspableObject.transform.position);
 				Quaternion orientationInROS = this.ConvertCoordinateSystemUnityToROS_Rotation(graspableObject.transform.rotation);
@@ -1125,7 +1077,6 @@ namespace SIGVerse.Competition.HumanNavigation
 			return isGraspedByLeftHand || isGraspedByRightHand;
 		}
 
-
 		public void OnTimeIsUp()
 		{
 			this.interruptedReason = HumanNaviModerator.ReasonTimeIsUp;
@@ -1177,10 +1128,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.goToNextTrialPanel.SetActive(false);
 
 			this.isCompetitionStarted = true; // for practice mode
-			this.goNextSession = true;
 		}
 
-		public void ShowStartTaskPanel()
+		private void ShowStartTaskPanel()
 		{
 			if (this.isPracticeMode)
 			{

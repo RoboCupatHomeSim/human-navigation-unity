@@ -182,7 +182,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 			this.speechProcess.StartInfo.Arguments = "\"" + truncatedMessage + "\" \"" + settings + "\"";
 
-			SIGVerseLogger.Warn("Speech Message="+ this.speechProcess.StartInfo.Arguments);
+			SIGVerseLogger.Info("Speech Message="+ this.speechProcess.StartInfo.Arguments);
 
 			foreach (GameObject destination in this.notificationDestinations)
 			{
