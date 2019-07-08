@@ -12,24 +12,6 @@ namespace SIGVerse.Competition.HumanNavigation
 
 	public class HumanNaviPubMessage : RosPubMessage<RosBridge.human_navigation.HumanNaviMsg>, IRosHumanNaviMessageSendHandler
 	{
-		public override void Clear()
-		{
-			if (this.webSocketConnection != null)
-			{
-				this.webSocketConnection.Unadvertise(this.publisher);
-			}
-		}
-
-		public override void Close()
-		{
-			if (this.webSocketConnection != null)
-			{
-				this.webSocketConnection.Unadvertise(this.publisher);
-			}
-
-			base.Close();
-		}
-
 		public void OnSendRosHumanNaviMessage(string message, string detail)
 		{
 			SIGVerseLogger.Info("Sending message : " + message + ", " + detail);

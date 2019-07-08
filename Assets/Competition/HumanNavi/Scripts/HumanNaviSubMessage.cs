@@ -17,24 +17,6 @@ namespace SIGVerse.Competition.HumanNavigation
 	{
 		public List<GameObject> destinations;
 
-		public override void Clear()
-		{
-			if (this.webSocketConnection != null)
-			{
-				this.webSocketConnection.Unsubscribe(this.subscriber);
-			}
-		}
-
-		public override void Close()
-		{
-			if (this.webSocketConnection != null)
-			{
-				this.webSocketConnection.Unsubscribe(this.subscriber);
-			}
-
-			base.Close();
-		}
-
 		protected override void SubscribeMessageCallback(RosBridge.human_navigation.HumanNaviMsg humanNaviMsg)
 		{
 			SIGVerseLogger.Info("Received message :" + humanNaviMsg.message);
