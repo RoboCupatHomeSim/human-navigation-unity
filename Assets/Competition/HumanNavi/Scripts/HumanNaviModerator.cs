@@ -410,7 +410,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void ApplicationQuitAfter1sec()
 		{
-			this.CloseRosConnections();
+			StartCoroutine(this.CloseRosConnections());
 
 			Thread.Sleep(1000);
 			Application.Quit();
@@ -492,11 +492,12 @@ namespace SIGVerse.Competition.HumanNavigation
 			if (HumanNaviConfig.Instance.numberOfTrials == HumanNaviConfig.Instance.configInfo.maxNumberOfTrials)
 			{
 				this.SendRosHumanNaviMessage(MsgMissionComplete, "");
-				string endMessage = "All sessions have ended";
-				this.SendPanelNotice(endMessage, 100, PanelNoticeStatus.Green);
-				base.StartCoroutine(this.ShowNoticeMessagePanelForAvatar(endMessage, 5.0f));
 
-				this.CloseRosConnections();
+				StartCoroutine(this.StopTime());
+
+				StartCoroutine(this.CloseRosConnections());
+
+				StartCoroutine(this.DisplayEndMessage());
 
 				this.isAllTaskFinished = true;
 			}
@@ -509,7 +510,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				this.SendRosHumanNaviMessage(MsgGoToNextSession, "");
 
-				StartCoroutine(this.ClearRosConnections(1.5f));
+				StartCoroutine(this.ClearRosConnections());
 			}
 
 			this.StopPlaybackRecord();
@@ -1146,7 +1147,7 @@ namespace SIGVerse.Competition.HumanNavigation
 			}
 		}
 
-		private void SendPanelNotice(string message, int fontSize, Color color)
+		private void SendPanelNotice(string message, int fontSize, Color color, bool shouldSendToPlaybackManager = true)
 		{
 			PanelNoticeStatus noticeStatus = new PanelNoticeStatus(message, fontSize, color, 3.0f);
 
@@ -1158,14 +1159,29 @@ namespace SIGVerse.Competition.HumanNavigation
 				functor: (reciever, eventData) => reciever.OnPanelNoticeChange(noticeStatus)
 			);
 
-			// For recording
-			ExecuteEvents.Execute<IPanelNoticeHandler>
-			(
-				target: this.playbackManager,
-				eventData: null,
-				functor: (reciever, eventData) => reciever.OnPanelNoticeChange(noticeStatus)
-			);
+			if (shouldSendToPlaybackManager)
+			{
+				// For recording
+				ExecuteEvents.Execute<IPanelNoticeHandler>
+				(
+					target: this.playbackManager,
+					eventData: null,
+					functor: (reciever, eventData) => reciever.OnPanelNoticeChange(noticeStatus)
+				);
+			}
 		}
+
+		public IEnumerator DisplayEndMessage()
+		{
+			yield return new WaitForSecondsRealtime(7);
+
+			string endMessage = "All sessions have ended";
+
+			SIGVerseLogger.Info(endMessage);
+
+			this.SendPanelNotice(endMessage, 80, PanelNoticeStatus.Blue, false);
+		}
+
 
 		private void RecordEventLog(string log)
 		{
@@ -1202,9 +1218,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			return true;
 		}
 
-		private IEnumerator ClearRosConnections(float waitTime)
+		private IEnumerator ClearRosConnections()
 		{
-			yield return new WaitForSecondsRealtime(waitTime);
+			yield return new WaitForSecondsRealtime(1.5f);
 
 			foreach (IRosConnection rosConnection in this.rosConnections)
 			{
@@ -1215,14 +1231,22 @@ namespace SIGVerse.Competition.HumanNavigation
 			SIGVerseLogger.Info("Clear ROS connections");
 		}
 
-		private void CloseRosConnections()
+		private IEnumerator CloseRosConnections()
 		{
+			yield return new WaitForSecondsRealtime(1.5f);
+
 			foreach (IRosConnection rosConnection in this.rosConnections)
 			{
 				rosConnection.Close();
 			}
 
 			SIGVerseLogger.Info("Close ROS connections");
+		}
+		private IEnumerator StopTime()
+		{
+			yield return new WaitForSecondsRealtime(1.0f);
+
+			Time.timeScale = 0.0f;
 		}
 	}
 }

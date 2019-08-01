@@ -90,6 +90,8 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			HumanNaviPlaybackCommon common = this.GetComponent<HumanNaviPlaybackCommon>();
 
+			common.robot.gameObject.SetActive(true);
+
 			this.filePath = common.GetFilePath();
 
 			//this.transformController   = new PlaybackTransformEventController  (common);  // Transform
