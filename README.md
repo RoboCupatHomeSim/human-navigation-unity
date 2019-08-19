@@ -1,14 +1,14 @@
 # Human Navigation Project
 
-This is a Unity project for the competition of Human Navigation task of the Partner Robot Challenge (Virtual Space) in the World Robot Competition.
+This is a Unity project for the competition of Human Navigation task of the RoboCup@Home Simulation.
 
 Please prepare a common unitypackage and a dll file for text-to-speech (TTS) in advance, and import them to this project.  
 
 For details of using the common unitypackage, please see an instruction in the following repository:  
-https://github.com/PartnerRobotChallengeVirtual/common-unity.git
+https://github.com/RoboCupatHomeSim/common-unity.git
 
 For details of creating the dll for TTS, please see the following repository:  
-https://github.com/PartnerRobotChallengeVirtual/console-simple-tts
+https://github.com/RoboCupatHomeSim/console-simple-tts
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ https://github.com/PartnerRobotChallengeVirtual/console-simple-tts
 
 ### Import common Unitypackage
 
-1. Prepare a common unitypackage (e.g. wrs-virtual-common.unitypackage).
+1. Prepare a common unitypackage (e.g. robocup-common.unitypackage).
 2. Open this project with Unity.
 3. Click [Assets]-[Import Package]-[Custom Package...].
 3. Select and open the common unitypackage.
