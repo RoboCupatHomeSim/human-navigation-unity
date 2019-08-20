@@ -1,0 +1,17 @@
+{
+	"teamName":"Hum@n Navigation",
+	"sessionTimeLimit":"9999",
+	"recoverUsingScoreFile": false,
+	"maxNumberOfTrials": 7,
+	"playbackType": 0,
+	"language": "Japanese",
+	"taskInfoList":[
+		{"environment":"LayoutHN01#01","target":"dummy#01","destination":"destination#01"},
+		{"environment":"LayoutHN02#01","target":"dummy#01","destination":"destination#01"},
+		{"environment":"LayoutHN03#01","target":"dummy#01","destination":"destination#01"},
+		{"environment":"LayoutHN04#01","target":"dummy#01","destination":"destination#01"},
+		{"environment":"LayoutHN05#01","target":"dummy#01","destination":"destination#01"},
+		{"environment":"LayoutHN06#01","target":"dummy#01","destination":"destination#01"},
+		{"environment":"LayoutHN07#01","target":"dummy#01","destination":"destination#01"}
+	]
+}
