@@ -13,7 +13,7 @@ https://github.com/RoboCupatHomeSim/console-simple-tts
 ## Prerequisites
 
 - OS: Windows 10
-- Unity version: 2018.4.3f1
+- Unity version: 2018.4.16f1
 
 ## How to Build
 
