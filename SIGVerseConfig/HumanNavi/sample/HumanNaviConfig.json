@@ -5,11 +5,11 @@
 	"maxNumberOfTrials": 6,
 	"playbackType": 0,
 	"taskInfoList":[
-		{"environment":"ExampleLayoutHN01#01","target":"apple#01","destination":"destination#01"},
-		{"environment":"LayoutHN01#01","target":"tumblerglass_c02#02","destination":"destination#01"},
-		{"environment":"LayoutHN06#01","target":"petbottle_500ml_empty_c02#01","destination":"destination#01"},
-		{"environment":"LayoutHN13#01","target":"cup_c02#01","destination":"destination#01"},
-		{"environment":"LayoutHN21#01","target":"apple#01","destination":"destination#01"},
-		{"environment":"LayoutHN28#01","target":"tumblerglass_c02#02","destination":"destination#01"}
+		{"environment":"ExampleLayoutHN01#01","target":"apple#01",                    "destination":"destination#01"},
+		{"environment":"LayoutHN01#01",       "target":"tumblerglass_c02#02",         "destination":"destination#01"},
+		{"environment":"LayoutHN06#01",       "target":"petbottle_500ml_empty_c02#01","destination":"destination#01"},
+		{"environment":"LayoutHN13#01",       "target":"cup_c02#01",                  "destination":"destination#01"},
+		{"environment":"LayoutHN21#01",       "target":"apple#01",                    "destination":"destination#01"},
+		{"environment":"LayoutHN28#01",       "target":"tumblerglass_c02#02",         "destination":"destination#01"}
 	]
 }

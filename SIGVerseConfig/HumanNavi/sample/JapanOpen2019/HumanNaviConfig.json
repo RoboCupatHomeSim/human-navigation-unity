@@ -1,0 +1,22 @@
+{
+	"teamName":"Hum@n Navigation",
+	"sessionTimeLimit":"180",
+	"recoverUsingScoreFile": true,
+	"maxNumberOfTrials": 12,
+	"playbackType": 1,
+	"language": "Japanese",
+	"taskInfoList":[
+		{"environment":"Layout2019HN04#01","target":"pepper_full#06",              "destination":"destination#02"},
+		{"environment":"Layout2019HN06#01","target":"petbottle_500ml_empty_c01#03","destination":"destination#01"},
+		{"environment":"Layout2019HN06#01","target":"soysauce_full#01",            "destination":"destination#02"},
+		{"environment":"Layout2019HN01#01","target":"doll_dog#02",                 "destination":"destination#01"},
+		{"environment":"Layout2019HN02#01","target":"cup_c02#03",                  "destination":"destination#01"},
+		{"environment":"Layout2019HN04#01","target":"dish_A_curry#02",             "destination":"destination#01"},
+		{"environment":"Layout2019HN01#01","target":"fork_A#02",                   "destination":"destination#02"},
+		{"environment":"Layout2019HN05#01","target":"ketchup_full#01",             "destination":"destination#02"},
+		{"environment":"Layout2019HN05#01","target":"sauce_full#01",               "destination":"destination#01"},
+		{"environment":"Layout2019HN02#01","target":"petbottle_2l_full_c01#02",    "destination":"destination#02"},
+		{"environment":"Layout2019HN07#01","target":"cup_c02#03",                  "destination":"destination#01"},
+		{"environment":"Layout2019HN03#01","target":"orange#02",                   "destination":"destination#02"}
+	]
+}
