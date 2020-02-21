@@ -62,5 +62,7 @@ SIGVerse*.log
 /Assets/SIGVerse*
 /Assets/Competition/Common*
 
+/Assets/Competition/HumanNavi/HiddenFiles*
+
 !/TTS/
 
