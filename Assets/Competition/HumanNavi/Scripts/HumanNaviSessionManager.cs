@@ -142,6 +142,11 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			this.defaultEnvironment.SetActive(false);
 
+			foreach(GameObject environment in this.environments)
+			{
+				environment.SetActive(false);
+			}
+
 			this.targetEnvironment = this.environments.Where(obj => obj.name == this.taskInfoList[numberOfSession - 1].environment).SingleOrDefault();
 			this.targetEnvironment.SetActive(true);
 
