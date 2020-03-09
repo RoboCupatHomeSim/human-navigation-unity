@@ -107,7 +107,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				if (environment == null)
 				{
-					throw new Exception("Environment does not exist.");
+					throw new Exception("Environment does not exist. name=" + taskInfo.environment);
 				}
 
 				Transform[] transformInChildren = environment.GetComponentsInChildren<Transform>();
