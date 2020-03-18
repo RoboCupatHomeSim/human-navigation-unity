@@ -55,19 +55,19 @@ namespace NewtonVR
         public override void Initialize(NVRPlayer player)
         {
             Player = player;
-            Player.gameObject.SetActive(false);
+            //Player.gameObject.SetActive(false);
 
-            OVRManager manager = Player.gameObject.AddComponent<OVRManager>();
-            manager.trackingOriginType = OVRManager.TrackingOrigin.FloorLevel;
+            //OVRManager manager = Player.gameObject.AddComponent<OVRManager>();
+            //manager.trackingOriginType = OVRManager.TrackingOrigin.FloorLevel;
 
-            OVRCameraRig rig = Player.gameObject.AddComponent<OVRCameraRig>();
+            //OVRCameraRig rig = Player.gameObject.AddComponent<OVRCameraRig>();
 
-            NVRHelpers.SetProperty(rig, "trackingSpace", Player.transform, true);
-            NVRHelpers.SetProperty(rig, "leftHandAnchor", Player.LeftHand.transform, true);
-            NVRHelpers.SetProperty(rig, "rightHandAnchor", Player.RightHand.transform, true);
-            NVRHelpers.SetProperty(rig, "centerEyeAnchor", Player.Head.transform, true);
+            //NVRHelpers.SetProperty(rig, "trackingSpace", Player.transform, true);
+            //NVRHelpers.SetProperty(rig, "leftHandAnchor", Player.LeftHand.transform, true);
+            //NVRHelpers.SetProperty(rig, "rightHandAnchor", Player.RightHand.transform, true);
+            //NVRHelpers.SetProperty(rig, "centerEyeAnchor", Player.Head.transform, true);
 
-            Player.gameObject.SetActive(true);
+            //Player.gameObject.SetActive(true);
         }
 
         private Vector3 PlayspaceBounds = Vector3.zero;

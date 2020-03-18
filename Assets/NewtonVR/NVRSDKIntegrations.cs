@@ -9,7 +9,6 @@ namespace NewtonVR
     {
         None,
         FallbackNonVR,
-        SteamVR,
         Oculus,
     }
 }

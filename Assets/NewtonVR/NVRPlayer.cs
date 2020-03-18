@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine.VR;
 using System.Linq;
 using UnityEngine.Events;
 
@@ -21,8 +20,6 @@ namespace NewtonVR
             }
         }
 
-        [HideInInspector]
-        public bool SteamVREnabled = false;
         [HideInInspector]
         public bool OculusSDKEnabled = false;
 
@@ -46,14 +43,6 @@ namespace NewtonVR
         {
             get
             {
-#if !UNITY_5_5_OR_NEWER
-                if (Application.isPlaying == false)
-                {
-                    return Vector3.zero; //not supported in unity below 5.5.
-                }
-#endif
-
-
                 if (Integration != null)
                 {
                     return Integration.GetPlayspaceBounds();
@@ -63,19 +52,6 @@ namespace NewtonVR
                     if (OculusSDKEnabled == true)
                     {
                         Integration = new NVROculusIntegration();
-                        if (Integration.IsHmdPresent() == true)
-                        {
-                            return Integration.GetPlayspaceBounds();
-                        }
-                        else
-                        {
-                            Integration = null;
-                        }
-                    }
-
-                    if (SteamVREnabled == true)
-                    {
-                        Integration = new NVRSteamVRIntegration();
                         if (Integration.IsHmdPresent() == true)
                         {
                             return Integration.GetPlayspaceBounds();
@@ -103,17 +79,6 @@ namespace NewtonVR
         public GameObject OverrideAllRightHand;
         [HideInInspector]
         public GameObject OverrideAllRightHandPhysicalColliders;
-
-        [HideInInspector]
-        public bool OverrideSteamVR;
-        [HideInInspector]
-        public GameObject OverrideSteamVRLeftHand;
-        [HideInInspector]
-        public GameObject OverrideSteamVRLeftHandPhysicalColliders;
-        [HideInInspector]
-        public GameObject OverrideSteamVRRightHand;
-        [HideInInspector]
-        public GameObject OverrideSteamVRRightHandPhysicalColliders;
 
         [HideInInspector]
         public bool OverrideOculus;
@@ -205,10 +170,6 @@ namespace NewtonVR
             if (CurrentIntegrationType == NVRSDKIntegrations.Oculus)
             {
                 Integration = new NVROculusIntegration();
-            }
-            else if (CurrentIntegrationType == NVRSDKIntegrations.SteamVR)
-            {
-                Integration = new NVRSteamVRIntegration();
             }
             else if (CurrentIntegrationType == NVRSDKIntegrations.FallbackNonVR)
             {

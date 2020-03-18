@@ -29,6 +29,7 @@
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
+debug.log
 
 # OS generated
 .DS_Store*

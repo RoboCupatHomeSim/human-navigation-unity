@@ -184,28 +184,6 @@ namespace NewtonVR
                     }
                 }
             }
-            else if (Player.CurrentIntegrationType == NVRSDKIntegrations.SteamVR)
-            {
-                InputDevice = this.gameObject.AddComponent<NVRSteamVRInputDevice>();
-
-                if (Player.OverrideSteamVR == true)
-                {
-                    if (IsLeft)
-                    {
-                        CustomModel = Player.OverrideSteamVRLeftHand;
-                        CustomPhysicalColliders = Player.OverrideSteamVRLeftHandPhysicalColliders;
-                    }
-                    else if (IsRight)
-                    {
-                        CustomModel = Player.OverrideSteamVRRightHand;
-                        CustomPhysicalColliders = Player.OverrideSteamVRRightHandPhysicalColliders;
-                    }
-                    else
-                    {
-                        Debug.LogError("[NewtonVR] Error: Unknown hand for SteamVR model override.");
-                    }
-                }
-            }
             else
             {
                 //Debug.LogError("[NewtonVR] Critical Error: NVRPlayer.CurrentIntegration not setup.");
