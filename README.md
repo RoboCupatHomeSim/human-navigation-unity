@@ -12,8 +12,8 @@ https://github.com/RoboCupatHomeSim/console-simple-tts
 
 ## Prerequisites
 
-- OS: Windows 10
-- Unity version: 2018.4.11f1
+Same as below for OS and Unity version.
+https://github.com/RoboCupatHomeSim/documents/blob/master/SoftwareManual/Environment.md#windows-pc
 
 ## How to Build
 
@@ -25,17 +25,19 @@ https://github.com/RoboCupatHomeSim/console-simple-tts
 3. Select and open the common unitypackage.
 4. Click [Import] button.
 
-### Import Oculus Utilities for Unity
+### Import the Oculus Integration for Unity
 
-1. Download Oculus Utilities for Unity ver.1.28.0 from the following link.  
-https://developer.oculus.com/downloads/package/oculus-utilities-for-unity-5/1.28.0/
-2. Unzip the downloaded file.
-3. Open this project with Unity.
-4. Click [Assets]-[Import Package]-[Custom Package...].
-5. Select and open "OculusUtilities.unitypackage".
-6. Click [Import] button.
-7. Click [Yes] on "Update Oculus Utilities Plugin" window.
-8. Click [Restart] on "Restart Unity" window.
+1. Download Oculus Integration for Unity ver.14.0 from the following link.  
+https://developer.oculus.com/downloads/package/unity-integration-archive/
+2. Open this project with Unity.
+3. Click [Assets]-[Import Package]-[Custom Package...].
+4. Select downloaded OculusIntegration_14.0.unitypackage and open the file.
+5. Click [Import] button.
+6. Click [Upgrade] when "Update Spatializer Plugins" window displayed.
+7. Click [Restart] when "Restart Unity" window displayed.
+8. Click [Yes] when "Update Oculus Utilities Plugin" window displayed.
+9. Click [Restart] when "Restart Unity" window displayed.
+10. Please confirm that no error occurred in Console window.
 
 ### Import executable file and dll for TTS
 1. Prepare "ConsoleSimpleTTS.exe" and "Interop.SpeechLib.dll".
