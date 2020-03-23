@@ -69,8 +69,9 @@ SIGVerse window will be opened.
 ## How to Execute Human Navigation Program
 
 ### Execute On Unity Editor
-1. Double click "Assets/Competition/HumanNavi/HumanNavi(.unity)" in Project window.
-2. Click the Play button at the top of the Unity editor.  
+1. Click [SIGVerse]-[Set Default GameView Size].
+2. Double click "Assets/Competition/HumanNavi/HumanNavi(.unity)" in Project window.
+3. Click the Play button at the top of the Unity editor.  
 
 ### Execute the Executable file
 1. Copy the "SIGVerseConfig" folder into the "Build" folder.
