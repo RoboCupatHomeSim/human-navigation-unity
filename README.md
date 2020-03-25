@@ -28,7 +28,7 @@ https://github.com/RoboCupatHomeSim/documents/blob/master/SoftwareManual/Environ
 ### Import the Oculus Integration for Unity
 
 1. Download Oculus Integration for Unity ver.14.0 from the following link.  
-https://developer.oculus.com/downloads/package/unity-integration-archive/
+https://developer.oculus.com/downloads/package/unity-integration-archive/14.0/
 2. Open this project with Unity.
 3. Click [Assets]-[Import Package]-[Custom Package...].
 4. Select downloaded OculusIntegration_14.0.unitypackage and open the file.
