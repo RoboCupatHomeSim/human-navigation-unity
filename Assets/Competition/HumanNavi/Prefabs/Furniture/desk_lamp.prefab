@@ -168,7 +168,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Convex: 1
-  m_CookingOptions: -1
+  m_CookingOptions: 28
   m_Mesh: {fileID: 4300000, guid: 9f9035395d1883544a4af95aff948d37, type: 2}
 --- !u!1 &1590620043400232
 GameObject:
@@ -213,5 +213,5 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Convex: 1
-  m_CookingOptions: -1
+  m_CookingOptions: 28
   m_Mesh: {fileID: 4300000, guid: 7ea5e7e827ca07a439b69a7f131f77d4, type: 2}

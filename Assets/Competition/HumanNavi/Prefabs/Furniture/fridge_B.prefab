@@ -1058,7 +1058,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 3
   m_Convex: 0
-  m_CookingOptions: -1
+  m_CookingOptions: 28
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300002, guid: ac410fdc71516e14893f069446ba7678, type: 3}
 --- !u!64 &64275968911307636
@@ -1072,7 +1072,7 @@ MeshCollider:
   m_Enabled: 0
   serializedVersion: 3
   m_Convex: 0
-  m_CookingOptions: -1
+  m_CookingOptions: 28
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300010, guid: ac410fdc71516e14893f069446ba7678, type: 3}
 --- !u!64 &64280545111903934
@@ -1086,7 +1086,7 @@ MeshCollider:
   m_Enabled: 0
   serializedVersion: 3
   m_Convex: 0
-  m_CookingOptions: -1
+  m_CookingOptions: 28
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300006, guid: ac410fdc71516e14893f069446ba7678, type: 3}
 --- !u!64 &64374361311072924
@@ -1100,7 +1100,7 @@ MeshCollider:
   m_Enabled: 0
   serializedVersion: 3
   m_Convex: 0
-  m_CookingOptions: -1
+  m_CookingOptions: 28
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300004, guid: ac410fdc71516e14893f069446ba7678, type: 3}
 --- !u!64 &64528313154356834
@@ -1114,7 +1114,7 @@ MeshCollider:
   m_Enabled: 0
   serializedVersion: 3
   m_Convex: 0
-  m_CookingOptions: -1
+  m_CookingOptions: 28
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300008, guid: ac410fdc71516e14893f069446ba7678, type: 3}
 --- !u!64 &64576404700163778
@@ -1128,7 +1128,7 @@ MeshCollider:
   m_Enabled: 0
   serializedVersion: 3
   m_Convex: 0
-  m_CookingOptions: -1
+  m_CookingOptions: 28
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300000, guid: ac410fdc71516e14893f069446ba7678, type: 3}
 --- !u!64 &64664704075508112
@@ -1142,7 +1142,7 @@ MeshCollider:
   m_Enabled: 0
   serializedVersion: 3
   m_Convex: 0
-  m_CookingOptions: -1
+  m_CookingOptions: 28
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300012, guid: ac410fdc71516e14893f069446ba7678, type: 3}
 --- !u!64 &64770284420620050
@@ -1156,7 +1156,7 @@ MeshCollider:
   m_Enabled: 0
   serializedVersion: 3
   m_Convex: 0
-  m_CookingOptions: -1
+  m_CookingOptions: 28
   m_SkinWidth: 0.01
   m_Mesh: {fileID: 4300014, guid: ac410fdc71516e14893f069446ba7678, type: 3}
 --- !u!65 &65004900137318950
