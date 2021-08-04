@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Valve.VR;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
@@ -16,6 +17,9 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		[HeaderAttribute("Bones for visualize")]
 		public HandType  handType;
+
+
+		private SteamVR_Input_Sources inputSource;
 
 		// for Grasping
 		private Transform thumb1, index1, middle1, ring1, pinky1;
@@ -76,6 +80,9 @@ namespace SIGVerse.Competition.HumanNavigation
 		// Use this for initialization
 		void Start()
 		{
+			if(this.handType==HandType.LeftHand) { this.inputSource = SteamVR_Input_Sources.LeftHand; }
+			if(this.handType==HandType.RightHand){ this.inputSource = SteamVR_Input_Sources.RightHand; }
+
 			this.thumb1Pos  = this.thumb1 .localPosition;  this.thumb2Pos  = this.thumb2 .localPosition;  this.thumb3Pos  = this.thumb3 .localPosition;  this.thumb4Pos  = this.thumb4 .localPosition;
 			this.index1Pos  = this.index1 .localPosition;  this.index2Pos  = this.index2 .localPosition;  this.index3Pos  = this.index3 .localPosition;  this.index4Pos  = this.index4 .localPosition;
 			this.middle1Pos = this.middle1.localPosition;  this.middle2Pos = this.middle2.localPosition;  this.middle3Pos = this.middle3.localPosition;  this.middle4Pos = this.middle4.localPosition;
@@ -166,7 +173,8 @@ namespace SIGVerse.Competition.HumanNavigation
 		{
 			float handTrigger1D = 0.0f;
 
-			handTrigger1D = (this.handType == HandType.LeftHand)? OVRInput.Get(OVRInput.RawAxis1D.LHandTrigger) : OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger);
+//			handTrigger1D = (this.handType == HandType.LeftHand)? OVRInput.Get(OVRInput.RawAxis1D.LHandTrigger) : OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger);
+			handTrigger1D = SteamVR_Actions.sigverse_SqueezeMiddle.GetAxis(this.inputSource);
 
 			//Debug.Log("handTrigger1D="+handTrigger1D);
 

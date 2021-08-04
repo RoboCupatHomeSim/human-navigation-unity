@@ -10,6 +10,9 @@ using SIGVerse.RosBridge;
 using System.Threading;
 using UnityEngine.SceneManagement;
 
+using Valve.VR;
+using Valve.VR.InteractionSystem;
+
 namespace SIGVerse.Competition.HumanNavigation
 {
 	public interface IReachMaxWrongObjectGraspCountHandler : IEventSystemHandler
@@ -73,8 +76,10 @@ namespace SIGVerse.Competition.HumanNavigation
 		public GameObject avatarForSimpleIK;
 		public GameObject headForSimpleIK;
 		public GameObject bodyForSimpleIK;
-		public NewtonVR.NVRHand LeftHandForSimpleIK;
-		public NewtonVR.NVRHand rightHandForSimpleIK;
+//		public NewtonVR.NVRHand LeftHandForSimpleIK;
+//		public NewtonVR.NVRHand rightHandForSimpleIK;
+		public Hand LeftHandForSimpleIK;
+		public Hand rightHandForSimpleIK;
 		public GameObject noticePanelForSimpleIKAvatar;
 		public UnityEngine.UI.Text noticeTextForSimpleIKAvatar;
 
@@ -82,8 +87,10 @@ namespace SIGVerse.Competition.HumanNavigation
 		public GameObject avatarForFinalIK;
 		public GameObject headForFinalIK;
 		public GameObject bodyForFinalIK;
-		public NewtonVR.NVRHand LeftHandForFinalIK;
-		public NewtonVR.NVRHand rightHandForFinalIK;
+//		public NewtonVR.NVRHand LeftHandForFinalIK;
+//		public NewtonVR.NVRHand rightHandForFinalIK;
+		public Hand LeftHandForFinalIK;
+		public Hand rightHandForFinalIK;
 		public GameObject noticePanelForFinalIKAvatar;
 		public UnityEngine.UI.Text noticeTextForFinalIKAvatar;
 
@@ -100,8 +107,10 @@ namespace SIGVerse.Competition.HumanNavigation
 		private GameObject avatar;
 		private GameObject head;
 		private GameObject body;
-		private NewtonVR.NVRHand LeftHand;
-		private NewtonVR.NVRHand rightHand;
+//		private NewtonVR.NVRHand LeftHand;
+//		private NewtonVR.NVRHand rightHand;
+		private Hand LeftHand;
+		private Hand rightHand;
 		private GameObject noticePanelForAvatar;
 		private UnityEngine.UI.Text noticeTextForAvatar;
 
@@ -252,15 +261,15 @@ namespace SIGVerse.Competition.HumanNavigation
 				}
 
 				// Giveup for practice mode
-				if ( this.isPracticeMode &&
-					((OVRInput.Get(OVRInput.RawButton.LThumbstick) && OVRInput.Get(OVRInput.RawButton.X) && OVRInput.Get(OVRInput.RawButton.Y)) ||
-					(OVRInput.Get(OVRInput.RawButton.RThumbstick) && OVRInput.Get(OVRInput.RawButton.A) && OVRInput.Get(OVRInput.RawButton.B)) ||
-					(Input.GetKeyDown(KeyCode.Escape)))
-				){
+				if ( this.isPracticeMode &&(
+					(SteamVR_Actions.sigverse_PressThumbstick.GetStateDown(SteamVR_Input_Sources.LeftHand)  && SteamVR_Actions.sigverse_PressNearButton.GetStateDown(SteamVR_Input_Sources.LeftHand)  && SteamVR_Actions.sigverse_PressFarButton.GetStateDown(SteamVR_Input_Sources.LeftHand)) ||
+					(SteamVR_Actions.sigverse_PressThumbstick.GetStateDown(SteamVR_Input_Sources.RightHand) && SteamVR_Actions.sigverse_PressNearButton.GetStateDown(SteamVR_Input_Sources.RightHand) && SteamVR_Actions.sigverse_PressFarButton.GetStateDown(SteamVR_Input_Sources.RightHand)) ||
+					(Input.GetKeyDown(KeyCode.Escape))
+				)){
 					this.OnGiveUp();
 				}
 
-				if (OVRInput.GetDown(OVRInput.RawButton.X) && this.isDuringSession)
+				if (SteamVR_Actions.sigverse_PressNearButton.GetStateDown(SteamVR_Input_Sources.LeftHand) && this.isDuringSession)
 				{
 					if (this.isPracticeMode)
 					{
@@ -907,13 +916,15 @@ namespace SIGVerse.Competition.HumanNavigation
 			this.CheckGraspOfObject(this.rightHand);
 		}
 
-		private void CheckGraspOfObject(NewtonVR.NVRHand hand)
+//		private void CheckGraspOfObject(NewtonVR.NVRHand hand)
+		private void CheckGraspOfObject(Hand hand)
 		{
-			if (hand.HoldButtonDown && hand.IsInteracting)
+//			if (hand.HoldButtonDown && hand.IsInteracting)
+			if (hand.currentAttachedObject != null)
 			{
-				if (hand.CurrentlyInteracting.tag == TagNameOfGraspables)
+				if (hand.currentAttachedObject.tag == TagNameOfGraspables)
 				{
-					if (this.IsTargetObject(hand.CurrentlyInteracting.name))
+					if (this.IsTargetObject(hand.currentAttachedObject.name))
 					{
 						if (!this.isTargetAlreadyGrasped)
 						{
@@ -928,13 +939,13 @@ namespace SIGVerse.Competition.HumanNavigation
 							this.isTargetAlreadyGrasped = true;
 						}
 
-						this.RecordEventLog("Object_Is_Grasped" + "\t" + "Target_Object" + "\t" + hand.CurrentlyInteracting.name);
+						this.RecordEventLog("Object_Is_Grasped" + "\t" + "Target_Object" + "\t" + hand.currentAttachedObject.name);
 					}
 					else
 					{
 						//if (!this.isTargetAlreadyGrasped)
 						{
-							if (!this.alreadyGraspedObjects.Contains(hand.CurrentlyInteracting.name))
+							if (!this.alreadyGraspedObjects.Contains(hand.currentAttachedObject.name))
 							{
 								SIGVerseLogger.Info("Wrong object is grasped [new]" + "\t" + this.GetElapsedTimeText() + "\t" + this.GetElapsedTimeText());
 
@@ -945,39 +956,48 @@ namespace SIGVerse.Competition.HumanNavigation
 
 								//this.countWrongObjectsGrasp++;
 
-								this.alreadyGraspedObjects.Add(hand.CurrentlyInteracting.name);
+								this.alreadyGraspedObjects.Add(hand.currentAttachedObject.name);
 							}
 							else
 							{
 								SIGVerseLogger.Info("Wrong object is grasped [already grasped]" + "\t" + this.GetElapsedTimeText() + "\t" + this.GetElapsedTimeText());
 							}
 
-							this.RecordEventLog("Object_Is_Grasped" + "\t" + "Wrong_Object" + "\t" + hand.CurrentlyInteracting.name);
+							this.RecordEventLog("Object_Is_Grasped" + "\t" + "Wrong_Object" + "\t" + hand.currentAttachedObject.name);
 						}
 					}
 				}
 				else// if (hand.CurrentlyInteracting.tag != "Untagged")
 				{
-					SIGVerseLogger.Info("Object_Is_Grasped" + "\t" + "Others" + "\t" + hand.CurrentlyInteracting.name + "\t" + this.GetElapsedTimeText());
-					this.RecordEventLog("Object_Is_Grasped" + "\t" + "Others" + "\t" + hand.CurrentlyInteracting.name);
+					SIGVerseLogger.Info("Object_Is_Grasped" + "\t" + "Others" + "\t" + hand.currentAttachedObject.name + "\t" + this.GetElapsedTimeText());
+					this.RecordEventLog("Object_Is_Grasped" + "\t" + "Others" + "\t" + hand.currentAttachedObject.name);
 				}
 			}
 		}
 
-		private string GetGraspingObjectId(NewtonVR.NVRHand hand)
+//		private string GetGraspingObjectId(NewtonVR.NVRHand hand)
+		private string GetGraspingObjectId(Hand hand)
 		{
 			string graspingObject = "";
 
-			if (hand.HoldButtonPressed)
+			if(hand.currentAttachedObject != null)
 			{
-				if (hand.IsInteracting)
+				if (hand.currentAttachedObject.tag == TagNameOfGraspables)
 				{
-					if (hand.CurrentlyInteracting.tag == TagNameOfGraspables)
-					{
-						graspingObject = hand.CurrentlyInteracting.name;
-					}
+					graspingObject = hand.currentAttachedObject.name;
 				}
 			}
+
+			//if (hand.HoldButtonPressed)
+			//{
+			//	if (hand.IsInteracting)
+			//	{
+			//		if (hand.CurrentlyInteracting.tag == TagNameOfGraspables)
+			//		{
+			//			graspingObject = hand.CurrentlyInteracting.name;
+			//		}
+			//	}
+			//}
 
 			return graspingObject;
 		}
@@ -988,19 +1008,22 @@ namespace SIGVerse.Competition.HumanNavigation
 			else                                            return false;
 		}
 
-		private void CheckGraspingStatus(NewtonVR.NVRHand hand)
+//		private void CheckGraspingStatus(NewtonVR.NVRHand hand)
+		private void CheckGraspingStatus(Hand hand)
 		{
-			if (hand.HoldButtonDown)
+//			if (hand.HoldButtonDown)
+			if (SteamVR_Actions.sigverse_PressMiddle.GetStateDown(hand.handType))
 			{
 				SIGVerseLogger.Info("HandInteraction" + "\t" + "HoldButtonDown" + "\t" + hand.name + "\t" + this.GetElapsedTimeText());
 				this.RecordEventLog("HandInteraction" + "\t" + "HoldButtonDown" + "\t" + hand.name);
 			}
 
-			if (hand.HoldButtonUp)
+//			if (hand.HoldButtonUp)
+			if (SteamVR_Actions.sigverse_PressMiddle.GetStateUp(hand.handType))
 			{
 				string objectInhand = "";
-				if      (hand.IsLeft)  { objectInhand = this.objectIdInLeftHandPreviousFrame; }
-				else if (hand.IsRight) { objectInhand = this.objectIdInRightHandPreviousFrame; }
+				if      (hand.handType==SteamVR_Input_Sources.LeftHand) { objectInhand = this.objectIdInLeftHandPreviousFrame; }
+				else if (hand.handType==SteamVR_Input_Sources.RightHand){ objectInhand = this.objectIdInRightHandPreviousFrame; }
 
 				if(objectInhand != "")
 				{
@@ -1076,8 +1099,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		public bool IsTargetGrasped()
 		{
-			bool isGraspedByLeftHand  = this.LeftHand .IsInteracting && this.IsTargetObject(this.LeftHand .CurrentlyInteracting.name);
-			bool isGraspedByRightHand = this.rightHand.IsInteracting && this.IsTargetObject(this.rightHand.CurrentlyInteracting.name);
+			bool isGraspedByLeftHand  = this.LeftHand .currentAttachedObject != null && this.IsTargetObject(this.LeftHand .currentAttachedObject.name);
+			bool isGraspedByRightHand = this.rightHand.currentAttachedObject != null && this.IsTargetObject(this.rightHand.currentAttachedObject.name);
 
 			return isGraspedByLeftHand || isGraspedByRightHand;
 		}

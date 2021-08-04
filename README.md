@@ -15,29 +15,27 @@ https://github.com/RoboCupatHomeSim/console-simple-tts
 Same as below for OS and Unity version.
 https://github.com/RoboCupatHomeSim/documents/blob/master/SoftwareManual/Environment.md#windows-pc
 
+Please install [Steam](https://store.steampowered.com/about/) and [SteamVR](https://store.steampowered.com/app/250820/SteamVR/) on your PC. Download the installer from the official website and install it.  
+And please install [Oculus Software](https://www.oculus.com/setup/) to use Oculus Headsets. [Oculus Link](https://support.oculus.com/articles/headsets-and-accessories/oculus-link/index-oculus-link) is also required.
+
+
 ## How to Build
 
-### Import common Unitypackage
+### Import unitypackages
 
-1. Prepare a common unitypackage (e.g. robocup-common.unitypackage).
-2. Open this project with Unity.
-3. Click [Assets]-[Import Package]-[Custom Package...].
-3. Select and open the common unitypackage.
-4. Click [Import] button.
+1. Download SteamVR Unity Plugin v2.7.3 from the following link.  
+https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/2.7.3/steamvr_2_7_3.unitypackage
+1. Open this project with Unity.
+1. Click [Continue] in the [Unity Package Manager Error] window.
+1. Click [Ignore] in the [Enter Safe Mode?] window.
+1. Click [Assets]-[Import Package]-[Custom Package...].
+1. Select a common unitypackage (e.g. robocup-common.unitypackage) and open the file.
+1. Click [Import] button.
+1. Click [Assets]-[Import Package]-[Custom Package...].
+1. Select the steamvr_2_7_3.unitypackage and open the file.
+1. Click [Import] button.
+1. Please confirm that no error occurred in Console window.
 
-### Import the Oculus Integration for Unity
-
-1. Download Oculus Integration for Unity ver.14.0 from the following link.  
-https://developer.oculus.com/downloads/package/unity-integration-archive/14.0/
-2. Open this project with Unity.
-3. Click [Assets]-[Import Package]-[Custom Package...].
-4. Select downloaded OculusIntegration_14.0.unitypackage and open the file.
-5. Click [Import] button.
-6. Click [Upgrade] when "Update Spatializer Plugins" window displayed.
-7. Click [Restart] when "Restart Unity" window displayed.
-8. Click [Yes] when "Update Oculus Utilities Plugin" window displayed.
-9. Click [Restart] when "Restart Unity" window displayed.
-10. Please confirm that no error occurred in Console window.
 
 ### Import executable file and dll for TTS
 1. Prepare "ConsoleSimpleTTS.exe" and "Interop.SpeechLib.dll".
@@ -68,7 +66,10 @@ SIGVerse window will be opened.
 
 ## How to Execute Human Navigation Program
 
-### Execute On Unity Editor
+Please start the ROS side application beforehand.  
+See [human-navigation-ros](https://github.com/RoboCupatHomeSim/human-navigation-ros) for an example application.
+
+### Execute on Unity Editor
 1. Click [SIGVerse]-[Set Default GameView Size].
 2. Double click "Assets/Competition/HumanNavi/HumanNavi(.unity)" in Project window.
 3. Click the Play button at the top of the Unity editor.  

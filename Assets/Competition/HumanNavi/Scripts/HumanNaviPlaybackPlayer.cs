@@ -50,7 +50,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				// Avatar
 				Transform avatar = GameObject.FindGameObjectWithTag("Avatar").transform;
-				avatar.GetComponentInChildren<NewtonVR.NVRPlayer>().enabled = false;
+//				avatar.GetComponentInChildren<NewtonVR.NVRPlayer>().enabled = false;
 
 #if ENABLE_VRIK
 				// Avatar (Final IK)
@@ -68,8 +68,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				if (!this.hasVRIK)
 				{
-					avatar.GetComponentInChildren<OVRManager>().enabled = false;
-					avatar.GetComponentInChildren<OVRCameraRig>().enabled = false;
+					//avatar.GetComponentInChildren<OVRManager>().enabled = false;
+					//avatar.GetComponentInChildren<OVRCameraRig>().enabled = false;
 
 					avatar.GetComponentInChildren<Animator>().enabled = false;
 					avatar.GetComponentInChildren<SIGVerse.Human.VR.SimpleHumanVRController>().enabled = false;
