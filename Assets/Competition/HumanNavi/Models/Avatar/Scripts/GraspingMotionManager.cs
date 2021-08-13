@@ -174,9 +174,9 @@ namespace SIGVerse.Competition.HumanNavigation
 			float handTrigger1D = 0.0f;
 
 //			handTrigger1D = (this.handType == HandType.LeftHand)? OVRInput.Get(OVRInput.RawAxis1D.LHandTrigger) : OVRInput.Get(OVRInput.RawAxis1D.RHandTrigger);
-			handTrigger1D = SteamVR_Actions.sigverse_SqueezeMiddle.GetAxis(this.inputSource);
+			handTrigger1D = SteamVR_Actions.sigverse.SqueezeMiddle.GetAxis(this.inputSource);
 
-			//Debug.Log("handTrigger1D="+handTrigger1D);
+//			Debug.LogError("handTrigger1D="+handTrigger1D);
 
 			return handTrigger1D;
 		}
