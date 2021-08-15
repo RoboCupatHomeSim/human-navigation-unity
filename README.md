@@ -64,10 +64,12 @@ SIGVerse window will be opened.
 2. Copy "HumanNaviConfig.json" to the [SIGVerseConfig]-[HumanNavi] folder.  
 (Note: If there is no configuration file in the HumanNavi folder, a configuration file will be automatically copied from the sample folder when the Unity project is opened.)
 
-## How to Execute Human Navigation Program
+## How to Execute Human Navigation
 
 Please start the ROS side application beforehand.  
 See [human-navigation-ros](https://github.com/RoboCupatHomeSim/human-navigation-ros) for an example application.
+
+On the Windows side, launch Oculus Software and connect the VR headset to the PC via Oculus Link (Oculus Air Link), and also launch SteamVR and set the VR headset to standby.
 
 ### Execute on Unity Editor
 1. Click [SIGVerse]-[Set Default GameView Size].
