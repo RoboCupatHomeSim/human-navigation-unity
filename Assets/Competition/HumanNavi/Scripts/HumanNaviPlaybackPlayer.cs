@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System;
+using Valve.VR;
+using Valve.VR.InteractionSystem;
+using UnityEngine.XR.Management;
+using UnityEngine.SpatialTracking;
 
 namespace SIGVerse.Competition.HumanNavigation
 {
@@ -18,7 +22,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private PlaybackGuidanceMessageEventController guidanceMessageController;
 
-		private bool hasVRIK = false;
+//		private bool hasVRIK = false;
 
 		protected override void Awake()
 		{
@@ -50,7 +54,7 @@ namespace SIGVerse.Competition.HumanNavigation
 
 				// Avatar
 				Transform avatar = GameObject.FindGameObjectWithTag("Avatar").transform;
-//				avatar.GetComponentInChildren<NewtonVR.NVRPlayer>().enabled = false;
+				avatar.GetComponentInChildren<Valve.VR.InteractionSystem.Player>().enabled = false;
 
 #if ENABLE_VRIK
 				// Avatar (Final IK)
@@ -66,10 +70,19 @@ namespace SIGVerse.Competition.HumanNavigation
 				}
 #endif
 
-				if (!this.hasVRIK)
+//				if (!this.hasVRIK)
 				{
-					//avatar.GetComponentInChildren<OVRManager>().enabled = false;
-					//avatar.GetComponentInChildren<OVRCameraRig>().enabled = false;
+					foreach (SteamVR_Behaviour_Pose pose in avatar.GetComponentsInChildren<SteamVR_Behaviour_Pose>()) { pose.enabled = false; }
+					foreach (Hand hand in avatar.GetComponentsInChildren<Hand>()) { hand.enabled = false; }
+					avatar.GetComponentInChildren<SteamVR_CameraHelper>().enabled = false;
+					avatar.GetComponentInChildren<TrackedPoseDriver>().enabled = false;
+
+					XRLoader activeLoader = XRGeneralSettings.Instance.Manager.activeLoader;
+					if (activeLoader != null)
+					{
+						activeLoader.Stop();
+						XRGeneralSettings.Instance.Manager.DeinitializeLoader();
+					}
 
 					avatar.GetComponentInChildren<Animator>().enabled = false;
 					avatar.GetComponentInChildren<SIGVerse.Human.VR.SimpleHumanVRController>().enabled = false;
