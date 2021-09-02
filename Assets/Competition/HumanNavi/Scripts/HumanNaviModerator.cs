@@ -542,8 +542,8 @@ namespace SIGVerse.Competition.HumanNavigation
 #else
 			this.avatar.transform.position = this.initialAvatarPosition;
 			this.avatar.transform.eulerAngles = this.initialAvatarRotation;
-			this.avatar.transform.Find("OVRCameraRig").localPosition = Vector3.zero;
-			this.avatar.transform.Find("OVRCameraRig").localRotation = Quaternion.identity;
+			this.avatar.transform.Find("[CameraRig]").localPosition = Vector3.zero;
+			this.avatar.transform.Find("[CameraRig]").localRotation = Quaternion.identity;
 			this.avatar.transform.Find("Ethan").localPosition = Vector3.zero;
 			this.avatar.transform.Find("Ethan").localRotation = Quaternion.identity;
 #endif
