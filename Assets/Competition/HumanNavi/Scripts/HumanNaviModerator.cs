@@ -154,6 +154,8 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private List<GameObject> graspableObjects;
 
+		private Dictionary<SteamVR_Input_Sources, GameObject> preAttachedObjectMap;
+
 		//private int countWrongObjectsGrasp;
 
 		//-----------------------------
@@ -212,6 +214,10 @@ namespace SIGVerse.Competition.HumanNavigation
 				this.receivedMessageMap.Add(MsgGetObjectStatus, false);
 				this.receivedMessageMap.Add(MsgGetSpeechState, false);
 				this.receivedMessageMap.Add(MsgGiveUp, false);
+
+				this.preAttachedObjectMap = new Dictionary<SteamVR_Input_Sources, GameObject>();
+				this.preAttachedObjectMap.Add(SteamVR_Input_Sources.LeftHand,  null);
+				this.preAttachedObjectMap.Add(SteamVR_Input_Sources.RightHand, null);
 
 				// Timer
 				this.stepTimer = new StepTimer();
@@ -919,6 +925,10 @@ namespace SIGVerse.Competition.HumanNavigation
 //		private void CheckGraspOfObject(NewtonVR.NVRHand hand)
 		private void CheckGraspOfObject(Hand hand)
 		{
+			if (this.preAttachedObjectMap[hand.handType] == hand.currentAttachedObject) { return; }
+
+			this.preAttachedObjectMap[hand.handType] = hand.currentAttachedObject;
+
 //			if (hand.HoldButtonDown && hand.IsInteracting)
 			if (hand.currentAttachedObject != null)
 			{

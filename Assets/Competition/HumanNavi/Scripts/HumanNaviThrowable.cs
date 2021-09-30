@@ -27,16 +27,17 @@ namespace SIGVerse.Competition.HumanNavigation
 
 		private void SetSIGVerseDefault()
 		{
-			this.attachmentFlags = Hand.AttachmentFlags.SnapOnAttach | Hand.AttachmentFlags.DetachFromOtherHand | Hand.AttachmentFlags.VelocityMovement | Hand.AttachmentFlags.TurnOffGravity;
+//			this.attachmentFlags = Hand.AttachmentFlags.SnapOnAttach | Hand.AttachmentFlags.DetachFromOtherHand | Hand.AttachmentFlags.VelocityMovement | Hand.AttachmentFlags.TurnOffGravity;
+			this.attachmentFlags = Hand.AttachmentFlags.DetachFromOtherHand | Hand.AttachmentFlags.VelocityMovement | Hand.AttachmentFlags.TurnOffGravity;
 
 			this.releaseVelocityStyle = ReleaseStyle.AdvancedEstimation;
 		}
-		protected override void OnHandHoverBegin(Hand hand)
-		{
-			this.attachmentOffset = hand.transform; // If this line set in OnAttachedToHand, only the first grasp will have unnatural behavior.
+		//protected override void OnHandHoverBegin(Hand hand)
+		//{
+		//	this.attachmentOffset = hand.transform; // If this line set in OnAttachedToHand, only the first grasp will have unnatural behavior.
 
-			base.OnHandHoverBegin(hand);
-		}
+		//	base.OnHandHoverBegin(hand);
+		//}
 	}
 
 #if UNITY_EDITOR
