@@ -191,7 +191,7 @@ namespace SIGVerse.Competition.HumanNavigation
 				(
 					target: destination,
 					eventData: null,
-					functor: (reciever, eventData) => reciever.OnSpeakGuidanceMessage(new GuidanceMessageStatus(message, displayType, sourceLanguage, targetLanguage))
+					functor: (reciever, eventData) => reciever.OnSpeakGuidanceMessage(new GuidanceMessageStatus(truncatedMessage, displayType, sourceLanguage, targetLanguage))
 				);
 
 				// For send speech result (ROS message)
