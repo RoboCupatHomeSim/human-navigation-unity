@@ -1,0 +1,11 @@
+{
+	"teamName":"Hum@n Navigation",
+	"sessionTimeLimit":"1800",
+	"recoverUsingScoreFile": false,
+	"maxNumberOfTrials": 2,
+	"playbackType": 1,
+	"taskInfoList":[
+		{"environment":"Layout2021HN01#01","target":"tumblerglass_c02#01",         "destination":"destination#01"},
+		{"environment":"Layout2021HN02#01","target":"petbottle_2l_full_c01#01",    "destination":"destination#01"}
+	]
+}
