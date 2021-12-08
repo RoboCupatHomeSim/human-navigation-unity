@@ -938,7 +938,7 @@ namespace SIGVerse.Competition.HumanNavigation
 					{
 						if (!this.isTargetAlreadyGrasped)
 						{
-							SIGVerseLogger.Info("Target object is grasped" + "\t" + this.GetElapsedTimeText());
+							SIGVerseLogger.Info("Target object is grasped" + "\t" + hand.currentAttachedObject.name + "\t" + this.GetElapsedTimeText());
 
 							this.SendPanelNotice("Target object is grasped", 100, PanelNoticeStatus.Green);
 
@@ -957,7 +957,7 @@ namespace SIGVerse.Competition.HumanNavigation
 						{
 							if (!this.alreadyGraspedObjects.Contains(hand.currentAttachedObject.name))
 							{
-								SIGVerseLogger.Info("Wrong object is grasped [new]" + "\t" + this.GetElapsedTimeText() + "\t" + this.GetElapsedTimeText());
+								SIGVerseLogger.Info("Wrong object is grasped [new]" + "\t" + hand.currentAttachedObject.name + "\t" + this.GetElapsedTimeText());
 
 								this.SendPanelNotice("Wrong object is grasped", 100, PanelNoticeStatus.Red);
 
@@ -970,7 +970,7 @@ namespace SIGVerse.Competition.HumanNavigation
 							}
 							else
 							{
-								SIGVerseLogger.Info("Wrong object is grasped [already grasped]" + "\t" + this.GetElapsedTimeText() + "\t" + this.GetElapsedTimeText());
+								SIGVerseLogger.Info("Wrong object is grasped [already grasped]" + "\t" + hand.currentAttachedObject.name + "\t" + this.GetElapsedTimeText());
 							}
 
 							this.RecordEventLog("Object_Is_Grasped" + "\t" + "Wrong_Object" + "\t" + hand.currentAttachedObject.name);

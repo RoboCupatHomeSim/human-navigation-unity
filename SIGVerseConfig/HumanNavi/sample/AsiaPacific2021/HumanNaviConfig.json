@@ -1,0 +1,17 @@
+{
+	"teamName":"Hum@n Navigation",
+	"sessionTimeLimit":"180",
+	"recoverUsingScoreFile": false,
+	"maxNumberOfTrials": 8,
+	"playbackType": 1,
+	"taskInfoList":[
+		{"environment":"Layout2019HN02#01","target":"petbottle_2l_full_c01#02",    "destination":"destination#02"},
+		{"environment":"Layout2021HN02#01","target":"toy_penguin#01",              "destination":"destination#02"},
+		{"environment":"Layout2019HN06#01","target":"petbottle_500ml_empty_c01#03","destination":"destination#01"},
+		{"environment":"Layout2021HN01#01","target":"doll_rabbit#02",              "destination":"destination#01"},
+		{"environment":"Layout2019HN07#01","target":"petbottle_2l_full_c01#01",    "destination":"destination#03"},
+		{"environment":"Layout2019HN05#01","target":"sauce_full#01",               "destination":"destination#01"},
+		{"environment":"Layout2019HN03#01","target":"toy_duck#03",                 "destination":"destination#03"},
+		{"environment":"Layout2019HN01#01","target":"doll_dog#02",                 "destination":"destination#01"}
+	]
+}
