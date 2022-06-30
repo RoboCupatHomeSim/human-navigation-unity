@@ -61,12 +61,6 @@ https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/2.7.3/st
 SIGVerse window will be opened.
 3. Type the IP address of ROS to "Rosbridge IP" in SIGVerse window.
 
-### Set Up Configuration File for Human Navigation
-
-1. Open the [SIGVerseConfig]-[HumanNavi]-[sample] folder in this project folder.
-2. Copy "HumanNaviConfig.json" to the [SIGVerseConfig]-[HumanNavi] folder.  
-(Note: If there is no configuration file in the HumanNavi folder, a configuration file will be automatically copied from the sample folder when the Unity project is opened.)
-
 ## How to Execute Human Navigation
 
 Please start the ROS side application beforehand.  
@@ -80,7 +74,7 @@ On the Windows side, launch Oculus Software and connect the VR headset to the PC
 3. Click the Play button at the top of the Unity editor.  
 
 ### Execute the Executable file
-1. Copy the "SIGVerseConfig" folder into the "Build" folder.
+1. Copy the "TTS" folder into the "Build" folder.
 2. Double Click the "HumanNavigation.exe" in the "Build" folder.
 
 ## License
