@@ -34,9 +34,11 @@ https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/2.7.3/st
 1. Click [Assets]-[Import Package]-[Custom Package...].
 1. Select the steamvr_2_7_3.unitypackage and open the file.
 1. Click [Import] button.
-1. If the Valve.VR.SteamVR_UnitySettingsWindow appears, click [Ignore All], and then click [Yes, Ignore All].
 1. Click [Assets]-[Reimport All].
 1. Click [Reimport] button.
+1. Click [Edit]-[Project Settings...].
+1. Check [XR Plug-in Management]-[Initialize XR on Startup].
+1. Check [XR Plug-in Management]-[Plug-in Providers]-[OpenVR Loader].
 1. Please confirm that no error occurred in Console window.
 
 
