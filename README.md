@@ -39,6 +39,7 @@ https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/2.7.3/st
 1. Click [Edit]-[Project Settings...].
 1. Check [XR Plug-in Management]-[Initialize XR on Startup].
 1. Check [XR Plug-in Management]-[Plug-in Providers]-[OpenVR Loader].
+1. Close [Project Settings] Window.
 1. Please confirm that no error occurred in Console window.
 
 
