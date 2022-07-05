@@ -49,11 +49,12 @@ https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/2.7.3/st
 
 ### Build
 1. Create a "Build" folder in this project folder.
-2. Open this project with Unity.
-3. Click [File]-[Build Settings].
-4. Click [Build].
-5. Select the "Build" folder.
-6. Type a file name (e.g. HumanNavigation) and save the file.  
+1. Open this project with Unity.
+1. Click [File]-[Build Settings].
+1. Click [Build].
+1. Select the "Build" folder.
+1. Type a file name (e.g. HumanNavigation) and save the file.  
+1. Copy the "TTS" folder under the "Build" folder.
 
 ## How to Set Up
 
@@ -77,8 +78,7 @@ On the Windows side, launch Oculus Software and connect the VR headset to the PC
 3. Click the Play button at the top of the Unity editor.  
 
 ### Execute the Executable file
-1. Copy the "TTS" folder into the "Build" folder.
-2. Double Click the "HumanNavigation.exe" in the "Build" folder.
+1. Double Click the "HumanNavigation.exe" in the "Build" folder.
 
 ## License
 
