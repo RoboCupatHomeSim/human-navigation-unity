@@ -26,16 +26,16 @@ And please install [Oculus Software](https://www.oculus.com/setup/) to use Oculu
 1. Download SteamVR Unity Plugin v2.7.3 from the following link.  
 https://github.com/ValveSoftware/steamvr_unity_plugin/releases/download/2.7.3/steamvr_2_7_3.unitypackage
 1. Open this project with Unity.
-1. Click [Continue] in the [Unity Package Manager Error] window.
-1. Click [Ignore] in the [Enter Safe Mode?] window.
+1. Click [**Continue**] in the [Unity Package Manager Error] window.
+1. Click [**Ignore**] in the [Enter Safe Mode?] window.
 1. Click [Assets]-[Import Package]-[Custom Package...].
 1. Select a common unitypackage (e.g. robocup-common.unitypackage) and open the file.
 1. Click [Import] button.
 1. Click [Assets]-[Import Package]-[Custom Package...].
 1. Select the steamvr_2_7_3.unitypackage and open the file.
 1. Click [Import] button.
-1. Click [Assets]-[Reimport All].
-1. Click [Reimport] button.
+1. Click [Assets]-[**Reimport All**].
+1. Click [**Reimport**] button.
 1. Click [Edit]-[Project Settings...].
 1. Check [XR Plug-in Management]-[Initialize XR on Startup].
 1. Check [XR Plug-in Management]-[Plug-in Providers]-[OpenVR Loader].
