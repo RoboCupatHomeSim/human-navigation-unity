@@ -1,0 +1,12 @@
+{
+	"teamName":"Hum@n Navigation",
+	"sessionTimeLimit":"999",
+	"recoverUsingScoreFile": false,
+	"maxNumberOfTrials": 2,
+	"playbackType": 1,
+	"taskInfoList":[
+		{"environment":"Layout2022HN01#01","target":"dish_A_curry#01", "destination":"destination#00"},
+		{"environment":"Layout2022HN02#01","target":"kettle#01",       "destination":"destination#00"}
+	]
+}
+
