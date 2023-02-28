@@ -1,0 +1,15 @@
+{
+	"teamName":"Hum@n Navigation",
+	"sessionTimeLimit":"180",
+	"recoverUsingScoreFile": true,
+	"maxNumberOfTrials": 6,
+	"playbackType": 1,
+	"taskInfoList":[
+		{"environment":"Layout2022HN01#01","target":"dish_A_curry#03",     "destination":"destination#01"},
+		{"environment":"Layout2022HN01#01","target":"mayonaise_full#01",   "destination":"destination#02"},
+		{"environment":"Layout2022HN02#01","target":"tumblerglass_c02#08", "destination":"destination#01"},
+		{"environment":"Layout2022HN02#01","target":"tumblerglass_c02#03", "destination":"destination#02"},
+		{"environment":"Layout2019HN01#01","target":"fork_A#02",           "destination":"destination#02"},
+		{"environment":"Layout2021HN01#01","target":"doll_rabbit#02",      "destination":"destination#01"}
+	]
+}
