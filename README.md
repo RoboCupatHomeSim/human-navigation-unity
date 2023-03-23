@@ -80,6 +80,11 @@ On the Windows side, launch Oculus Software and connect the VR headset to the PC
 ### Execute the Executable file
 1. Double Click the "HumanNavigation.exe" in the "Build" folder.
 
+## Notes
+- If you want to use the translation feature, see below.  
+https://github.com/RoboCupatHomeSim/human-navigation-ros/wiki/RosMessage#guidance-message  
+https://github.com/RoboCupatHomeSim/translation-library-for-human-navi/wiki
+
 ## License
 
 This project is licensed under the SIGVerse License - see the LICENSE.txt file for details.
