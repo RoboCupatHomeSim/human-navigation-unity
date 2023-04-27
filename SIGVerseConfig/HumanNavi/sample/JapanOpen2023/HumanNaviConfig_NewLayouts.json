@@ -1,0 +1,11 @@
+{
+	"teamName":"Hum@n Navigation",
+	"sessionTimeLimit":"999",
+	"recoverUsingScoreFile": false,
+	"maxNumberOfTrials": 2,
+	"playbackType": 1,
+	"taskInfoList":[
+		{"environment":"Layout2023Team1#01","target":"ketchup_full#01",    "destination":"destination#00"},
+		{"environment":"Layout2023TeamKR#01","target":"dish_A_curry#01", "destination":"destination#00"}
+	]
+}

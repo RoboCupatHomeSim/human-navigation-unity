@@ -102,3 +102,8 @@ SIGVerse*.log
 
 /Assets/Competition/HumanNavi/HiddenFiles*
 
+# Editor
+/Assets/Editor*
+/Assets/Editor.meta
+
+
