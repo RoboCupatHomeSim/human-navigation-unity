@@ -1,14 +1,14 @@
 {
 	"teamName":"Hum@n Navigation",
 	"sessionTimeLimit":"999",
-	"recoverUsingScoreFile": true,
+	"recoverUsingScoreFile": false,
 	"maxNumberOfTrials": 5,
 	"playbackType": 0,
 	"taskInfoList":[
-		{"environment":"RCJO2025_01#01Layout", "target":"tumblerglass_c02#01",       "destination":"destination#00"},
-		{"environment":"RCJO2025_02#01Layout", "target":"petbottle_2l_full_c01#01",  "destination":"destination#00"},
-		{"environment":"RCJO2025_03#01Layout", "target":"tumblerglass_c02#01",       "destination":"destination#00"},
-		{"environment":"RCJO2025_04#01Layout", "target":"tumblerglass_c02#01",       "destination":"destination#00"},
-		{"environment":"RCJO2025_05#01Layout", "target":"kettle#01",                 "destination":"destination#00"}
+		{"environment":"RCJO2025_01#01", "target":"tumblerglass_c02#01",       "destination":"destination#00"},
+		{"environment":"RCJO2025_02#01", "target":"petbottle_2l_full_c01#01",  "destination":"destination#00"},
+		{"environment":"RCJO2025_03#01", "target":"tumblerglass_c02#01",       "destination":"destination#00"},
+		{"environment":"RCJO2025_04#01", "target":"tumblerglass_c02#01",       "destination":"destination#00"},
+		{"environment":"RCJO2025_05#01", "target":"kettle#01",                 "destination":"destination#00"}
 	]
 }
