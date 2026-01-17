@@ -1,3 +1,7 @@
+> [!WARNING]
+> This repository is for ROS 1 only.
+
+
 # Human Navigation Project
 
 This is a Unity project for the competition of Human Navigation task of the RoboCup@Home Simulation.
